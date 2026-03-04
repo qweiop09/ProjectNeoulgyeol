@@ -12,16 +12,21 @@ public class ClosePhaseController : MonoBehaviour
     private void Awake()
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        battlePhaseCoordinator.OnClosePhaseEnd += ClosePhaseProcess;
+        battlePhaseCoordinator.OnClosePhaseEnd += StartClosePhase;
     }
     
-    private void ClosePhaseProcess()
+    private void StartClosePhase()
+    {
+        CompleteClosePhaseProcess();
+    }
+    
+    private void CompleteClosePhaseProcess()
     {
         // Close Phase Logic
         Debug.Log("Close Phase Ended");
         
         // Close Phase End
-        // battlePhaseCoordinator.CompleteClosePhaseEnd();
+        battlePhaseCoordinator.CompleteClosePhaseEnd();
     }
     
     

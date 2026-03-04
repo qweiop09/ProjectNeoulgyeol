@@ -23,30 +23,44 @@ public class CompetePhaseController : MonoBehaviour
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
         
-        battlePhaseCoordinator.OnCompetePhaseStart += CompetePhaseStartProcess;
-        battlePhaseCoordinator.OnCompetePhasePerform += CompetePhaseMiddleProcess;
-        battlePhaseCoordinator.OnCompetePhaseEnd += CompetePhaseEndProcess;
+        battlePhaseCoordinator.OnCompetePhaseStart += StartCompetePhase;
+        battlePhaseCoordinator.OnCompetePhasePerform += StartCompetePhaseMiddleProcess;
+        battlePhaseCoordinator.OnCompetePhaseEnd += StartCompetePhaseEndProcess;
     }
     
-    private void CompetePhaseStartProcess()
+    // Start Phase Actions
+    private void StartCompetePhase()
     {
-        // Compete Phase Logic
+        CompleteCompetePhaseStartProcess();
+    }
+    
+    private void CompleteCompetePhaseStartProcess()
+    {
         Debug.Log("Compete Phase Started");
-        
-        // Compete Phase End
         battlePhaseCoordinator.CompleteCompeteStart();
     }
     
-    private void CompetePhaseMiddleProcess()
+    
+    // Middle Phase Actions
+    private void StartCompetePhaseMiddleProcess()
     {
-        // Compete Phase Logic
+        CompleteCompetePhaseMiddleProcess();
+    }
+    
+    private void CompleteCompetePhaseMiddleProcess()
+    {
         Debug.Log("Compete Phase Performing");
-        
-        // Compete Phase End
         battlePhaseCoordinator.CompleteCompetePerform();
     }
     
-    private void CompetePhaseEndProcess()
+    
+    // End Phase Actions
+    private void StartCompetePhaseEndProcess()
+    {
+        CompleteCompetePhaseEndProcess();
+    }
+    
+    private void CompleteCompetePhaseEndProcess()
     {
         // Compete Phase Logic
         Debug.Log("Compete Phase Ended");

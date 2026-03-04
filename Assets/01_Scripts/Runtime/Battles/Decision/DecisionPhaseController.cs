@@ -13,35 +13,52 @@ public class DecisionPhaseController : MonoBehaviour
     private void Awake()
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        battlePhaseCoordinator.OnDecisionPhaseStart += DecisionPhaseStartProcess;
-        battlePhaseCoordinator.OnDecisionPhasePerform += DecisionPhaseMiddleProcess;
-        battlePhaseCoordinator.OnDecisionPhaseEnd += DecisionPhaseEndProcess;
+        battlePhaseCoordinator.OnDecisionPhaseStart += StartDecisionPhase;
+        battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
+        battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
     }
     
-    private void DecisionPhaseStartProcess()
+    // Start Phase Actions
+    private void StartDecisionPhase()
     {
-        // Decision Phase Logic
+        CompleteDecisionPhaseStartProcess();
+    }
+    
+    private void CompleteDecisionPhaseStartProcess()
+    {
         Debug.Log("Decision Phase Started");
-        
-        // Decision Phase End
         battlePhaseCoordinator.CompleteDecisionStart();
     }
     
-    private void DecisionPhaseMiddleProcess()
+    
+    // Middle Phase Actions
+    private void StartDecisionPhaseMiddleProcess()
     {
-        // Decision Phase Logic
+        // CompleteDecisionPhaseMiddleProcess();
+        return;
+    }
+    
+    private void CompleteDecisionPhaseMiddleProcess()
+    {
         Debug.Log("Decision Phase Performing");
-        
-        // Decision Phase End
         battlePhaseCoordinator.CompleteDecisionPerform();
     }
     
-    private void DecisionPhaseEndProcess()
+    public void PressedCompetePhaseStartButton()
     {
-        // Decision Phase Logic
+        CompleteDecisionPhaseMiddleProcess();
+    }
+    
+    
+    // End Phase Actions
+    private void StartDecisionPhaseEndProcess()
+    {
+        CompleteDecisionPhaseEndProcess();
+    }
+    
+    private void CompleteDecisionPhaseEndProcess()
+    {
         Debug.Log("Decision Phase Ended");
-        
-        // Decision Phase End
         battlePhaseCoordinator.CompleteDecisionEnd();
     }
     

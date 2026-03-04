@@ -8,10 +8,15 @@ public class OpenPhaseController : MonoBehaviour
     private void Awake()
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        battlePhaseCoordinator.OnOpenPhaseStart += OpenPhaseProcess;
+        battlePhaseCoordinator.OnOpenPhaseStart += StartOpenPhase;
     }
     
-    private void OpenPhaseProcess()
+    private void StartOpenPhase()
+    {
+        CompleteOpenPhaseProcess();
+    }
+    
+    private void CompleteOpenPhaseProcess()
     {
         // Open Phase Logic
         Debug.Log("Open Phase Started");
