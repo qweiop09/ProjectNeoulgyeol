@@ -24,13 +24,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
    public event Action OnDecisionPhaseEnd;                
    
    // Compete Phase Actions
-   public event Action OnCompetePhaseStart;
+   public event Action<CharacterStatus[], CharacterStatus[]> OnCompetePhaseStart;
    public event Action OnCompetePhasePerform;
    public event Action OnCompetePhaseEnd;
    
    // Close Phase Actions
    public event Action OnClosePhaseEnd;
-
    
    // 수신
    // Start Battle
@@ -63,12 +62,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
         OnDecisionPhaseEnd?.Invoke();
     }
     
-    public void CompleteDecisionEnd()
+    public void CompleteDecisionEnd(CharacterStatus[] _playerCharacters, CharacterStatus[] _enemyCharacters)
     {
         if( currentPhase != PhaseState.Decision) return;
         currentPhase = PhaseState.Compete;
         
-        OnCompetePhaseStart?.Invoke();
+        OnCompetePhaseStart?.Invoke(_playerCharacters, _enemyCharacters);
     }
     
     // Compete Phase Actions

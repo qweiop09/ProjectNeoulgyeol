@@ -17,8 +17,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private BattlePhaseCoordinator battlePhaseCoordinator;
     
     // data Variables
-    [SerializeField] private Character[] playerCharacters;
-    [SerializeField] private Character[] enemyCharacters;
+    [SerializeField] private CharacterStatus[] playerCharacters;
+    [SerializeField] private CharacterStatus[] enemyCharacters;
     
     
     // private Methods
@@ -31,6 +31,16 @@ public class BattleManager : MonoBehaviour
      public BattlePhaseCoordinator GetBattlePhaseCoordinator()
     {
         return battlePhaseCoordinator;
+    }
+
+    public CharacterStatus[] GetPlayerCharacters()
+    {
+        return playerCharacters;
+    }
+
+    public CharacterStatus[] GetEnemyCharacters()
+    {
+        return enemyCharacters;
     }
     
 }

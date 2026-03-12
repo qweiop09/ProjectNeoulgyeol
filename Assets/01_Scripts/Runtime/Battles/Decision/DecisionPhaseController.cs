@@ -10,6 +10,9 @@ public class DecisionPhaseController : MonoBehaviour
     [SerializeField] private BattleManager battleManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
+    private CharacterStatus[] playerCharacterTargetingDatas;
+    private CharacterStatus[] enemyCharacterTargetingDatas;
+    
     private void Awake()
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
@@ -21,6 +24,11 @@ public class DecisionPhaseController : MonoBehaviour
     // Start Phase Actions
     private void StartDecisionPhase()
     {
+        playerCharacterTargetingDatas = battleManager.GetPlayerCharacters();
+        enemyCharacterTargetingDatas = battleManager.GetEnemyCharacters();
+        
+        // 속도 설정 (배열 정렬까지)
+        
         CompleteDecisionPhaseStartProcess();
     }
     
@@ -41,6 +49,9 @@ public class DecisionPhaseController : MonoBehaviour
     private void CompleteDecisionPhaseMiddleProcess()
     {
         Debug.Log("Decision Phase Performing");
+        
+        // 타겟팅 데이터 설정
+        
         battlePhaseCoordinator.CompleteDecisionPerform();
     }
     
@@ -59,7 +70,8 @@ public class DecisionPhaseController : MonoBehaviour
     private void CompleteDecisionPhaseEndProcess()
     {
         Debug.Log("Decision Phase Ended");
-        battlePhaseCoordinator.CompleteDecisionEnd();
+        
+        battlePhaseCoordinator.CompleteDecisionEnd(playerCharacterTargetingDatas, enemyCharacterTargetingDatas);
     }
     
 }

@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CompetePhaseController : MonoBehaviour
 {
@@ -10,29 +12,100 @@ public class CompetePhaseController : MonoBehaviour
     [SerializeField] private BattleManager battleManager; 
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
-    [SerializeField] private CompeteHandler competeHandler;
+    [SerializeField] private CompeteContestController competeContestController;
     [SerializeField] private CompeteMoveHandler competeMoveHandler;
-    [SerializeField] private CompeteJudgmentHandler competeJudgmentHandler;
-
+    
     
     // data Variables
-    private Character[] playerCharacters;
-    private Character[] enemyCharacters;
+    private CharacterBattleData[] playerCharacterBattleDatas;
+    private CharacterBattleData[] enemyCharacterTargetDatas;
+    
+    private CharacterBattleData[] allCharacterTargetDatas;
     
     private void Awake()
     {
+        // 이벤트 구독
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
         
-        battlePhaseCoordinator.OnCompetePhaseStart += StartCompetePhase;
+        battlePhaseCoordinator.OnCompetePhaseStart += (data1, data2)
+            => StartCompetePhaseStartProcess(
+                ChangeCharacterDataToCharacterBattleData(data1),
+                ChangeCharacterDataToCharacterBattleData(data2));
+        
         battlePhaseCoordinator.OnCompetePhasePerform += StartCompetePhaseMiddleProcess;
         battlePhaseCoordinator.OnCompetePhaseEnd += StartCompetePhaseEndProcess;
     }
     
-    // Start Phase Actions
-    private void StartCompetePhase()
+    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterStatus[] _characterStatuses)
     {
+        CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
+        
+        for (int i = 0; i < _characterStatuses.Length; i++)
+        {
+            _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
+        }
+
+        return _returnBattleDataArray;
+    }
+    
+    // Start Phase Actions
+    private void StartCompetePhaseStartProcess(CharacterBattleData[] _playerCharacters, CharacterBattleData[] _enemyCharacters)
+    {
+        playerCharacterBattleDatas = _playerCharacters;
+        enemyCharacterTargetDatas = _enemyCharacters;
+        
+        List<CharacterBattleData> playerCharacters = new List<CharacterBattleData>();
+        List<CharacterBattleData> enemyCharacters = new List<CharacterBattleData>();
+        
+        for(int i = 0; i < _playerCharacters.Length; i++)
+        {
+            playerCharacters.Add(_playerCharacters[i]);
+        }
+        for (int i = 0; i < _enemyCharacters.Length; i++)
+        {
+            enemyCharacters.Add(_enemyCharacters[i]);
+        }
+        
+        SetCharactersTargetingDatas(playerCharacters, enemyCharacters);
+        
         CompleteCompetePhaseStartProcess();
     }
+    
+    private void SetCharactersTargetingDatas(List<CharacterBattleData> _playerCharacterBattleDatas, List<CharacterBattleData> _enemyCharacterTargetDatas)
+    {
+        // 속도에 따른 행동 순서 결정
+        // 아군, 적군 혼합
+        // 정렬된 값들이 들어와야 기능함
+        
+        List<CharacterBattleData> _allCharacterTargetDatas = new List<CharacterBattleData>();
+        
+        // 속도 비교하여 행동 순서 결정
+        // 더 큰 쪽이 앞쪽에 있음
+        while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
+        {
+            if (_playerCharacterBattleDatas[0].GetCurrentSpeed >= _enemyCharacterTargetDatas[0].GetCurrentSpeed)
+            {
+                _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
+                _playerCharacterBattleDatas.RemoveAt(0);
+            }
+            else
+            {
+                _allCharacterTargetDatas.Add(_enemyCharacterTargetDatas[0]);
+                _enemyCharacterTargetDatas.RemoveAt(0);
+            }
+        }
+        if (_playerCharacterBattleDatas.Count == 0)
+        {
+            _allCharacterTargetDatas.AddRange(_enemyCharacterTargetDatas);
+        }
+        else 
+        {
+            _allCharacterTargetDatas.AddRange(_playerCharacterBattleDatas);
+        }
+
+        allCharacterTargetDatas = _allCharacterTargetDatas.ToArray();
+    }    
+    
     
     private void CompleteCompetePhaseStartProcess()
     {
@@ -42,11 +115,23 @@ public class CompetePhaseController : MonoBehaviour
     
     
     // Middle Phase Actions
-    private void StartCompetePhaseMiddleProcess()
+    private async void StartCompetePhaseMiddleProcess()
     {
-        CompleteCompetePhaseMiddleProcess();
+        for (int i = 0; i < allCharacterTargetDatas.Count(); i++)
+        {
+            CharacterBattleData currentCharacter = allCharacterTargetDatas[i];
+
+            // Move Phase
+            await competeMoveHandler.HandleCompeteMove(currentCharacter.GetCharacterTransform, currentCharacter.GetCharacterTransform);
+
+            // Compete Cycle Phase
+            await competeContestController.StartCompeteCycle(currentCharacter);
+
+        }
+
     }
-    
+
+
     private void CompleteCompetePhaseMiddleProcess()
     {
         Debug.Log("Compete Phase Performing");
