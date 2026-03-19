@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterStatus : MonoBehaviour
+[CreateAssetMenu(menuName = "Game/Character Data", fileName = "New Character Data")]
+public class CharacterStatus : ScriptableObject
 {
     // TODO: 캐릭터 스테이터스 및 정보
     public int maxHp;
@@ -12,15 +13,19 @@ public class CharacterStatus : MonoBehaviour
 
     public int slotCount; // 스킬 슬롯 갯수
     
-    public int characterSpeedHighLimit;
     public int characterSpeedLowLimit;
-    
-    public int characterCurrentSpeed;
+    public int characterSpeedHighLimit;
     
     
     // 캐릭터가 보유한 스킬들의 정보
     private CharacterSkill[] characterSkills;
     
+    public int GetRandomSpeed()
+    {
+        return Random.Range(characterSpeedLowLimit, characterSpeedHighLimit + 1);
+    }
+    
     // 장비한 장비들의 정보
+    
     
 }

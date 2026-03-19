@@ -10,8 +10,8 @@ public class DecisionPhaseController : MonoBehaviour
     [SerializeField] private BattleManager battleManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
-    private CharacterStatus[] playerCharacterTargetingDatas;
-    private CharacterStatus[] enemyCharacterTargetingDatas;
+    private CharacterBattleData[] playerCharacterTargetingDatas;
+    private CharacterBattleData[] enemyCharacterTargetingDatas;
     
     private void Awake()
     {

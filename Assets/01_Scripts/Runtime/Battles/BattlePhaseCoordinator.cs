@@ -15,6 +15,9 @@ public class BattlePhaseCoordinator : MonoBehaviour
    
    // 송신
    // 시작 메세지
+   // Battle Start Actions
+   public event Action<CharacterBattleData[], CharacterBattleData[]> OnBattleStart;
+   
    // Open Phase Actions
    public event Action OnOpenPhaseStart;  
    
@@ -24,7 +27,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
    public event Action OnDecisionPhaseEnd;                
    
    // Compete Phase Actions
-   public event Action<CharacterStatus[], CharacterStatus[]> OnCompetePhaseStart;
+   public event Action<CharacterBattleData[], CharacterBattleData[]> OnCompetePhaseStart;
    public event Action OnCompetePhasePerform;
    public event Action OnCompetePhaseEnd;
    
@@ -33,11 +36,11 @@ public class BattlePhaseCoordinator : MonoBehaviour
    
    // 수신
    // Start Battle
-   public void BattleStart()
+   public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
    {
-       currentPhase = PhaseState.Open;
-       
-       OnOpenPhaseStart?.Invoke();
+       currentPhase = PhaseState.Open; 
+
+       OnBattleStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
    }
    
     // Open Phase Actions
@@ -62,12 +65,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
         OnDecisionPhaseEnd?.Invoke();
     }
     
-    public void CompleteDecisionEnd(CharacterStatus[] _playerCharacters, CharacterStatus[] _enemyCharacters)
+    public void CompleteDecisionEnd(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
     {
         if( currentPhase != PhaseState.Decision) return;
         currentPhase = PhaseState.Compete;
         
-        OnCompetePhaseStart?.Invoke(_playerCharacters, _enemyCharacters);
+        OnCompetePhaseStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
     }
     
     // Compete Phase Actions

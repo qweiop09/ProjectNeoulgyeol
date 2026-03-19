@@ -17,14 +17,30 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private BattlePhaseCoordinator battlePhaseCoordinator;
     
     // data Variables
-    [SerializeField] private CharacterStatus[] playerCharacters;
-    [SerializeField] private CharacterStatus[] enemyCharacters;
+    [SerializeField] private CharacterBattleData[] playerCharacters;
+    [SerializeField] private CharacterBattleData[] enemyCharacters;
     
+    // debug Variables
+    [SerializeField] private CharacterStatus testCharacterStatus;
     
     // private Methods
-    public void BattleStart()
+    public void TestStart()
+    {
+        playerCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterStatus)} ;
+        enemyCharacters = new CharacterBattleData[] {ChangeCharacterDataToCharacterBattleData(testCharacterStatus)} ;
+        
+        BattleStart(playerCharacters
+            , enemyCharacters);
+    }
+    
+    public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
     { 
-        battlePhaseCoordinator.BattleStart();
+        // playerCharacters = new CharacterStatus[] {testCharacterStatus} ;
+        // enemyCharacters = new CharacterStatus[] {testCharacterStatus};
+        
+        Debug.Log(_playerBattleDatas);
+        
+        battlePhaseCoordinator.BattleStart(_playerBattleDatas, _enemyBattleDatas);
     }
     
     // public Methods
@@ -33,14 +49,34 @@ public class BattleManager : MonoBehaviour
         return battlePhaseCoordinator;
     }
 
-    public CharacterStatus[] GetPlayerCharacters()
+    public CharacterBattleData[] GetPlayerCharacters()
     {
         return playerCharacters;
     }
 
-    public CharacterStatus[] GetEnemyCharacters()
+    public CharacterBattleData[] GetEnemyCharacters()
     {
         return enemyCharacters;
+    }
+    
+    // private Methods
+    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterStatus[] _characterStatuses)
+    {
+        CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
+        
+        for (int i = 0; i < _characterStatuses.Length; i++)
+        {
+            _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
+        }
+
+        return _returnBattleDataArray;
+    }
+    
+    private CharacterBattleData ChangeCharacterDataToCharacterBattleData(CharacterStatus _characterStatuses)
+    {
+        
+        return  new CharacterBattleData(_characterStatuses);
+                         
     }
     
 }

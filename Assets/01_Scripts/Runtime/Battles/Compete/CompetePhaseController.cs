@@ -36,13 +36,13 @@ public class CompetePhaseController : MonoBehaviour
         battlePhaseCoordinator.OnCompetePhaseEnd += StartCompetePhaseEndProcess;
     }
     
-    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterStatus[] _characterStatuses)
+    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterBattleData[] _characterStatuses)
     {
         CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
         
         for (int i = 0; i < _characterStatuses.Length; i++)
         {
-            _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
+            _returnBattleDataArray[i] =  _characterStatuses[i];
         }
 
         return _returnBattleDataArray;

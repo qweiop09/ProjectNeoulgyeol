@@ -6164,7 +6164,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2105620157}
         m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-        m_MethodName: BattleStart
+        m_MethodName: TestStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21549,6 +21549,7 @@ GameObject:
   - component: {fileID: 1835948664}
   - component: {fileID: 1835948662}
   - component: {fileID: 1835948663}
+  - component: {fileID: 1835948666}
   m_Layer: 0
   m_Name: CompetePhase
   m_TagString: Untagged
@@ -21583,6 +21584,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0553b1021ee4930b102ebc3cc606657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCharacterPoints: []
+  enemyCharacterPoints: []
 --- !u!114 &1835948663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21607,6 +21610,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07eb117bb062442c4b27942a9182dc98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  competeJudgmentHandler: {fileID: 1835948663}
+  competeCharacterAnimationHandler: {fileID: 1835948666}
 --- !u!114 &1835948665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21620,9 +21625,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   battleManager: {fileID: 2105620157}
-  competeHandler: {fileID: 1835948664}
+  competeContestController: {fileID: 1835948664}
   competeMoveHandler: {fileID: 1835948662}
-  competeJudgmentHandler: {fileID: 1835948663}
+--- !u!114 &1835948666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835948660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ef162e72b06451ba714f6a34e31babf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2052886579
 GameObject:
   m_ObjectHideFlags: 0
@@ -21807,8 +21823,8 @@ MonoBehaviour:
   competePhaseController: {fileID: 1835948665}
   closePhaseController: {fileID: 80861367}
   battlePhaseCoordinator: {fileID: 2105620156}
-  playerCharacters: []
-  enemyCharacters: []
+  testCharacterStatus: {fileID: 11400000, guid: a1141480c9c0841baad88b37a0225dae,
+    type: 2}
 --- !u!4 &2105620158
 Transform:
   m_ObjectHideFlags: 0
