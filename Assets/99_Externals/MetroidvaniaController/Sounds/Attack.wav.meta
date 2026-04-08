@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 166731
+  packageName: Metroidvania Controller
+  packageVersion: 1.2
+  assetPath: Assets/MetroidvaniaController/Sounds/Attack.wav
+  uploadId: 398611

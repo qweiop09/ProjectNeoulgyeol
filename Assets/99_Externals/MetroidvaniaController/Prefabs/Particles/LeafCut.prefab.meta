@@ -5,3 +5,10 @@ PrefabImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 166731
+  packageName: Metroidvania Controller
+  packageVersion: 1.2
+  assetPath: Assets/MetroidvaniaController/Prefabs/Particles/LeafCut.prefab
+  uploadId: 398611

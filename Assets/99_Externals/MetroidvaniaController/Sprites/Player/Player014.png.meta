@@ -86,3 +86,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 166731
+  packageName: Metroidvania Controller
+  packageVersion: 1.2
+  assetPath: Assets/MetroidvaniaController/Sprites/Player/Player014.png
+  uploadId: 398611

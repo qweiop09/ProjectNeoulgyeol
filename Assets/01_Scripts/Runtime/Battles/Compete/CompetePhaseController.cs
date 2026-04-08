@@ -75,12 +75,12 @@ public class CompetePhaseController : MonoBehaviour
     {
         // 속도에 따른 행동 순서 결정
         // 아군, 적군 혼합
-        // 정렬된 값들이 들어와야 기능함
+        // 속도가 정렬된 값들이 들어와야 기능함
         
         List<CharacterBattleData> _allCharacterTargetDatas = new List<CharacterBattleData>();
         
         // 속도 비교하여 행동 순서 결정
-        // 더 큰 쪽이 앞쪽에 있음
+        // 속도가 더 높은 쪽이 앞쪽에 있음
         while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
         {
             if (_playerCharacterBattleDatas[0].GetCurrentSpeed >= _enemyCharacterTargetDatas[0].GetCurrentSpeed)

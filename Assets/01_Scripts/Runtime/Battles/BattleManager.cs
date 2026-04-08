@@ -10,7 +10,7 @@ public class BattleManager : MonoBehaviour
 {
     // class Variables
     [SerializeField] private OpenPhaseController openPhaseController;
-    [SerializeField] private DecisionPhaseController targettingPhaseController;
+    [SerializeField] private DecisionPhaseController decisionPhaseController;
     [SerializeField] private CompetePhaseController competePhaseController;
     [SerializeField] private ClosePhaseController closePhaseController;
     
@@ -33,11 +33,9 @@ public class BattleManager : MonoBehaviour
             , enemyCharacters);
     }
     
+    // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
     public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
-    { 
-        // playerCharacters = new CharacterStatus[] {testCharacterStatus} ;
-        // enemyCharacters = new CharacterStatus[] {testCharacterStatus};
-        
+    {
         Debug.Log(_playerBattleDatas);
         
         battlePhaseCoordinator.BattleStart(_playerBattleDatas, _enemyBattleDatas);
