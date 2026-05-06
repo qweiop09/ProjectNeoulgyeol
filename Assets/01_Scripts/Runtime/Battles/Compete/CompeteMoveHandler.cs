@@ -11,15 +11,17 @@ public class CompeteMoveHandler : MonoBehaviour
 
     public Task HandleCompeteMove( Transform _movePoint, Transform _targetPoint)
     {
-        while (Vector3.Distance(_movePoint.position, _targetPoint.position) > 0.1f)
-        {
-            
-            _movePoint.position = Vector3.Lerp(_movePoint.position, _targetPoint.position, 0.1f * Time.deltaTime);
-            Task.Delay(10);
-
-        } 
+        // while (Vector3.Distance(_movePoint.position, _targetPoint.position) > 0.1f)
+        // {
+        //     
+        //     _movePoint.position = Vector3.Lerp(_movePoint.position, _targetPoint.position, 0.1f * Time.deltaTime);
+        //     Task.Delay(10);
+        //
+        // } 
+        //
+        // return Task.CompletedTask;
         
-        return Task.CompletedTask;
+        MoveToTargetTimelineDirector.Instance.PlayMoveToTargetClip(_movePoint, _targetPoint);
     }
     
 }
