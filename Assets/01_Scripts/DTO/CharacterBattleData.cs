@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+namespace _01_Scripts.DTO
+{
 public class CharacterBattleData
 {
     // TODO: 캐릭터 스테이터스 및 정보

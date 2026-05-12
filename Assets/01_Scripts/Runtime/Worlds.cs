@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime
+{
 public class Worlds : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -15,4 +15,5 @@ public class Worlds : MonoBehaviour
     {
         
     }
+}
 }

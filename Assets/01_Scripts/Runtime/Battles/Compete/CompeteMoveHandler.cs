@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using _01_Scripts.Timeline;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime.Battles.Compete
+{
 public class CompeteMoveHandler : MonoBehaviour
 {
     // 캐릭터 위치 값

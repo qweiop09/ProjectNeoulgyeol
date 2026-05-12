@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+namespace _01_Scripts.DTO
+{
 public class CharacterSkill : MonoBehaviour
 {
     // 채보 (애니메이션 포함? 클래스로 따로 뺄 듯) 
@@ -9,4 +9,5 @@ public class CharacterSkill : MonoBehaviour
     // 데미지 배율
     
     
+}
 }

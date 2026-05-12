@@ -1,11 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using _01_Scripts.DTO;
+using _01_Scripts.Runtime.Battles.Close;
+using _01_Scripts.Runtime.Battles.Compete;
+using _01_Scripts.Runtime.Battles.Decision;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
+namespace _01_Scripts.Runtime.Battles
+{
 public class BattleManager : MonoBehaviour
 {
     // class Variables
@@ -42,7 +42,7 @@ public class BattleManager : MonoBehaviour
     }
     
     // public Methods
-     public BattlePhaseCoordinator GetBattlePhaseCoordinator()
+    public BattlePhaseCoordinator GetBattlePhaseCoordinator()
     {
         return battlePhaseCoordinator;
     }
@@ -77,4 +77,5 @@ public class BattleManager : MonoBehaviour
                          
     }
     
+}
 }

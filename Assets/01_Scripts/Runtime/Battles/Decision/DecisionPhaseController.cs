@@ -1,10 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using Unity.VisualScripting;
+using _01_Scripts.DTO;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime.Battles.Decision
+{
 public class DecisionPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
@@ -74,4 +72,5 @@ public class DecisionPhaseController : MonoBehaviour
         battlePhaseCoordinator.CompleteDecisionEnd(playerCharacterTargetingDatas, enemyCharacterTargetingDatas);
     }
     
+}
 }

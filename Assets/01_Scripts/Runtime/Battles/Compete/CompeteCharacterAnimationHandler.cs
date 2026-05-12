@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime.Battles.Compete
+{
 public class CompeteCharacterAnimationHandler : MonoBehaviour
 {
     
     
+}
 }

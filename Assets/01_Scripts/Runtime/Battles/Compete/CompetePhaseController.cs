@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
+using _01_Scripts.DTO;
 using UnityEngine;
-using UnityEngine.Serialization;
 
+namespace _01_Scripts.Runtime.Battles.Compete
+{
 public class CompetePhaseController : MonoBehaviour
 {
     // class Variables
@@ -153,4 +152,5 @@ public class CompetePhaseController : MonoBehaviour
         // Compete Phase End
         battlePhaseCoordinator.CompleteCompeteEnd();
     }
+}
 }

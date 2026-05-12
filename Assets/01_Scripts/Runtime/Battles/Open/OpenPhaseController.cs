@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using _01_Scripts.DTO;
+using _01_Scripts.Runtime.Battles;
 using UnityEngine;
 
 public class OpenPhaseController : MonoBehaviour

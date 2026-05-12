@@ -1,8 +1,12 @@
 using System.Linq;
+using _01_Scripts.Interfacese;
+using _01_Scripts.Timeline.Battle;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
+namespace _01_Scripts.Timeline
+{
 public class MoveToTargetTimelineDirector : Singleton<MoveToTargetTimelineDirector>
 {
     public void PlayMoveToTargetClip(PlayableDirector director,TimelineAsset timelineAsset ,Transform movePoint, Transform targetPoint)
@@ -17,4 +21,5 @@ public class MoveToTargetTimelineDirector : Singleton<MoveToTargetTimelineDirect
         
         director.Play(timelineAsset);
     }
+}
 }

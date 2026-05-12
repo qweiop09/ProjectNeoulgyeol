@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime.Battles.Close
+{
 public class ClosePhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
@@ -30,4 +28,5 @@ public class ClosePhaseController : MonoBehaviour
     }
     
     
+}
 }

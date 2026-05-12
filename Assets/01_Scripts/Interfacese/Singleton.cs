@@ -1,6 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+namespace _01_Scripts.Interfacese
+{
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
@@ -53,4 +54,5 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         _isQuitting = true;
     }
+}
 }

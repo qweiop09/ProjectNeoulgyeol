@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
+namespace _01_Scripts.Timeline.Battle
+{
 public class MoveToTargetBehaviour : PlayableBehaviour
 {
-    public Transform targetTransform; // 목표 지점 (ExposedReference로 받을 값)
-    public AnimationCurve easeCurve;  // 부드러운 움직임을 위한 커브
+    public Transform targetTransform;
+    public AnimationCurve easeCurve;
 
-    private Vector3 startPosition;    // 시작 시점의 위치 저장용
+    private Vector3 startPosition;
     private bool isInitialized = false;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -34,7 +36,7 @@ public class MoveToTargetBehaviour : PlayableBehaviour
 
     public override void OnBehaviourPause(Playable playable, FrameData info)
     {
-        // 클립이 끝나면 초기화 플래그 리셋 (다음 재생을 위해)
         isInitialized = false;
     }
+}
 }

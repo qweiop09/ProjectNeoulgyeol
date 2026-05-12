@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+namespace _01_Scripts.DTO
+{
 [CreateAssetMenu(menuName = "Game/Character Data", fileName = "New Character Data")]
 public class CharacterStatus : ScriptableObject
 {
@@ -28,4 +28,5 @@ public class CharacterStatus : ScriptableObject
     // 장비한 장비들의 정보
     
     
+}
 }

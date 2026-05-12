@@ -1,47 +1,50 @@
 using System;
+using _01_Scripts.DTO;
 using UnityEngine;
 
+namespace _01_Scripts.Runtime.Battles
+{
 public class BattlePhaseCoordinator : MonoBehaviour
 {
-   private enum PhaseState
-   {
+    private enum PhaseState
+    {
         Open
-      , Decision
-      , Compete
-      , Close
-   }
+        , Decision
+        , Compete
+        , Close
+    }
 
-   [SerializeField] private PhaseState currentPhase = PhaseState.Open;
+    [SerializeField] private PhaseState currentPhase = PhaseState.Open;
    
-   // 송신
-   // 시작 메세지
-   // Battle Start Actions
-   public event Action<CharacterBattleData[], CharacterBattleData[]> OnBattleStart;
+    // 송신
+    // 시작 메세지
+    // Battle Start Actions
+    public event Action<CharacterBattleData[], CharacterBattleData[]> OnBattleStart;
    
-   // Open Phase Actions
-   public event Action OnOpenPhaseStart;  
+    // Open Phase Actions
+    public event Action OnOpenPhaseStart;  
    
-   // Decision Phase Actions
-   public event Action OnDecisionPhaseStart;
-   public event Action OnDecisionPhasePerform;             
-   public event Action OnDecisionPhaseEnd;                
+    // Decision Phase Actions
+    public event Action OnDecisionPhaseStart;
+    public event Action OnDecisionPhasePerform;             
+    public event Action OnDecisionPhaseEnd;                
    
-   // Compete Phase Actions
-   public event Action<CharacterBattleData[], CharacterBattleData[]> OnCompetePhaseStart;
-   public event Action OnCompetePhasePerform;
-   public event Action OnCompetePhaseEnd;
+    // Compete Phase Actions
+    public event Action<CharacterBattleData[], CharacterBattleData[]> OnCompetePhaseStart;
+    public event Action OnCompetePhasePerform;
+    public event Action OnCompetePhaseEnd;
    
-   // Close Phase Actions
-   public event Action OnClosePhaseEnd;
+    // Close Phase Actions
+    public event Action OnClosePhaseEnd;
    
-   // 수신
-   // Start Battle
-   public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
-   {
-       currentPhase = PhaseState.Open; 
+    // 수신
+    // Start Battle
+    public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
+    {
+        currentPhase = PhaseState.Open; 
 
-       OnBattleStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
-   }
+        OnBattleStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
+    }
    
     // Open Phase Actions
     public void CompleteOpenPhaseStart()
@@ -103,4 +106,5 @@ public class BattlePhaseCoordinator : MonoBehaviour
         OnOpenPhaseStart?.Invoke();
     }
 
+}
 }

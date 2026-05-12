@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
+namespace _01_Scripts.Timeline.Battle
+{
 public class MoveToTargetClip : PlayableAsset
 {
-    public ExposedReference<Transform> targetEnemy; // 씬의 적 위치
-    public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1); // 기본 EaseInOut
+    // [핵심 1] 매니저와 통일할 고정 ID를 아예 static으로 선언해둬!
+    public static readonly PropertyName TargetId = new PropertyName("targetEnemy"); 
+
+    public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
@@ -17,4 +21,5 @@ public class MoveToTargetClip : PlayableAsset
 
         return playable;
     }
-} 
+}
+}
