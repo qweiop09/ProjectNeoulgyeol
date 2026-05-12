@@ -7,10 +7,6 @@ namespace _01_Scripts.Runtime.Battles.Compete
 {
 public class CompeteContestController : MonoBehaviour
 {
-    [SerializeField] private CompeteJudgmentHandler competeJudgmentHandler;
-    [FormerlySerializedAs("competeINCharacterAnimationHandler")] [SerializeField] private CompeteCharacterAnimationHandler competeCharacterAnimationHandler;
-    
-    
     // 경합
     public Task StartCompeteCycle(CharacterBattleData currentCompeteCharacter)
     {

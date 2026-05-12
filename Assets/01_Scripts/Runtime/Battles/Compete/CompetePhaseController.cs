@@ -12,7 +12,6 @@ public class CompetePhaseController : MonoBehaviour
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
     [SerializeField] private CompeteContestController competeContestController;
-    [SerializeField] private CompeteMoveHandler competeMoveHandler;
     
     
     // data Variables
@@ -119,9 +118,6 @@ public class CompetePhaseController : MonoBehaviour
         for (int i = 0; i < allCharacterTargetDatas.Count(); i++)
         {
             CharacterBattleData currentCharacter = allCharacterTargetDatas[i];
-
-            // Move Phase
-            await competeMoveHandler.HandleCompeteMove(currentCharacter.GetCharacterTransform, currentCharacter.GetCharacterTransform);
 
             // Compete Cycle Phase
             await competeContestController.StartCompeteCycle(currentCharacter);
