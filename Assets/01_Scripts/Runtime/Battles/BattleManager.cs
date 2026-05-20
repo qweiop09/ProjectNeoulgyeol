@@ -3,6 +3,7 @@ using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _01_Scripts.Runtime.Battles
 {
@@ -21,16 +22,15 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private CharacterBattleData[] enemyCharacters;
     
     // debug Variables
-    [SerializeField] private CharacterStatus testCharacterStatus;
+    [FormerlySerializedAs("testCharacterStatus")] [SerializeField] private CharacterData testCharacterData;
     
     // private Methods
     public void TestStart()
     {
-        playerCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterStatus)} ;
-        enemyCharacters = new CharacterBattleData[] {ChangeCharacterDataToCharacterBattleData(testCharacterStatus)} ;
+        playerCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+        enemyCharacters = new CharacterBattleData[] {ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
         
-        BattleStart(playerCharacters
-            , enemyCharacters);
+        BattleStart(playerCharacters, enemyCharacters);
     }
     
     // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
@@ -58,7 +58,7 @@ public class BattleManager : MonoBehaviour
     }
     
     // private Methods
-    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterStatus[] _characterStatuses)
+    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
     {
         CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
         
@@ -70,7 +70,7 @@ public class BattleManager : MonoBehaviour
         return _returnBattleDataArray;
     }
     
-    private CharacterBattleData ChangeCharacterDataToCharacterBattleData(CharacterStatus _characterStatuses)
+    private CharacterBattleData ChangeCharacterDataToCharacterBattleData(CharacterData _characterStatuses)
     {
         
         return  new CharacterBattleData(_characterStatuses);

@@ -8,7 +8,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
 {
     private enum PhaseState
     {
-        Open
+          Open
         , Decision
         , Compete
         , Close

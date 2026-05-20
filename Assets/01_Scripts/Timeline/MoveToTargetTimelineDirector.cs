@@ -1,5 +1,4 @@
 using System.Linq;
-using _01_Scripts.Interfacese;
 using _01_Scripts.Timeline.Battle;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -7,18 +6,28 @@ using UnityEngine.Timeline;
 
 namespace _01_Scripts.Timeline
 {
-public class MoveToTargetTimelineDirector : Singleton<MoveToTargetTimelineDirector>
+public class MoveToTargetTimelineDirector : MonoBehaviour
 {
     public void PlayMoveToTargetClip(PlayableDirector director,TimelineAsset timelineAsset ,Transform movePoint, Transform targetPoint)
     {
-        TrackAsset moveToTargetTrack = FindObjectOfType<MoveToTargetTrack>();
-        
-        // 여기에 MoveToTargetClip을 재생하는 로직을 구현
-        MoveToTargetTrack targetTrack = timelineAsset.GetOutputTracks().FirstOrDefault(t => t.name == "MoveToTargetTrack");
-        director.SetGenericBinding(targetTrack, gameObject);
-        
-        targetPoint.GetComponent<MoveToTargetTrack>().targetEnemy = movePoint; // 타겟 포인트에 이동할 위치 설정
-        
+        if (director == null || timelineAsset == null || movePoint == null || targetPoint == null)
+        {
+            Debug.LogError("MoveToTargetTimelineDirector: 타임라인 실행에 필요한 값이 비어있습니다.");
+            return;
+        }
+
+        TrackAsset targetTrack = timelineAsset.GetOutputTracks()
+            .FirstOrDefault(t => t is MoveToTargetTrack || t.name == "MoveToTargetTrack");
+
+        if (targetTrack == null)
+        {
+            Debug.LogError("MoveToTargetTimelineDirector: MoveToTargetTrack을 찾을 수 없습니다.");
+            return;
+        }
+
+        director.playableAsset = timelineAsset;
+        director.SetGenericBinding(targetTrack, movePoint);
+        director.SetReferenceValue(MoveToTargetClip.TargetId, targetPoint);
         director.Play(timelineAsset);
     }
 }

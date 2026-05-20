@@ -3,7 +3,7 @@ using UnityEngine;
 namespace _01_Scripts.DTO
 {
 [CreateAssetMenu(menuName = "Game/Character Data", fileName = "New Character Data")]
-public class CharacterStatus : ScriptableObject
+public class CharacterData : ScriptableObject
 {
     // TODO: 캐릭터 스테이터스 및 정보
     public int maxHp;

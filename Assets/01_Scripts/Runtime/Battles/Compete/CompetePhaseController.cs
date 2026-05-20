@@ -42,7 +42,7 @@ public class CompetePhaseController : MonoBehaviour
         {
             _returnBattleDataArray[i] =  _characterStatuses[i];
         }
-
+    
         return _returnBattleDataArray;
     }
     

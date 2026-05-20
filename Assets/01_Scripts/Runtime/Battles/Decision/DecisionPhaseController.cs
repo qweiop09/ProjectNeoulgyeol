@@ -25,7 +25,7 @@ public class DecisionPhaseController : MonoBehaviour
         playerCharacterTargetingDatas = battleManager.GetPlayerCharacters();
         enemyCharacterTargetingDatas = battleManager.GetEnemyCharacters();
         
-        // 속도 설정 (배열 정렬까지)
+        // 속도 초기화 (배열 정렬까지)
         
         CompleteDecisionPhaseStartProcess();
     }

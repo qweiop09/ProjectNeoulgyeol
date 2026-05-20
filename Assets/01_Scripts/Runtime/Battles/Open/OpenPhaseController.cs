@@ -115,7 +115,7 @@ public class OpenPhaseController : MonoBehaviour
     }
 
     
-    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterStatus[] _characterStatuses)
+    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
     {
         CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
         

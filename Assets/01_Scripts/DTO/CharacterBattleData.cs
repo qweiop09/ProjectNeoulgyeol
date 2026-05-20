@@ -6,7 +6,7 @@ public class CharacterBattleData
 {
     // TODO: 캐릭터 스테이터스 및 정보
     
-    public CharacterStatus characterStatus;
+    public CharacterData CharacterData;
     
     private int currentHp;
     private int currentMp;
@@ -32,12 +32,12 @@ public class CharacterBattleData
     public void SetCharacterTransform(Transform _transform) { characterTransform = _transform; }
     
 
-    public CharacterBattleData(CharacterStatus _characterStatus)
+    public CharacterBattleData(CharacterData characterData)
     {
-        characterStatus = _characterStatus;
+        CharacterData = characterData;
         
-        currentHp = characterStatus.maxHp;
-        currentMp = characterStatus.maxMp;
+        currentHp = CharacterData.maxHp;
+        currentMp = CharacterData.maxMp;
     }
     
     
@@ -59,7 +59,7 @@ public class CharacterBattleData
     
     public void SetRandomSpeed()
     {
-        currentSpeed = characterStatus.GetRandomSpeed();
+        currentSpeed = CharacterData.GetRandomSpeed();
     }
 
     public void SetTargetingSlot(int _slotIndex, TargetingData _targetingData)
@@ -101,12 +101,13 @@ public class CharacterBattleData
     public void DebugPrintStatusData()
     {
         Debug.Log(
-        "체력 : " + characterStatus.maxHp + "\n" +
-                "마나 : " + characterStatus.maxMp + "\n" +
-                "공격 : " + characterStatus.attack + "\n" +
-                "방어 : " + characterStatus.defense + "\n" +
-                "현재 속도 : " + currentSpeed );
+            "체력 : " + CharacterData.maxHp + "\n" +
+            "마나 : " + CharacterData.maxMp + "\n" +
+            "공격 : " + CharacterData.attack + "\n" +
+            "방어 : " + CharacterData.defense + "\n" +
+            "현재 속도 : " + currentSpeed );
     }
     
 
+}
 }
