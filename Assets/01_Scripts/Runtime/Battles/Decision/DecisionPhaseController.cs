@@ -6,6 +6,7 @@ namespace _01_Scripts.Runtime.Battles.Decision
 public class DecisionPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
+    [SerializeField] private ActionSelectionPhaseController actionSelectionPhaseController;
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
     private CharacterBattleData[] playerCharacterTargetingDatas;
@@ -40,6 +41,9 @@ public class DecisionPhaseController : MonoBehaviour
     // Middle Phase Actions
     private void StartDecisionPhaseMiddleProcess()
     {
+        actionSelectionPhaseController?.ActivateActionSelectionPhase();
+        
+        
         // CompleteDecisionPhaseMiddleProcess();
         return;
     }
@@ -47,6 +51,7 @@ public class DecisionPhaseController : MonoBehaviour
     private void CompleteDecisionPhaseMiddleProcess()
     {
         Debug.Log("Decision Phase Performing");
+        actionSelectionPhaseController?.DeactivateActionSelectionPhase();
         
         // 타겟팅 데이터 설정
         

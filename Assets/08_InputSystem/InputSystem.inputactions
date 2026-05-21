@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "InputSystem",
+    "maps": [
+        {
+            "name": "DecisionPhaseInput",
+            "id": "09ed9411-a16c-4533-9df4-ea4f9cf682d7",
+            "actions": [
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "adb4ba3d-3d5a-484d-893f-e675000229fa",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "db39b986-78f1-4eb3-b8fe-3202d1fb95f3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
