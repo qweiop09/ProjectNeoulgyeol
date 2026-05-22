@@ -1,16 +1,18 @@
 using _01_Scripts.DTO;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _01_Scripts.Runtime.Battles.Decision
 {
 public class DecisionPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
-    [SerializeField] private ActionSelectionPhaseController actionSelectionPhaseController;
+    [SerializeField] private ActionSelectionPhaseManager actionSelectionPhaseManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
     private CharacterBattleData[] playerCharacterTargetingDatas;
     private CharacterBattleData[] enemyCharacterTargetingDatas;
+    
     
     private void Awake()
     {
@@ -41,17 +43,16 @@ public class DecisionPhaseController : MonoBehaviour
     // Middle Phase Actions
     private void StartDecisionPhaseMiddleProcess()
     {
-        actionSelectionPhaseController?.ActivateActionSelectionPhase();
+        actionSelectionPhaseManager.ActivateCharacterSelectionPhase();
         
         
-        // CompleteDecisionPhaseMiddleProcess();
         return;
     }
     
     private void CompleteDecisionPhaseMiddleProcess()
     {
         Debug.Log("Decision Phase Performing");
-        actionSelectionPhaseController?.DeactivateActionSelectionPhase();
+        actionSelectionPhaseManager.DeactivateCharacterSelectionPhase();
         
         // 타겟팅 데이터 설정
         
