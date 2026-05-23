@@ -14,7 +14,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
          SelectingTarget
      }
 
-    private bool isDetecting = false;
+    [SerializeField] private bool isDetecting = false;
     
      private SelectionState currentState = SelectionState.Idle;
     
@@ -36,7 +36,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     
     private void SpreadSelectedSignal(CharacterHandler characterHandler)
      {
-         characterChoiceContoller.DeactivateActionSelectionPhase();
+         // characterChoiceContoller.DeactivateActionSelectionPhase();
          
          characterActionUI.HandleCharacterSelected(characterHandler);
      }
@@ -64,7 +64,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     {
         Debug.Log("Action Selection Phase Deactivated");
         
-        characterChoiceContoller.DeactivateActionSelectionPhase();
+        // characterChoiceContoller.DeactivateActionSelectionPhase();
         currentState = SelectionState.Idle;
         isDetecting = false;
         

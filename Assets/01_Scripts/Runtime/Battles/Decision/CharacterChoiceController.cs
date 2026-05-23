@@ -14,10 +14,13 @@ public class CharacterChoiceController : MonoBehaviour
     [SerializeField] private InputActionReference leftClickAction;
     [SerializeField] private InputActionReference pointerPositionAction;
     [SerializeField] private LayerMask characterLayerMask = ~0;
-
-    private bool isActive;
+    
+    [Header("Internal Fields")]
+    [Space(10)]
+    
+    [SerializeField] private bool isActive;
     private bool enabledLeftClickActionInternally;
-    private CharacterHandler selectedCharacter;
+    [SerializeField] private CharacterHandler selectedCharacter;
 
     public CharacterHandler SelectedCharacter => selectedCharacter;
 
@@ -32,6 +35,7 @@ public class CharacterChoiceController : MonoBehaviour
         EnableLeftClickAction();
     }
 
+    // 선택 페이즈 종료
     public void DeactivateActionSelectionPhase()
     {
         isActive = false;
@@ -78,8 +82,18 @@ public class CharacterChoiceController : MonoBehaviour
 
         if (hitCharacterHandler == null)
         {
+            Debug.Log("No character hit, clearing selection.");
+            
             selectedCharacter = null;
             OnSelectionCleared?.Invoke();
+            return;
+        }
+        
+        if(hitCharacterHandler.transform.gameObject.layer == LayerMask.NameToLayer("UI"))
+        {
+            Debug.Log("Clicked on UI, ignoring selection.");
+            
+            selectedCharacter = null;
             return;
         }
 

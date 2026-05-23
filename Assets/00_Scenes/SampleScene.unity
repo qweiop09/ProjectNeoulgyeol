@@ -169,7 +169,7 @@ MonoBehaviour:
   choiceController: {fileID: 95625652}
   raycastCamera: {fileID: 330585545}
   actionSettingPanel: {fileID: 0}
-  actionSettingPrefab: {fileID: 268171843269085820, guid: ef0aa37f817204e8daab33e6df7f7daf, type: 3}
+  actionSettingPrefab: {fileID: 732370794598969944, guid: 0d6bbce26148b43d88f1c11387e6ad4f, type: 3}
   actionSettingCanvas: {fileID: 2115617653}
   menuScreenOffset: {x: 120, y: 0}
 --- !u!114 &95625651
@@ -202,7 +202,7 @@ MonoBehaviour:
   pointerPositionAction: {fileID: -6116850811211237701, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
   characterLayerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 40
 --- !u!4 &95625653
 Transform:
   m_ObjectHideFlags: 0
@@ -303,6 +303,7 @@ GameObject:
   - component: {fileID: 117546381}
   - component: {fileID: 117546380}
   - component: {fileID: 117546379}
+  - component: {fileID: 117546388}
   m_Layer: 3
   m_Name: DrawCharacter (1)
   m_TagString: Player
@@ -657,6 +658,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &117546388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117546378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09c3d0ee0dee3446bbf054578ac8e579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
+  director: {fileID: 0}
+  moveToTargetTimelineAsset: {fileID: 0}
+  moveToTargetTimelineManager: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1939,15 +1955,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4660077664275962}
-  - component: {fileID: 114231493561458258}
-  - component: {fileID: 114435282020508100}
-  - component: {fileID: 114145885865696732}
   - component: {fileID: 212971026991054558}
   - component: {fileID: 95975119788970268}
   - component: {fileID: 50738828400564736}
   - component: {fileID: 70405054904815412}
   - component: {fileID: 82701610442727288}
   - component: {fileID: 212971026991054559}
+  - component: {fileID: 212971026991054560}
   m_Layer: 3
   m_Name: PlayerCharacter
   m_TagString: Player
@@ -2153,96 +2167,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &114145885865696732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377239804249712}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8644d33345e77614ba3ace9c18398d0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 114231493561458258}
-  animator: {fileID: 95975119788970268}
-  runSpeed: 40
---- !u!114 &114231493561458258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377239804249712}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 783f8b7882d2d2a42a5b76de9179978f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_JumpForce: 850
-  m_MovementSmoothing: 0.05
-  m_AirControl: 1
-  m_WhatIsGround:
-    serializedVersion: 2
-    m_Bits: 53
-  m_GroundCheck: {fileID: 0}
-  m_WallCheck: {fileID: 0}
-  canDoubleJump: 0
-  m_DashForce: 25
-  life: 10
-  invincible: 0
-  particleJumpUp: {fileID: 0}
-  particleJumpDown: {fileID: 0}
-  OnFallEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114145885865696732}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnFall
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnLandEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114145885865696732}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnLanding
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &114435282020508100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1377239804249712}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9955788a5eaffa49a9297f38eaa6202, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dmgValue: 4
-  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
-  attackCheck: {fileID: 0}
-  animator: {fileID: 95975119788970268}
-  canAttack: 1
-  isTimeToCheck: 0
-  cam: {fileID: 0}
 --- !u!212 &212971026991054558
 SpriteRenderer:
   serializedVersion: 2
@@ -2321,6 +2245,21 @@ PlayableDirector:
     value: {fileID: 117546387}
   m_ExposedReferences:
     m_References: []
+--- !u!114 &212971026991054560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377239804249712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09c3d0ee0dee3446bbf054578ac8e579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
+  director: {fileID: 0}
+  moveToTargetTimelineAsset: {fileID: 0}
+  moveToTargetTimelineManager: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
