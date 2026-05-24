@@ -1,3 +1,4 @@
+using System;
 using _01_Scripts.DTO;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,8 +21,10 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     [SerializeField] private SelectionState currentState = SelectionState.Idle;
     
     [SerializeField] private CharacterChoiceController characterChoiceController;
-    [SerializeField] private CommandMenuController commandMenuController;
-    [SerializeField] private ChracterActionUI characterActionUI;
+    [FormerlySerializedAs("commandMenuController")] [SerializeField] private ActionBuilder actionBuilder;
+    [FormerlySerializedAs("characterActionUI")] [SerializeField] private CharacterActionUIController characterActionUIController;
+    
+    public event Action<ActData> OnActSelected;
     
     [Space(10)]
     [Header("Internal Fields")]
@@ -35,7 +38,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         characterChoiceController.OnSelectionCleared += HandleSelectionClearedSignal;
         
         // 객체의 수명이 길기 때문에 굳이 구독취소 안함(메서드로 빼기 귀찮)
-        commandMenuController.CompletedActionSetting +=
+        characterActionUIController.CompletedActionSetting +=
             () => { ChangeSelectionState(SelectionState.SelectingActTarget); };
     }
 
@@ -50,11 +53,18 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         // 행동선택에서 다른 상태로 바뀔 때 UI 초기화
         if (currentState == SelectionState.SelectingAction && newState != SelectionState.SelectingAction)
         {
-            characterActionUI.HandleSelectionCleared();
+            characterActionUIController.HandleSelectionCleared();
+            
+            // 이전으로 돌아가면 선택된 행동 캐릭터 초기화
+            if (currentState == newState + 1)
+            {
+                Debug.Log("Clearing selected act character: " + selectedActCharacter.name);
+                selectedActCharacter = null;
+            }
+            
         }
             
         if (currentState == newState) return;
-        
         
         Debug.Log("Changing Selection State: " + currentState + " -> " + newState);
         currentState = newState;
@@ -68,11 +78,11 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
         else if (currentState == SelectionState.SelectingAction)
         {
-            characterActionUI.HandleCharacterSelected(selectedActCharacter);
+            characterActionUIController.HandleCharacterSelected(selectedActCharacter);
         }
         else if (currentState == SelectionState.SelectingActTarget)
         {
-            commandMenuController.SetTargetCharacter(selectedActTarget);
+            // pass
         }
     }
     
@@ -90,6 +100,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
          {
              selectedActTarget = characterHandler;
              ChangeSelectionState(SelectionState.SelectingActCharacter);
+             
+             SetAct(BuildAct());
          }
          else
          {
@@ -107,6 +119,25 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         ChangeSelectionState(currentState - 1 );
     }
 
+    private ActData BuildAct()
+    {
+        Debug.Log("Building ActData with Character: " + selectedActCharacter.name + " and Target: " + selectedActTarget.name);
+        
+        ActData tempActData
+            = actionBuilder.BuildAction(selectedActCharacter, 0, 0, selectedActTarget, 0);
+        
+        selectedActCharacter = null;
+        selectedActTarget = null;
+
+        return
+            tempActData;
+    }
+    
+    private void SetAct(ActData actData)
+    {
+        OnActSelected?.Invoke(actData);
+    }
+    
     // 매니저 기능 시작점
     // 액션 선택 단계(ray기반 클릭) 활성화
     public void ActivateCharacterSelectionPhase()
@@ -145,8 +176,6 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         ChangeSelectionState(SelectionState.Idle);
         
     }
-    
-    
     
 }
 }

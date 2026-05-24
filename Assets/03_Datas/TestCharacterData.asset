@@ -19,3 +19,5 @@ MonoBehaviour:
   slotCount: 1
   characterSpeedLowLimit: 1
   characterSpeedHighLimit: 5
+  characterSkills:
+  - {fileID: 0}

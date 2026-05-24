@@ -89,12 +89,12 @@ public class OpenPhaseController : MonoBehaviour
         {
             int i = left;
             int j = right;
-            int pivot = _characterBattleDatas[(left + right) / 2].GetCurrentSpeed;
+            int pivot = _characterBattleDatas[(left + right) / 2].CurrentSpeed;
 
             while (i <= j)
             {
-                while (_characterBattleDatas[i].GetCurrentSpeed > pivot) i++;
-                while (_characterBattleDatas[j].GetCurrentSpeed < pivot) j--;
+                while (_characterBattleDatas[i].CurrentSpeed > pivot) i++;
+                while (_characterBattleDatas[j].CurrentSpeed < pivot) j--;
 
                 if (i <= j)
                 {

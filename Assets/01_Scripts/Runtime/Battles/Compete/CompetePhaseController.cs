@@ -81,7 +81,7 @@ public class CompetePhaseController : MonoBehaviour
         // 속도가 더 높은 쪽이 앞쪽에 있음
         while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
         {
-            if (_playerCharacterBattleDatas[0].GetCurrentSpeed >= _enemyCharacterTargetDatas[0].GetCurrentSpeed)
+            if (_playerCharacterBattleDatas[0].CurrentSpeed >= _enemyCharacterTargetDatas[0].CurrentSpeed)
             {
                 _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
                 _playerCharacterBattleDatas.RemoveAt(0);
@@ -121,18 +121,15 @@ public class CompetePhaseController : MonoBehaviour
 
             // Compete Cycle Phase
             await competeContestController.StartCompeteCycle(currentCharacter);
-
         }
 
     }
-
-
+    
     private void CompleteCompetePhaseMiddleProcess()
     {
         Debug.Log("Compete Phase Performing");
         battlePhaseCoordinator.CompleteCompetePerform();
     }
-    
     
     // End Phase Actions
     private void StartCompetePhaseEndProcess()

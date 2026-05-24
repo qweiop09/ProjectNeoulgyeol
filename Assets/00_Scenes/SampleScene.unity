@@ -153,8 +153,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.Decision.ActionSelectionPhaseController
   currentState: 0
   characterChoiceController: {fileID: 95625652}
-  commandMenuController: {fileID: 95625651}
-  characterActionUI: {fileID: 95625650}
+  actionBuilder: {fileID: 95625651}
+  characterActionUIController: {fileID: 95625650}
   selectedActCharacter: {fileID: 0}
   selectedActTarget: {fileID: 0}
 --- !u!114 &95625650
@@ -169,7 +169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0c6b934cea24b29b61edefaf579ba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChracterActionUI
-  choiceController: {fileID: 95625652}
   raycastCamera: {fileID: 330585545}
   actionSettingPanel: {fileID: 5832070059906060190}
   actionSettingCanvas: {fileID: 2115617653}
@@ -299,15 +298,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 117546387}
-  - component: {fileID: 117546386}
-  - component: {fileID: 117546385}
-  - component: {fileID: 117546384}
+  - component: {fileID: 117546388}
   - component: {fileID: 117546383}
   - component: {fileID: 117546382}
   - component: {fileID: 117546381}
   - component: {fileID: 117546380}
   - component: {fileID: 117546379}
-  - component: {fileID: 117546388}
   m_Layer: 3
   m_Name: DrawCharacter (1)
   m_TagString: Player
@@ -557,96 +553,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &117546384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117546378}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8644d33345e77614ba3ace9c18398d0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 117546386}
-  animator: {fileID: 117546382}
-  runSpeed: 40
---- !u!114 &117546385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117546378}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9955788a5eaffa49a9297f38eaa6202, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dmgValue: 4
-  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
-  attackCheck: {fileID: 0}
-  animator: {fileID: 117546382}
-  canAttack: 1
-  isTimeToCheck: 0
-  cam: {fileID: 0}
---- !u!114 &117546386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117546378}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 783f8b7882d2d2a42a5b76de9179978f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_JumpForce: 850
-  m_MovementSmoothing: 0.05
-  m_AirControl: 1
-  m_WhatIsGround:
-    serializedVersion: 2
-    m_Bits: 53
-  m_GroundCheck: {fileID: 0}
-  m_WallCheck: {fileID: 0}
-  canDoubleJump: 0
-  m_DashForce: 25
-  life: 10
-  invincible: 0
-  particleJumpUp: {fileID: 0}
-  particleJumpDown: {fileID: 0}
-  OnFallEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 117546384}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnFall
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnLandEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 117546384}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OnLanding
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!4 &117546387
 Transform:
   m_ObjectHideFlags: 0
@@ -2921,8 +2827,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 95625651}
-        m_TargetAssemblyTypeName: ActionSettingController, Assembly-CSharp
+      - m_Target: {fileID: 95625650}
+        m_TargetAssemblyTypeName: CharacterActionUIController, Assembly-CSharp
         m_MethodName: PressedAttackButton
         m_Mode: 1
         m_Arguments:

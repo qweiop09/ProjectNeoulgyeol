@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
     public void TestStart()
     {
         playerCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
-        enemyCharacters = new CharacterBattleData[] {ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+        enemyCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
         
         BattleStart(playerCharacters, enemyCharacters);
     }

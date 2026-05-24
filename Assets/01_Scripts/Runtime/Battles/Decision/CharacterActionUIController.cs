@@ -1,15 +1,18 @@
+using System;
 using _01_Scripts.Runtime.Battles;
 using _01_Scripts.Runtime.Battles.Decision;
+using Unity.VisualScripting;
 using UnityEngine;
-public class ChracterActionUI : MonoBehaviour
+public class CharacterActionUIController : MonoBehaviour
 {
-    [SerializeField] private CharacterChoiceController choiceController;
     [SerializeField] private Camera raycastCamera;
     [SerializeField] private RectTransform actionSettingPanel;
-    // [SerializeField] private RectTransform actionSettingPrefab;
     [SerializeField] private Canvas actionSettingCanvas;
     [SerializeField] private Vector2 menuScreenOffset = new Vector2(120f, 0f);
-
+    
+    // 행동대상을 선택해야 할 때 외부에 알리는 이벤트
+    public event Action CompletedActionSetting; 
+    
     private RectTransform activeActionSettingMenu;
 
     private void Awake()
@@ -22,22 +25,6 @@ public class ChracterActionUI : MonoBehaviour
             if (actionSettingCanvas == null)
                 actionSettingCanvas = actionSettingPanel.GetComponentInParent<Canvas>();
         }
-    }
-
-    private void OnEnable()
-    {
-        if (choiceController == null) return;
-
-        // choiceController.OnCharacterSelected += HandleCharacterSelected;
-        // choiceController.OnSelectionCleared += HandleSelectionCleared;
-    }
-
-    private void OnDisable()
-    {
-        if (choiceController == null) return;
-
-        // choiceController.OnCharacterSelected -= HandleCharacterSelected;
-        // choiceController.OnSelectionCleared -= HandleSelectionCleared;
     }
 
     public void HandleCharacterSelected(CharacterHandler characterTransform)
@@ -94,16 +81,16 @@ public class ChracterActionUI : MonoBehaviour
             return null;
 
         return activeActionSettingMenu;
-
-        // 프리팹 참조할 때 쓰던 코드
-        // if (activeActionSettingMenu != null)
-        //     return activeActionSettingMenu;
-        //
-        // if (actionSettingPrefab == null || actionSettingCanvas == null)
-        //     return null;
-        //
-        // activeActionSettingMenu = Instantiate(actionSettingPrefab, actionSettingCanvas.transform);
-        // activeActionSettingMenu.gameObject.SetActive(false);
-        // return activeActionSettingMenu;
     }
+    
+    // 버튼 클릭
+    
+    public void PressedAttackButton()
+    {
+        Debug.Log("Action Button Pressed");
+        CompletedActionSetting?.Invoke();
+    }
+    
+    // 아래에 UI 버튼 클릭 시 호출할 메서드 추가 (예: PressedDefendButton, PressedItemButton 등)
+    
 }

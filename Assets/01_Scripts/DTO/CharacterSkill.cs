@@ -2,11 +2,12 @@ using UnityEngine;
 
 namespace _01_Scripts.DTO
 {
-public class CharacterSkill : MonoBehaviour
+public class CharacterSkill : ScriptableObject
 {
-    // 채보 (애니메이션 포함? 클래스로 따로 뺄 듯) 
+    // 뭔가 나중에 쓸 것 같음
+    // [SerializeField] private int skillStartPriority; // 스킬의 행동 우선순위 (낮을수록 먼저 행동)
     
-    // 데미지 배율
+    [SerializeField] public int skillStartDistance; // 스킬의 행동 시작 거리 타입 (근거리, 원거리 등)
     
     
 }
