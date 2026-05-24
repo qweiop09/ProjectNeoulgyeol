@@ -27,6 +27,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     [Header("Internal Fields")]
     
     [SerializeField] private CharacterHandler selectedActCharacter;
+    [SerializeField] private CharacterHandler selectedActTarget;
     
     private void OnEnable()
     {
@@ -71,22 +72,23 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
         else if (currentState == SelectionState.SelectingActTarget)
         {
-            commandMenuController.SetTargetCharacter(selectedActCharacter);
+            commandMenuController.SetTargetCharacter(selectedActTarget);
         }
     }
     
     private void SpreadSelectedSignal(CharacterHandler characterHandler)
      {
             Debug.Log("Character Selected: " + characterHandler.name + " in state: " + currentState);
-            selectedActCharacter = characterHandler;
-         
+            
          // 현재 상태에 따른 전파 위치 선별
          if ( currentState == SelectionState.SelectingActCharacter )
          {
+             selectedActCharacter = characterHandler;
              ChangeSelectionState(SelectionState.SelectingAction);
          }
          else if ( currentState == SelectionState.SelectingActTarget )
          {
+             selectedActTarget = characterHandler;
              ChangeSelectionState(SelectionState.SelectingActCharacter);
          }
          else

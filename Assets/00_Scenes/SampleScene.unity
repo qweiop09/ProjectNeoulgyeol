@@ -151,11 +151,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c0ee8312ec56403f91e41747f60397b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.Decision.ActionSelectionPhaseController
-  isDetecting: 0
   currentState: 0
-  characterChoiceContoller: {fileID: 95625652}
-  actionSettingController: {fileID: 95625651}
+  characterChoiceController: {fileID: 95625652}
+  commandMenuController: {fileID: 95625651}
   characterActionUI: {fileID: 95625650}
+  selectedActCharacter: {fileID: 0}
+  selectedActTarget: {fileID: 0}
 --- !u!114 &95625650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2919,7 +2920,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2243606094470508506}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 95625651}
+        m_TargetAssemblyTypeName: ActionSettingController, Assembly-CSharp
+        m_MethodName: PressedAttackButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &4694643069502808791
 CanvasRenderer:
   m_ObjectHideFlags: 0
