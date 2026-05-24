@@ -44,7 +44,9 @@ public class CharacterBattleData
     public class TargetingData
     {
         public int useSlot;
+        // 상대 배열의 index
         public int targetPosition;
+        // slot은 림버스 슬롯같은거
         public int targetSlot;
 
         public CharacterSkill useSkill;

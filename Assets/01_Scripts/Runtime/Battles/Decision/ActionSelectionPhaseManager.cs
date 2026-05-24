@@ -2,6 +2,7 @@ using _01_Scripts.DTO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace _01_Scripts.Runtime.Battles.Decision
 {
@@ -11,21 +12,28 @@ public class ActionSelectionPhaseManager : MonoBehaviour
      {
          Idle,
          SelectingAction,
-         SelectingTarget
+         SelectingActCharacter,
+         SelectingActTarget
+         
      }
 
     [SerializeField] private bool isDetecting = false;
     
-     private SelectionState currentState = SelectionState.Idle;
+    [SerializeField] private SelectionState currentState = SelectionState.Idle;
     
     [SerializeField] private CharacterChoiceController characterChoiceContoller;
-    [SerializeField] private ActionSettingController actionSettingController;
+    [FormerlySerializedAs("actionSettingController")] [SerializeField] private CommandMenuController commandMenuController;
     [SerializeField] private ChracterActionUI characterActionUI;
     
     private void OnEnable()
     {
         characterChoiceContoller.OnCharacterSelected += SpreadSelectedSignal;
         characterChoiceContoller.OnSelectionCleared += HandleSelectionClearedSignal;
+        
+        // 객체의 수명이 길기 때문에 굳이 구독취소 안함(메서드로 빼기 귀찮)
+        commandMenuController.CompletedActionSetting +=
+            () => { currentState = SelectionState.SelectingActTarget; };
+
     }
 
     private void OnDisable()
@@ -38,11 +46,35 @@ public class ActionSelectionPhaseManager : MonoBehaviour
      {
          // characterChoiceContoller.DeactivateActionSelectionPhase();
          
-         characterActionUI.HandleCharacterSelected(characterHandler);
+         // TODO: 현재 상태관리가 너무 하드코딩되어 있음, 이전 상태로 돌아가는 방식으로 개선 필요(스택)
+         // 해당하는 메서드 두개니까 보고하기( 쿨릭시 뭐 있을 때, 뭐 없을 때 )
+         // 
+         
+         // 현재 상태에 따른 전파 위치 선별
+         if ( currentState == SelectionState.SelectingActCharacter )
+         {
+             currentState = SelectionState.SelectingAction;
+             
+             characterActionUI.HandleCharacterSelected(characterHandler);
+         }
+         else if ( currentState == SelectionState.SelectingActTarget )
+         {
+             currentState = SelectionState.SelectingAction;
+             
+             commandMenuController.SetTargetCharacter(characterHandler);
+         }
+         else
+         {
+             Debug.Log("Character selected in ??? state, ignoring: "
+                       + characterHandler.name + "\n Current State: " + currentState);
+         }
+         
      }
     
     private void HandleSelectionClearedSignal()
     {
+        currentState = SelectionState.SelectingActCharacter;
+        
         characterActionUI.HandleSelectionCleared();
     }
 
@@ -53,7 +85,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         Debug.Log("Action Selection Phase Activated");
         
         characterChoiceContoller.ActivateActionSelectionPhase();
-        currentState = SelectionState.SelectingTarget;
+        currentState = SelectionState.SelectingActCharacter;
         isDetecting = true;
 
         // 액션 선택 UI 활성화

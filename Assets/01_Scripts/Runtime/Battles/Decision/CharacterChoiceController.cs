@@ -29,6 +29,7 @@ public class CharacterChoiceController : MonoBehaviour
     // 빈 곳 클릭했을 때 (선택 해제)
     public event System.Action OnSelectionCleared;
 
+    // 선택 페이즈 시작
     public void ActivateActionSelectionPhase()
     {
         isActive = true;
@@ -63,6 +64,7 @@ public class CharacterChoiceController : MonoBehaviour
         DeactivateActionSelectionPhase();
     }
 
+    // 클릭 시 캐릭터 선택 시도
     private void OnLeftClickPerformed(InputAction.CallbackContext context)
     {
         if (!isActive) return;
@@ -71,6 +73,7 @@ public class CharacterChoiceController : MonoBehaviour
         TrySelectCharacter(GetPointerScreenPosition());
     }
 
+    // 화면 클릭 위치에서 캐릭터 선택 시도
     private void TrySelectCharacter(Vector3 screenPosition)
     {
         if (raycastCamera == null) return;
@@ -80,6 +83,7 @@ public class CharacterChoiceController : MonoBehaviour
         
         Debug.Log("RayCast hit: " + (hitCharacterHandler != null ? hitCharacterHandler.name : "None"));
 
+        // 빈공간 클릭했을 때 UI지우기용 클릭 감지
         if (hitCharacterHandler == null)
         {
             Debug.Log("No character hit, clearing selection.");
@@ -88,7 +92,7 @@ public class CharacterChoiceController : MonoBehaviour
             OnSelectionCleared?.Invoke();
             return;
         }
-        
+        // UI 레이어 클릭 감지
         if(hitCharacterHandler.transform.gameObject.layer == LayerMask.NameToLayer("UI"))
         {
             Debug.Log("Clicked on UI, ignoring selection.");
@@ -101,6 +105,7 @@ public class CharacterChoiceController : MonoBehaviour
         OnCharacterSelected?.Invoke(selectedCharacter);
     }
 
+    // 클릭 위치에서 레이캐스트를 쏴서 캐릭터 핸들러 가져오기
     private CharacterHandler GetRayCastHitTransform(Ray ray)
     {
         if (raycastMode == RaycastMode.Physics2D)
@@ -116,6 +121,7 @@ public class CharacterChoiceController : MonoBehaviour
         return null;
     }
 
+    // 클릭 감지 활성화
     private void EnableLeftClickAction()
     {
         if (leftClickAction.action == null) return;
@@ -127,6 +133,7 @@ public class CharacterChoiceController : MonoBehaviour
         }
     }
 
+    // 클릭 감지 비활성화
     private void DisableLeftClickActionIfNeeded()
     {
         if (enabledLeftClickActionInternally && leftClickAction?.action != null)
