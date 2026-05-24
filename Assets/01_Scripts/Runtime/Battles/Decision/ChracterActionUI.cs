@@ -95,6 +95,7 @@ public class ChracterActionUI : MonoBehaviour
 
         return activeActionSettingMenu;
 
+        // 프리팹 참조할 때 쓰던 코드
         // if (activeActionSettingMenu != null)
         //     return activeActionSettingMenu;
         //

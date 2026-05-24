@@ -15,8 +15,8 @@ public class CharacterChoiceController : MonoBehaviour
     [SerializeField] private InputActionReference pointerPositionAction;
     [SerializeField] private LayerMask characterLayerMask = ~0;
     
-    [Header("Internal Fields")]
     [Space(10)]
+    [Header("Internal Fields")]
     
     [SerializeField] private bool isActive;
     private bool enabledLeftClickActionInternally;
