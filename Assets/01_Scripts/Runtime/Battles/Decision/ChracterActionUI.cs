@@ -6,7 +6,7 @@ public class ChracterActionUI : MonoBehaviour
     [SerializeField] private CharacterChoiceController choiceController;
     [SerializeField] private Camera raycastCamera;
     [SerializeField] private RectTransform actionSettingPanel;
-    [SerializeField] private RectTransform actionSettingPrefab;
+    // [SerializeField] private RectTransform actionSettingPrefab;
     [SerializeField] private Canvas actionSettingCanvas;
     [SerializeField] private Vector2 menuScreenOffset = new Vector2(120f, 0f);
 
@@ -90,14 +90,19 @@ public class ChracterActionUI : MonoBehaviour
 
     private RectTransform GetActionMenu()
     {
-        if (activeActionSettingMenu != null)
-            return activeActionSettingMenu;
-
-        if (actionSettingPrefab == null || actionSettingCanvas == null)
+        if (activeActionSettingMenu == null)
             return null;
 
-        activeActionSettingMenu = Instantiate(actionSettingPrefab, actionSettingCanvas.transform);
-        activeActionSettingMenu.gameObject.SetActive(false);
         return activeActionSettingMenu;
+
+        // if (activeActionSettingMenu != null)
+        //     return activeActionSettingMenu;
+        //
+        // if (actionSettingPrefab == null || actionSettingCanvas == null)
+        //     return null;
+        //
+        // activeActionSettingMenu = Instantiate(actionSettingPrefab, actionSettingCanvas.transform);
+        // activeActionSettingMenu.gameObject.SetActive(false);
+        // return activeActionSettingMenu;
     }
 }
