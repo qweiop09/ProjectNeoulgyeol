@@ -11,8 +11,8 @@ public class DecisionPhaseController : MonoBehaviour
     
     [SerializeField] private ActionSelectionPhaseManager actionSelectionPhaseManager;
     
-    private CharacterBattleData[] playerCharacterTargetingDatas;
-    private CharacterBattleData[] enemyCharacterTargetingDatas;
+    private CharacterHandler[] playerCharacterTargetingDatas;
+    private CharacterHandler[] enemyCharacterTargetingDatas;
     
     
     private void Awake()
@@ -22,7 +22,7 @@ public class DecisionPhaseController : MonoBehaviour
         battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
         battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
         
-        actionSelectionPhaseManager.OnActSelected += (actData) => { Debug.Log($"Selected Act: {actData}"); };
+        actionSelectionPhaseManager.OnActSelected += SetSelectedActData;
     }
     
     private void SetSelectedActData(ActData actData)
@@ -32,10 +32,30 @@ public class DecisionPhaseController : MonoBehaviour
         CharacterBattleData actPlayerCharacterBattleData = actData.ActPlayerCharacter.GetCharacterBattleData();
 
         // 선택된 행동의 타겟팅 데이터를 저장 (배열의 편성 순서에 맞게)
+        Debug.Log(actPlayerCharacterBattleData.PlacementOrder);
+        Debug.Log(actData.UseSlot);
+        
+        Debug.Log(playerCharacterTargetingDatas);
+        Debug.Log(playerCharacterTargetingDatas
+                [actPlayerCharacterBattleData.PlacementOrder]);
+        Debug.Log(playerCharacterTargetingDatas
+                [actPlayerCharacterBattleData.PlacementOrder].
+            GetCharacterBattleData());
+        Debug.Log(playerCharacterTargetingDatas
+                [actPlayerCharacterBattleData.PlacementOrder].
+            GetCharacterBattleData().TargetingData[actData.UseSlot]);
+        
+        
         playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder].TargetingData[actData.UseSlot] = actData;
+                [actPlayerCharacterBattleData.PlacementOrder].
+            GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
         
         Debug.Log($"Updated Targeting Data for {actPlayerCharacterBattleData.CharacterData.name} at Slot {actData.UseSlot}");
+        
+        Debug.Log(playerCharacterTargetingDatas
+                [actPlayerCharacterBattleData.PlacementOrder].
+            GetCharacterBattleData().TargetingData[actData.UseSlot]);
+
     }
     
     
@@ -92,6 +112,8 @@ public class DecisionPhaseController : MonoBehaviour
         Debug.Log("Decision Phase Ended");
         
         battlePhaseCoordinator.CompleteDecisionEnd(playerCharacterTargetingDatas, enemyCharacterTargetingDatas);
+        
+        
     }
     
 }

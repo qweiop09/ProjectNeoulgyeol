@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace _01_Scripts.DTO
 {
+[CreateAssetMenu(menuName = "ProjectNeoulgyeol/SkillData", fileName = "New Skill Data")]
 public class CharacterSkill : ScriptableObject
 {
     // 뭔가 나중에 쓸 것 같음

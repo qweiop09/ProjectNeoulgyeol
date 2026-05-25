@@ -11,6 +11,14 @@ public class ActionBuilder : MonoBehaviour
         , CharacterHandler targetPlayerCharacter, int targetSlot)
     {
         Debug.Log("Building action for character: " + characterHandler.name);
+        
+        
+        Debug.Log(characterHandler);
+        Debug.Log(characterHandler.GetCharacterBattleData());
+        Debug.Log(characterHandler.GetCharacterBattleData().CharacterData);
+        Debug.Log(characterHandler.GetCharacterBattleData().CharacterData.characterSkills);
+        Debug.Log(characterHandler.GetCharacterBattleData().CharacterData.characterSkills[useSkill]);
+        
         ActData returnActData = 
             new ActData(characterHandler, useSlot, 
                 characterHandler.GetCharacterBattleData().CharacterData.characterSkills[useSkill],

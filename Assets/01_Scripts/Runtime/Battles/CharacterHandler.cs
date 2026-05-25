@@ -22,8 +22,11 @@ public class CharacterHandler : MonoBehaviour
     
     [SerializeField] private CharacterBattleData characterBattleData;
 
+    public void SetCharacterBattleData(CharacterBattleData _characterBattleData)
+    {
+        characterBattleData = _characterBattleData;
+    }
     public CharacterBattleData GetCharacterBattleData() => characterBattleData;
-    
 
     public void PlayFight()
     {

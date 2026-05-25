@@ -20,4 +20,4 @@ MonoBehaviour:
   characterSpeedLowLimit: 1
   characterSpeedHighLimit: 5
   characterSkills:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 7215831baef7b49d39ec39ed7f32496e, type: 2}

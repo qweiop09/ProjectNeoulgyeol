@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace _01_Scripts.DTO
 {
-[CreateAssetMenu(menuName = "Game/Character Data", fileName = "New Character Data")]
+[CreateAssetMenu(menuName = "ProjectNeoulgyeol/Character Data", fileName = "New Character Data")]
 public class CharacterData : ScriptableObject
 {
     // TODO: 캐릭터 스테이터스 및 정보

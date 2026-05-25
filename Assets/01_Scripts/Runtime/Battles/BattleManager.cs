@@ -1,3 +1,4 @@
+using System;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
@@ -18,8 +19,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private BattlePhaseCoordinator battlePhaseCoordinator;
     
     // data Variables
-    [SerializeField] private CharacterBattleData[] playerCharacters;
-    [SerializeField] private CharacterBattleData[] enemyCharacters;
+    [SerializeField] private CharacterHandler[] playerCharacters;
+    [SerializeField] private CharacterHandler[] enemyCharacters;
     
     // debug Variables
     [FormerlySerializedAs("testCharacterStatus")] [SerializeField] private CharacterData testCharacterData;
@@ -27,16 +28,35 @@ public class BattleManager : MonoBehaviour
     // private Methods
     public void TestStart()
     {
-        playerCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
-        enemyCharacters = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+        CharacterBattleData[] a;
+        CharacterBattleData[] b; 
         
-        BattleStart(playerCharacters, enemyCharacters);
+        a = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+        b = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+                        
+        BattleStart(a, b);
     }
-    
+
     // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
     public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
     {
         Debug.Log(_playerBattleDatas);
+        
+        if(playerCharacters.Length < _playerBattleDatas.Length 
+           || enemyCharacters.Length < _enemyBattleDatas.Length)
+        {
+            Debug.LogError("Not enough character handlers for the provided battle data.");
+            return;
+        }
+
+        for (int i = 0; i < playerCharacters.Length; i++)
+        {
+            playerCharacters[i].SetCharacterBattleData(_playerBattleDatas[i]);
+            enemyCharacters[i].SetCharacterBattleData(_enemyBattleDatas[i]);
+        }
+
+        SetRefCharacterBattleData(playerCharacters);
+        SetRefCharacterBattleData(enemyCharacters);
         
         battlePhaseCoordinator.BattleStart(_playerBattleDatas, _enemyBattleDatas);
     }
@@ -47,12 +67,12 @@ public class BattleManager : MonoBehaviour
         return battlePhaseCoordinator;
     }
 
-    public CharacterBattleData[] GetPlayerCharacters()
+    public CharacterHandler[] GetPlayerCharacters()
     {
         return playerCharacters;
     }
 
-    public CharacterBattleData[] GetEnemyCharacters()
+    public CharacterHandler[] GetEnemyCharacters()
     {
         return enemyCharacters;
     }
@@ -75,6 +95,29 @@ public class BattleManager : MonoBehaviour
         
         return  new CharacterBattleData(_characterStatuses);
                          
+    }
+    
+    // 배틀 데이터 기반의 참조 데이터 설정 (ex. 타겟의 트랜스폼)
+    public CharacterHandler[] SetRefCharacterBattleData(CharacterHandler[] characterHandlers)
+    {
+        CharacterBattleData _characterBattleData;
+        
+        for (int i = 0; i < characterHandlers.Length; i++)
+        {
+            _characterBattleData = characterHandlers[i].GetCharacterBattleData();
+            
+            _characterBattleData.CharacterTransform = characterHandlers[i].transform;
+            _characterBattleData.TargetingData = new ActData[_characterBattleData.CharacterData.slotCount];
+        }
+
+        return characterHandlers;
+    }
+    
+    // 기본 데이터 기반의 참조 데이터 설정 
+    private CharacterBattleData SetRefCharacterData(CharacterBattleData characterBattleData)
+    {
+        // pass
+        return characterBattleData;
     }
     
 }
