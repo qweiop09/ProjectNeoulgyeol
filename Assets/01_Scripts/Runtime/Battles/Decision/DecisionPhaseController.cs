@@ -29,22 +29,9 @@ public class DecisionPhaseController : MonoBehaviour
     {
         Debug.Log("Setting Selected Act Data: " + actData);
         
-        CharacterBattleData actPlayerCharacterBattleData = actData.ActPlayerCharacter.GetCharacterBattleData();
+        CharacterBattleData actPlayerCharacterBattleData = actData.CastPlayerCharacter.GetCharacterBattleData();
 
         // 선택된 행동의 타겟팅 데이터를 저장 (배열의 편성 순서에 맞게)
-        Debug.Log(actPlayerCharacterBattleData.PlacementOrder);
-        Debug.Log(actData.UseSlot);
-        
-        Debug.Log(playerCharacterTargetingDatas);
-        Debug.Log(playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder]);
-        Debug.Log(playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder].
-            GetCharacterBattleData());
-        Debug.Log(playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder].
-            GetCharacterBattleData().TargetingData[actData.UseSlot]);
-        
         
         playerCharacterTargetingDatas
                 [actPlayerCharacterBattleData.PlacementOrder].
@@ -54,7 +41,7 @@ public class DecisionPhaseController : MonoBehaviour
         
         Debug.Log(playerCharacterTargetingDatas
                 [actPlayerCharacterBattleData.PlacementOrder].
-            GetCharacterBattleData().TargetingData[actData.UseSlot]);
+            GetCharacterBattleData().TargetingData[actData.UseSlot] == null);
 
     }
     

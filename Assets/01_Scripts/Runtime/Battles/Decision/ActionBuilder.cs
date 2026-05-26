@@ -18,6 +18,7 @@ public class ActionBuilder : MonoBehaviour
         Debug.Log(characterHandler.GetCharacterBattleData().CharacterData);
         Debug.Log(characterHandler.GetCharacterBattleData().CharacterData.characterSkills);
         Debug.Log(characterHandler.GetCharacterBattleData().CharacterData.characterSkills[useSkill]);
+        Debug.Log(characterHandler.GetCharacterBattleData().CharacterData.characterSkills[useSkill] == null);
         
         ActData returnActData = 
             new ActData(characterHandler, useSlot, 

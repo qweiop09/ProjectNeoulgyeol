@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ActData
 {
-    public CharacterHandler ActPlayerCharacter;
+    public CharacterHandler CastPlayerCharacter;
     
     public int UseSlot;
     
@@ -16,10 +16,10 @@ public class ActData
 
     public CharacterSkill UseSkill;
 
-    public ActData(CharacterHandler actPlayerCharacter, int useSlot, CharacterSkill useSkill
+    public ActData(CharacterHandler castPlayerCharacter, int useSlot, CharacterSkill useSkill
         , CharacterHandler targetPlayerCharacter, int targetSlot)
     {
-        ActPlayerCharacter = actPlayerCharacter;
+        CastPlayerCharacter = castPlayerCharacter;
         UseSlot = useSlot;
         UseSkill = useSkill;
         TargetPlayerCharacter = targetPlayerCharacter;

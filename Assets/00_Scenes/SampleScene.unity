@@ -269,6 +269,10 @@ MonoBehaviour:
   competePhaseController: {fileID: 1341329603}
   closePhaseController: {fileID: 1101826395}
   battlePhaseCoordinator: {fileID: 109294628}
+  playerCharacters:
+  - {fileID: 212971026991054560}
+  enemyCharacters:
+  - {fileID: 117546388}
   testCharacterData: {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
 --- !u!4 &109294630
 Transform:
@@ -299,6 +303,8 @@ GameObject:
   m_Component:
   - component: {fileID: 117546387}
   - component: {fileID: 117546388}
+  - component: {fileID: 117546390}
+  - component: {fileID: 117546389}
   - component: {fileID: 117546383}
   - component: {fileID: 117546382}
   - component: {fileID: 117546381}
@@ -580,9 +586,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09c3d0ee0dee3446bbf054578ac8e579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
-  director: {fileID: 0}
-  moveToTargetTimelineAsset: {fileID: 0}
-  moveToTargetTimelineManager: {fileID: 0}
+  timelineDirector: {fileID: 117546390}
+  director: {fileID: 117546389}
+--- !u!320 &117546389
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117546378}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: d4b0bf5340597481b9565cd34477085c, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: -1128090824146298287, guid: d4b0bf5340597481b9565cd34477085c, type: 2}
+    value: {fileID: 0}
+  m_ExposedReferences:
+    m_References: []
+--- !u!114 &117546390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117546378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12053cc54f5944f128a0b91e1a7569ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.TimelineDirector
+  director: {fileID: 117546389}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,9 +1576,6 @@ GameObject:
   - component: {fileID: 1341329608}
   - component: {fileID: 1341329603}
   - component: {fileID: 1341329605}
-  - component: {fileID: 1341329604}
-  - component: {fileID: 1341329607}
-  - component: {fileID: 1341329606}
   m_Layer: 0
   m_Name: CompetePhaseController
   m_TagString: Untagged
@@ -1563,18 +1597,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompetePhaseController
   battleManager: {fileID: 109294629}
   competeContestController: {fileID: 1341329605}
---- !u!114 &1341329604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341329602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0553b1021ee4930b102ebc3cc606657, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CompeteMoveHandler
 --- !u!114 &1341329605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1587,30 +1609,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07eb117bb062442c4b27942a9182dc98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CompeteContestController
---- !u!114 &1341329606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341329602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ef162e72b06451ba714f6a34e31babf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CompeteCharacterAnimationHandler
---- !u!114 &1341329607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341329602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2de1034b7c55431d8e5da120ab643eca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CompeteJudgmentHandler
+  moveToTargetTimelineAsset: {fileID: 11400000, guid: d4b0bf5340597481b9565cd34477085c, type: 2}
+  moveToTargetBinder: {fileID: 11400000, guid: 20eb2e47acc30485e980873366b8f1a1, type: 2}
 --- !u!4 &1341329608
 Transform:
   m_ObjectHideFlags: 0
@@ -1864,13 +1864,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4660077664275962}
+  - component: {fileID: 212971026991054560}
+  - component: {fileID: 212971026991054561}
+  - component: {fileID: 212971026991054559}
   - component: {fileID: 212971026991054558}
   - component: {fileID: 95975119788970268}
   - component: {fileID: 50738828400564736}
   - component: {fileID: 70405054904815412}
   - component: {fileID: 82701610442727288}
-  - component: {fileID: 212971026991054559}
-  - component: {fileID: 212971026991054560}
   m_Layer: 3
   m_Name: PlayerCharacter
   m_TagString: Player
@@ -2166,9 +2167,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09c3d0ee0dee3446bbf054578ac8e579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
-  director: {fileID: 0}
-  moveToTargetTimelineAsset: {fileID: 0}
-  moveToTargetTimelineManager: {fileID: 0}
+  timelineDirector: {fileID: 212971026991054561}
+  director: {fileID: 212971026991054559}
+--- !u!114 &212971026991054561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377239804249712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12053cc54f5944f128a0b91e1a7569ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.TimelineDirector
+  director: {fileID: 212971026991054559}
 --- !u!224 &246248306340448913
 RectTransform:
   m_ObjectHideFlags: 0

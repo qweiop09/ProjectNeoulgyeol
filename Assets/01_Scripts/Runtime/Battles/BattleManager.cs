@@ -1,10 +1,9 @@
-using System;
+using UnityEngine;
+using UnityEngine.Serialization;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _01_Scripts.Runtime.Battles
 {

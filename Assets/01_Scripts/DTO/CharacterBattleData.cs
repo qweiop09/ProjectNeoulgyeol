@@ -3,8 +3,7 @@ using UnityEngine.Serialization;
 
 namespace _01_Scripts.DTO
 {
-public class CharacterBattleData : ScriptableObject
-
+public class CharacterBattleData 
 {
 // TODO: 캐릭터 스테이터스 및 정보
 

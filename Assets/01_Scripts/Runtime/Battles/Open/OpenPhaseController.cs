@@ -8,7 +8,6 @@ public class OpenPhaseController : MonoBehaviour
     [SerializeField] private BattleManager battleManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
 
-    
     CharacterBattleData[] playerCharacters;
     CharacterBattleData[] enemyCharacters;
     
