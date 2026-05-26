@@ -18,6 +18,7 @@ public class CompeteContestController : MonoBehaviour
     [SerializeField] private TimelineAsset moveToTargetTimelineAsset;
     [SerializeField] private MoveToTargetBinder moveToTargetBinder;
 
+    // 한 캐릭터의 모든 행동을 실행
     public async Task StartCompeteCycle(ActData[] actDatas)
     {
         Debug.Log("Compete Cycle Started with " + actDatas.Length + " actions.");
@@ -30,6 +31,8 @@ public class CompeteContestController : MonoBehaviour
             Debug.Log("PlayCompete Start");
             // await PlayCompete(actDatas[i]);
         }
+        
+        Debug.Log("Compete Cycle Completed.");
     }
 
     private Task PlayMoveToTarget(ActData actData)

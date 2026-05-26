@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Compete._01_Scripts.Runtime.Battles.Compete;
 using UnityEngine;
@@ -55,6 +56,7 @@ public class CompetePhaseController : MonoBehaviour
         CompleteCompetePhaseStartProcess();
     }
     
+    // 두개를 하나로 묶는거
     private void SetCharactersTargetingDatas(List<CharacterHandler> _playerCharacterBattleDatas, List<CharacterHandler> _enemyCharacterTargetDatas)
     {
         // 속도에 따른 행동 순서 결정
@@ -99,13 +101,18 @@ public class CompetePhaseController : MonoBehaviour
     // Middle Phase Actions
     private async void StartCompetePhaseMiddleProcess()
     {
+        // 모든 캐릭터의 행동을 실행
         for (int i = 0; i < allCharacterHandlers.Count(); i++)
         {
             CharacterHandler currentCharacter = allCharacterHandlers[i];
 
             // Compete Cycle Phase
+            // 한 캐릭터의 모든 행동을 실행
             await competeContestController.StartCompeteCycle(currentCharacter.GetCharacterBattleData().TargetingData);
+            Debug.Log("Compete Cycle Completed for Character: " + currentCharacter.name);
         }
+
+        CompleteCompetePhaseMiddleProcess();
     }
     
     private void CompleteCompetePhaseMiddleProcess()

@@ -92,9 +92,9 @@ public class BattlePhaseCoordinator : MonoBehaviour
     public void CompleteCompeteEnd()
     {
         if( currentPhase != PhaseState.Compete) return;
-        OnClosePhaseEnd?.Invoke();
-        
         currentPhase = PhaseState.Close;
+        
+        OnClosePhaseEnd?.Invoke();
     }
     
     // Close Phase Actions
