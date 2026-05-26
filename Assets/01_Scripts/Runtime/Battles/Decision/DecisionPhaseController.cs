@@ -38,10 +38,6 @@ public class DecisionPhaseController : MonoBehaviour
             GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
         
         Debug.Log($"Updated Targeting Data for {actPlayerCharacterBattleData.CharacterData.name} at Slot {actData.UseSlot}");
-        
-        Debug.Log(playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder].
-            GetCharacterBattleData().TargetingData[actData.UseSlot] == null);
 
     }
     

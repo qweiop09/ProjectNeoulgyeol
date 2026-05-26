@@ -96,7 +96,7 @@ public class MoveToTargetBehaviour : PlayableBehaviour
             return;
         }
 
-        actor.rotation = Quaternion.LookRotation(moveDirection.normalized, Vector3.up);
+        // actor.rotation = Quaternion.LookRotation(moveDirection.normalized, Vector3.up);
     }
 }
 }

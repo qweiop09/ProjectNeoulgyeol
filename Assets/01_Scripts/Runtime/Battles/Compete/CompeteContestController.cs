@@ -21,7 +21,6 @@ public class CompeteContestController : MonoBehaviour
     public async Task StartCompeteCycle(ActData[] actDatas)
     {
         Debug.Log("Compete Cycle Started with " + actDatas.Length + " actions.");
-        Debug.Log(actDatas);
 
         for (int i = 0; i < actDatas.Length; i++)
         {
