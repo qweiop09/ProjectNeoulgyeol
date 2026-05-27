@@ -20,7 +20,8 @@ public class CharacterAnimationController : MonoBehaviour
         switch (markerMessage)
         {
             case "AttackStart":
-                animator.SetBool("IsAttacking", true);
+                // animator.SetBool("IsAttacking", true);
+                animator.SetTrigger("IsAttacking");
                 break;
         }
     }

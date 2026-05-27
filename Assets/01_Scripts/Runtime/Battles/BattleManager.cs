@@ -75,7 +75,7 @@ public class BattleManager : MonoBehaviour
     {
         return enemyCharacters;
     }
-    
+
     // private Methods
     private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
     {

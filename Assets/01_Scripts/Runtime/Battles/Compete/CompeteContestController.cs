@@ -12,6 +12,8 @@ public class CompeteContestController : MonoBehaviour
 {
     [SerializeField] private TimelineAsset moveToTargetTimelineAsset;
     [SerializeField] private MoveToTargetBinder moveToTargetBinder;
+    
+    [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
 
     // 한 캐릭터의 모든 행동을 실행
     public async Task StartCompeteCycle(ActData[] actDatas)
@@ -38,15 +40,22 @@ public class CompeteContestController : MonoBehaviour
             .PlayAsync(actData.CastPlayerCharacter , moveToTargetTimelineAsset, moveToTargetBinder, actData);
     }
 
-    private Task PlayCompete(ActData actData)
+    private async Task PlayCompete(ActData actData)
     {
         Debug.Log("PlayCompete: " + actData.CastPlayerCharacter.characterBattleData.TargetingData[actData.UseSlot].UseSkill.skillName);
         
         CharacterHandler caster = actData.CastPlayerCharacter;
-        CharacterSkill skill = caster.characterBattleData.TargetingData[actData.UseSlot].UseSkill;
+        CharacterSkill skill = caster.characterBattleData.TargetingData[actData.UseSlot].UseSkill; 
         
-        return caster.timelineDirector
+        await Wait(MoveToTargetWaitTime / 1000f); // MoveToTarget이 끝난 후 잠시 대기
+
+        await caster.timelineDirector
             .PlayAsync(caster, skill.skillTimelineAsset, skill.timelineBinder, actData);
+    }
+        
+    private Task Wait(float seconds)
+    {
+        return Task.Delay((int)(seconds * 1000));
     }
 }
 }
