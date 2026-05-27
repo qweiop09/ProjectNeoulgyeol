@@ -1,5 +1,6 @@
 using System;
 using _01_Scripts.DTO;
+using _01_Scripts.Runtime.Battles.CameraControlle;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -48,12 +49,13 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         characterChoiceController.OnSelectionCleared -= HandleSelectionClearedSignal;
     }
     
-    private void ChangeSelectionState(SelectionState newState)
+    private async void ChangeSelectionState(SelectionState newState)
     {
         // 행동선택에서 다른 상태로 바뀔 때 UI 초기화
         if (currentState == SelectionState.SelectingAction && newState != SelectionState.SelectingAction)
         {
             characterActionUIController.HandleSelectionCleared();
+            await CameraHandler.Instance.PositionResetToLerp();
             
             // 이전으로 돌아가면 선택된 행동 캐릭터 초기화
             if (currentState == newState + 1)
@@ -79,6 +81,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         else if (currentState == SelectionState.SelectingAction)
         {
             characterActionUIController.HandleCharacterSelected(selectedActCharacter);
+            await CameraHandler.Instance.MoveToLerp(
+                selectedActCharacter.transform.position + new Vector3(1f, 0, -10), 1);
         }
         else if (currentState == SelectionState.SelectingActTarget)
         {

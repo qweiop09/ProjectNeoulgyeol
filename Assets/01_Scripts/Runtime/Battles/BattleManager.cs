@@ -22,11 +22,14 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private CharacterHandler[] enemyCharacters;
     
     // debug Variables
+    [SerializeField] private GameObject StartButton;
     [FormerlySerializedAs("testCharacterStatus")] [SerializeField] private CharacterData testCharacterData;
     
     // private Methods
     public void TestStart()
     {
+        StartButton.SetActive(false);
+        
         CharacterBattleData[] a;
         CharacterBattleData[] b; 
         
