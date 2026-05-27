@@ -23,6 +23,14 @@ public class CharacterAnimationController : MonoBehaviour
                 // animator.SetBool("IsAttacking", true);
                 animator.SetTrigger("IsAttacking");
                 break;
+            
+            case "IsRuning":
+                animator.SetBool("IsRuning", true);
+                break;
+            
+            case "IsNotRuning":
+                animator.SetBool("IsRuning", false);
+                break;
         }
     }
 }

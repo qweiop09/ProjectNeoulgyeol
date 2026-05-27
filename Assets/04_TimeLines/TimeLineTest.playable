@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5078618650618182154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93fc0e1470bd47d3bbce328d771f5d6, type: 3}
+  m_Name: Battle Marker
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.BattleMarker
+  m_Time: 2.5
+  message: IsNotRuning
 --- !u!114 &-1128090824146298287
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -92,6 +106,31 @@ MonoBehaviour:
     m_DisplayName: MoveToTargetClip
   m_Markers:
     m_Objects: []
+--- !u!114 &-653785420635087431
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a16748d9461eae46a725db9776d5390, type: 3}
+  m_Name: Markers
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.MarkerTrack
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips: []
+  m_Markers:
+    m_Objects:
+    - {fileID: 3127400954600051231}
+    - {fileID: -5078618650618182154}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +151,7 @@ MonoBehaviour:
     m_Framerate: 60
     m_ScenePreview: 1
   m_DurationMode: 0
-  m_MarkerTrack: {fileID: 0}
+  m_MarkerTrack: {fileID: -653785420635087431}
 --- !u!114 &2857188849287698766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -158,7 +197,21 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  arrivalDistance: 1
+  arrivalDistance: 1.25
   distanceAxisWeight: {x: 1, y: 2, z: 1}
   followTarget: 1
   faceMoveDirection: 1
+--- !u!114 &3127400954600051231
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93fc0e1470bd47d3bbce328d771f5d6, type: 3}
+  m_Name: Battle Marker
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.BattleMarker
+  m_Time: 0
+  message: IsRuning

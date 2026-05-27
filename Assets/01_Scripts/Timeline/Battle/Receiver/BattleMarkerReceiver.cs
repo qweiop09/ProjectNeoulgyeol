@@ -16,6 +16,7 @@ public class BattleMarkerReceiver : MonoBehaviour, INotificationReceiver
             Debug.Log($"BattleMarker 수신: {marker.message}");
             OnBattleMarkerReceived?.Invoke(marker.message);
         }
+        
     }
 }
 }

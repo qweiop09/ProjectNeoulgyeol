@@ -27,7 +27,7 @@ public class CompeteContestController : MonoBehaviour
         {
             if (actDatas[i] == null) continue;
             
-            CameraHandler.Instance.SetFollowTransform(actDatas[i].CastPlayerCharacter.transform, 1);
+            CameraHandler.Instance.SetFollowTransform(actDatas[i].CastPlayerCharacter.transform, 1.5f);
             
             await PlayMoveToTarget(actDatas[i]);
             Debug.Log("PlayCompete Start");
