@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6611fc7211c5740a4981361cc0d4286f, type: 3}
   m_Name: TestSkillData
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.CharacterSkill
+  skillName: "\uD14C\uC2A4\uD2B8 \uD3C9\uD0C0"
   skillStartDistance: 10
+  timelineBinder: {fileID: 0}
+  skillTimelineAsset: {fileID: 11400000, guid: 8d2583d5e26a34a8589f93fae183d393, type: 2}

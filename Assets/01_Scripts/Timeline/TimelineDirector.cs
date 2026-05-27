@@ -1,6 +1,7 @@
 // 실행 담당
 
 using System.Threading.Tasks;
+using _01_Scripts.Runtime.Battles;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -23,24 +24,31 @@ public class TimelineDirector : MonoBehaviour
         director = _director;
     }
 
-    public void Play(TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
+    public void Play(CharacterHandler castCharacterHandler, TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
     {
         if (timelineAsset == null)
         {
             Debug.LogError("TimelineDirector: TimelineAsset이 비어있습니다.");
             return;
         }
-
+        
+        castCharacterHandler.director.playableAsset = timelineAsset; // PlayAsync를 호출하는 캐릭터의 Director에 TimelineAsset 할당
+        castCharacterHandler.director = director; // PlayAsync를 호출하는 캐릭터에 Director 할당
+                
         director.playableAsset = timelineAsset;
-        binder?.Bind(director, data);
+        if (data != null)
+            binder?.Bind(director, data);
+        else
+            Debug.LogWarning("TimelineDirector: ActData가 비어있습니다.");
+
         director.Play();
     }
 
     // 기다려야 할 때 이걸 사용
-    public Task PlayAsync(TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
+    public Task PlayAsync(CharacterHandler castCharacterHandler , TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
     {
         var tcs = new TaskCompletionSource<bool>();
-
+        
         void OnStoppedHandler()
         {
             OnStopped -= OnStoppedHandler;
@@ -48,7 +56,7 @@ public class TimelineDirector : MonoBehaviour
         }
 
         OnStopped += OnStoppedHandler;
-        Play(timelineAsset, binder, data);
+        Play(castCharacterHandler, timelineAsset, binder, data);
 
         return tcs.Task;
     }
