@@ -48,6 +48,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
     }
 
     protected virtual void OnApplicationQuit()
