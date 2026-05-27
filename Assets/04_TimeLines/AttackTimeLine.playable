@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Animation Marker
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.AnimationMarker
   m_Time: 0
-  message: UseSkill
+  message: AttackStart
 --- !u!114 &-4707052619641459236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -48,11 +48,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: SkillTimeLine
+  m_Name: AttackTimeLine
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.TimelineAsset
   m_Version: 0
   m_Tracks: []
-  m_FixedDuration: 6
+  m_FixedDuration: 4.033333333333333
   m_EditorSettings:
     m_Framerate: 60
     m_ScenePreview: 1

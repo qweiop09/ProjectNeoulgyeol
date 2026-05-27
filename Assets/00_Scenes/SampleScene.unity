@@ -589,6 +589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
   timelineDirector: {fileID: 117546390}
   director: {fileID: 117546389}
+  characterType: 0
 --- !u!320 &117546389
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -1076,6 +1077,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
   timelineDirector: {fileID: 533880745}
   director: {fileID: 533880744}
+  characterType: 0
 --- !u!320 &533880744
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -2994,6 +2996,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.CharacterHandler
   timelineDirector: {fileID: 212971026991054561}
   director: {fileID: 212971026991054559}
+  characterType: 0
 --- !u!114 &212971026991054561
 MonoBehaviour:
   m_ObjectHideFlags: 0
