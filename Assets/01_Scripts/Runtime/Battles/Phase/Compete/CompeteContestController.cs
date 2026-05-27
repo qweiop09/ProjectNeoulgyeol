@@ -1,4 +1,5 @@
 using _01_Scripts.DTO;
+using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Timeline;
 
 namespace _01_Scripts.Runtime.Battles.Compete
@@ -19,14 +20,20 @@ public class CompeteContestController : MonoBehaviour
     public async Task StartCompeteCycle(ActData[] actDatas)
     {
         Debug.Log("Compete Cycle Started with " + actDatas.Length + " actions.");
+        
+        
 
         for (int i = 0; i < actDatas.Length; i++)
         {
             if (actDatas[i] == null) continue;
             
+            CameraHandler.Instance.SetFollowTransform(actDatas[i].CastPlayerCharacter.transform, 1);
+            
             await PlayMoveToTarget(actDatas[i]);
             Debug.Log("PlayCompete Start");
             await PlayCompete(actDatas[i]);
+            
+            CameraHandler.Instance.UnsetFollowTransform();
         }
         
         Debug.Log("Compete Cycle Completed.");

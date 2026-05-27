@@ -172,7 +172,7 @@ MonoBehaviour:
   raycastCamera: {fileID: 330585545}
   actionSettingPanel: {fileID: 5832070059906060190}
   actionSettingCanvas: {fileID: 2115617653}
-  menuScreenOffset: {x: 120, y: 0}
+  menuScreenOffset: {x: 300, y: 60}
 --- !u!114 &95625651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -659,7 +659,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2782,8 +2782,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.18}
-  m_Size: {x: 0.65, y: 1.7}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 3, y: 5.5}
   m_Direction: 0
 --- !u!82 &82701610442727288
 AudioSource:

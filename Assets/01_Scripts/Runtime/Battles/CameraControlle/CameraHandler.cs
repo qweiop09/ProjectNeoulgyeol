@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using _01_Scripts.Interfacese;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace _01_Scripts.Runtime.Battles.CameraControlle
 {
@@ -8,27 +10,62 @@ public class CameraHandler : Singleton<CameraHandler>
 {
     [SerializeField] private Camera camera;
 
+    private Transform followTargetTransfrom;
+    private float followTargetSize;
+    private bool isFollowing = false;
+
     public void Awake()
     {
         base.Awake();
         
-        if (camera == null)
+        if (camera == null){}
             camera = gameObject.GetComponent<UnityEngine.Camera>();
     }
 
+    public void FixedUpdate()
+    {
+        if (followTargetTransfrom != null && isFollowing)
+        {
+            transform.position = 
+                Vector3.Lerp(transform.position, followTargetTransfrom.position, 0.1f)
+                + new Vector3( 0,0,-10);
+            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, followTargetSize, 0.3f);
+        }
+    }
+
+    public void SetFollowTransform(Transform target, float targetSize)
+    {
+        followTargetTransfrom = target;
+        followTargetSize = targetSize;
+        isFollowing = true;
+    }
+
+    public void UnsetFollowTransform()
+    {
+        followTargetTransfrom = null;
+        followTargetSize = 5;
+        isFollowing = false;
+    }
+    
     public void Move(Vector3 targetPosition, int targetSize )
     {
+        if (isFollowing)
+            return;
+        
         transform.position = targetPosition;
         camera.orthographicSize = targetSize;
     }
     
     public async Task MoveToLerp(Vector3 targetPosition, int targetSize)
     {
+        if (isFollowing)
+            return;
+        
         while (Vector3.Distance(transform.position, targetPosition) > 0.001f
                || Mathf.Abs(camera.orthographicSize - targetSize) > 0.001f)
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.05f);
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetSize, 0.05f);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.065f);
+            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetSize, 0.065f);
             await Wait(0.001f);
         }
 
@@ -38,12 +75,18 @@ public class CameraHandler : Singleton<CameraHandler>
 
     public void PositionReset()
     {
+        if (isFollowing)
+            return;
+        
         transform.position = new Vector3(0,0,-10);
         camera.orthographicSize = 5;
     }
 
     public async Task PositionResetToLerp()
     {
+        if (isFollowing)
+            return;
+        
         Vector3 temp = new Vector3(0,0,-10);
         
         while ( Vector3.Distance(transform.position,temp) > 0.001f 

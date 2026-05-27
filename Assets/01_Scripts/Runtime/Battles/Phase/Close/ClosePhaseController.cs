@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using _01_Scripts.Runtime.Battles.CameraControlle;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles.Close
@@ -23,7 +24,9 @@ public class ClosePhaseController : MonoBehaviour
     {
         // Close Phase Logic
         Debug.Log("Close Phase Ended");
-        await Wait(1.2f); 
+        await Wait(0.4f);
+
+        await CameraHandler.Instance.PositionResetToLerp();
         
         // Close Phase End
         battlePhaseCoordinator.CompleteClosePhaseEnd();
