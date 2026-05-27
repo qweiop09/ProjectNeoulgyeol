@@ -81,6 +81,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         else if (currentState == SelectionState.SelectingAction)
         {
             characterActionUIController.HandleCharacterSelected(selectedActCharacter);
+
             await CameraHandler.Instance.MoveToLerp(
                 selectedActCharacter.transform.position + new Vector3(1f, 0, -10), 1);
         }
@@ -97,6 +98,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
          // 현재 상태에 따른 전파 위치 선별
          if ( currentState == SelectionState.SelectingActCharacter )
          {
+             if (characterHandler.characterType == CharacterHandler.CharacterType.Enemy)
+                 return;
+             
              selectedActCharacter = characterHandler;
              ChangeSelectionState(SelectionState.SelectingAction);
          }

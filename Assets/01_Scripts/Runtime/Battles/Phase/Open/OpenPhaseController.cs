@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles;
 using UnityEngine;
+using Vector3 = System.Numerics.Vector3;
 
 public class OpenPhaseController : MonoBehaviour
 {
@@ -28,12 +29,18 @@ public class OpenPhaseController : MonoBehaviour
     {
         playerCharacters = new CharacterHandler[_playerCharacters.Length];
         enemyCharacters = new CharacterHandler[_enemyCharacters.Length];
-        
-        for(int i = 0; i < _playerCharacters.Length; i++)
+
+        for (int i = 0; i < _playerCharacters.Length; i++)
+        {
             playerCharacters[i] = Instantiate(characterHandlerPrefab);
-        
-        for (int i = 0; i < _enemyCharacters.Length; i++) 
+            playerCharacters[i].characterType = CharacterHandler.CharacterType.Friendly;
+        }
+
+        for (int i = 0; i < _enemyCharacters.Length; i++)
+        {
             enemyCharacters[i] = Instantiate(characterHandlerPrefab);
+            enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
+        }
 
         playerCharacters = SetBattleDataToHandlers(playerCharacters , _playerCharacters);
         enemyCharacters = SetBattleDataToHandlers(enemyCharacters , _enemyCharacters);
@@ -88,6 +95,10 @@ public class OpenPhaseController : MonoBehaviour
         {
             // 캐릭터 위치 설정
              _characterBattleDatas[i].transform.position = _characterPositions[i].position;
+             if (_characterBattleDatas[i].characterType == CharacterHandler.CharacterType.Friendly)
+                 _characterBattleDatas[i].transform.rotation = new Quaternion(0, 0, 0, 0);
+             else
+                 _characterBattleDatas[i].transform.rotation = new Quaternion(0, 180, 0, 0);
         }
     }
 

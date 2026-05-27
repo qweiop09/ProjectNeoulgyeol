@@ -9,8 +9,16 @@ namespace _01_Scripts.Runtime.Battles
 {
 public class CharacterHandler : MonoBehaviour
 {
+    public enum CharacterType
+    {
+          Friendly
+        , Enemy
+    }
+    
     [SerializeField] public TimelineDirector timelineDirector; 
-    [SerializeField] public PlayableDirector director; 
+    [SerializeField] public PlayableDirector director;
+
+    [SerializeField] public CharacterType characterType;
     
     // 애니메니터 (대기모션 등 타임라인 재생이 필요없는 애니메이션을 관리)
     
