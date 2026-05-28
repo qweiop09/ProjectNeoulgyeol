@@ -18,12 +18,16 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private BattlePhaseCoordinator battlePhaseCoordinator;
     
     // data Variables
+    [SerializeField] private CharacterHandler originCharacter;
+    
     [SerializeField] private CharacterHandler[] playerCharacters;
     [SerializeField] private CharacterHandler[] enemyCharacters;
     
     // debug Variables
     [SerializeField] private GameObject StartButton;
-    [FormerlySerializedAs("testCharacterStatus")] [SerializeField] private CharacterData testCharacterData;
+    [SerializeField] private CharacterData[] testFlendlyCharacterDatas;
+    [SerializeField] private CharacterData[] testEnemyCharacterDatas;
+    
     
     // private Methods
     public void TestStart()
@@ -33,8 +37,8 @@ public class BattleManager : MonoBehaviour
         CharacterBattleData[] a;
         CharacterBattleData[] b; 
         
-        a = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
-        b = new CharacterBattleData[] { ChangeCharacterDataToCharacterBattleData(testCharacterData)} ;
+        a = ChangeCharacterDataToCharacterBattleData(testFlendlyCharacterDatas);
+        b = ChangeCharacterDataToCharacterBattleData(testEnemyCharacterDatas);
                         
         BattleStart(a, b);
     }
@@ -44,22 +48,25 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log(_playerBattleDatas);
         
-        if(playerCharacters.Length < _playerBattleDatas.Length 
-           || enemyCharacters.Length < _enemyBattleDatas.Length)
-        {
-            Debug.LogError("Not enough character handlers for the provided battle data.");
-            return;
-        }
-
-        for (int i = 0; i < playerCharacters.Length; i++)
-        {
-            playerCharacters[i].SetCharacterBattleData(_playerBattleDatas[i]);
-            enemyCharacters[i].SetCharacterBattleData(_enemyBattleDatas[i]);
-        }
-
-        SetRefCharacterBattleData(playerCharacters);
-        SetRefCharacterBattleData(enemyCharacters);
+        playerCharacters = new CharacterHandler[_playerBattleDatas.Length];
+        enemyCharacters = new CharacterHandler[_enemyBattleDatas.Length];
         
+        // 플레이어 캐릭터 핸들러 생성 및 배틀 데이터 초기화
+        for(int i = 0; i < playerCharacters.Length; i++)
+        {
+            playerCharacters[i] = Instantiate(originCharacter, transform);
+            playerCharacters[i].SetCharacterBattleData(_playerBattleDatas[i]);
+            SetRefCharacterBattleData(playerCharacters[i]);
+        }
+        
+        for(int i = 0; i < enemyCharacters.Length; i++)
+        {
+            enemyCharacters[i] = Instantiate(originCharacter, transform);
+            enemyCharacters[i].SetCharacterBattleData(_enemyBattleDatas[i]);
+            SetRefCharacterBattleData(enemyCharacters[i]);
+        }
+        
+        // 전투 시작 신호 보내기
         battlePhaseCoordinator.BattleStart(_playerBattleDatas, _enemyBattleDatas);
     }
     
@@ -73,7 +80,7 @@ public class BattleManager : MonoBehaviour
     {
         return playerCharacters;
     }
-
+    
     public CharacterHandler[] GetEnemyCharacters()
     {
         return enemyCharacters;
@@ -88,38 +95,21 @@ public class BattleManager : MonoBehaviour
         {
             _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
         }
-
+    
         return _returnBattleDataArray;
     }
     
-    private CharacterBattleData ChangeCharacterDataToCharacterBattleData(CharacterData _characterStatuses)
-    {
-        
-        return  new CharacterBattleData(_characterStatuses);
-                         
-    }
-    
     // 배틀 데이터 기반의 참조 데이터 설정 (ex. 타겟의 트랜스폼)
-    public CharacterHandler[] SetRefCharacterBattleData(CharacterHandler[] characterHandlers)
+    public CharacterHandler SetRefCharacterBattleData(CharacterHandler characterHandlers)
     {
         CharacterBattleData _characterBattleData;
         
-        for (int i = 0; i < characterHandlers.Length; i++)
-        {
-            _characterBattleData = characterHandlers[i].GetCharacterBattleData();
-            
-            _characterBattleData.CharacterTransform = characterHandlers[i].transform;
-            _characterBattleData.TargetingData = new ActData[_characterBattleData.CharacterData.slotCount];
-        }
+        _characterBattleData = characterHandlers.GetCharacterBattleData();
+        
+        _characterBattleData.CharacterTransform = characterHandlers.transform;
+        _characterBattleData.TargetingData = new ActData[_characterBattleData.CharacterData.slotCount];
 
         return characterHandlers;
-    }
-    
-    // 기본 데이터 기반의 참조 데이터 설정 
-    private CharacterBattleData SetRefCharacterData(CharacterBattleData characterBattleData)
-    {
-        // pass
-        return characterBattleData;
     }
     
 }
