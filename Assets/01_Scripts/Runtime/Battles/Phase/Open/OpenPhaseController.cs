@@ -1,18 +1,17 @@
 using System.Collections.Generic;
-using _01_Scripts.DTO;
-using _01_Scripts.Runtime.Battles;
 using UnityEngine;
-using Vector3 = System.Numerics.Vector3;
 
+namespace _01_Scripts.Runtime.Battles.Phase.Open
+{
 public class OpenPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
     
-    [SerializeField] private CharacterHandler characterHandlerPrefab;
-    
     private CharacterHandler[] playerCharacters;
     private CharacterHandler[] enemyCharacters;
+    
+    private CharacterHandler[] turnOrderCharacters;
     
     [SerializeField] private Transform[] playerCharacterPositions;
     [SerializeField] private Transform[] enemyCharacterPositions;
@@ -20,30 +19,16 @@ public class OpenPhaseController : MonoBehaviour
     private void Awake()
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
+        battlePhaseCoordinator.OnOpenPhaseStart += StartOpenPhase;
+        
         battlePhaseCoordinator.OnBattleStart += (data1, data2)
             => StartBattle(data1, data2);
-        battlePhaseCoordinator.OnOpenPhaseStart += StartOpenPhase;
     }
 
-    private void StartBattle(CharacterBattleData[] _playerCharacters, CharacterBattleData[] _enemyCharacters)
+    private void StartBattle(CharacterHandler[] _playerCharacters, CharacterHandler[] _enemyCharacters)
     {
-        playerCharacters = new CharacterHandler[_playerCharacters.Length];
-        enemyCharacters = new CharacterHandler[_enemyCharacters.Length];
-
-        for (int i = 0; i < _playerCharacters.Length; i++)
-        {
-            playerCharacters[i] = Instantiate(characterHandlerPrefab);
-            playerCharacters[i].characterType = CharacterHandler.CharacterType.Friendly;
-        }
-
-        for (int i = 0; i < _enemyCharacters.Length; i++)
-        {
-            enemyCharacters[i] = Instantiate(characterHandlerPrefab);
-            enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
-        }
-
-        playerCharacters = SetBattleDataToHandlers(playerCharacters , _playerCharacters);
-        enemyCharacters = SetBattleDataToHandlers(enemyCharacters , _enemyCharacters);
+        playerCharacters = _playerCharacters;
+        enemyCharacters = _enemyCharacters;
         
         StartOpenPhase();
     }
@@ -53,14 +38,8 @@ public class OpenPhaseController : MonoBehaviour
     {
         Debug.Log("Start Open Phase");
         
-        playerCharacters = SetCharactersSpeed(playerCharacters);
-        enemyCharacters = SetCharactersSpeed(enemyCharacters);
-
-        SortByCurrentSpeedCharacterBattleDatas(playerCharacters);
-        SortByCurrentSpeedCharacterBattleDatas(enemyCharacters);
-        
-        SetCharactersPosition(playerCharacters, playerCharacterPositions);
-        SetCharactersPosition(enemyCharacters, enemyCharacterPositions);
+        playerCharacters = SortBySpeedDescending(SetCharactersSpeed(playerCharacters));
+        enemyCharacters = SortBySpeedDescending(SetCharactersSpeed(enemyCharacters));
         
         Debug.Log("속도 조정 완료 \n -------------------------------------------------------");
         
@@ -68,14 +47,26 @@ public class OpenPhaseController : MonoBehaviour
         for (int i = 0; i < playerCharacters.Length; i++)
         {
             playerCharacters[i].GetCharacterBattleData().DebugPrintStatusData();
+            
+            playerCharacters[i].GetCharacterBattleData().PlacementOrder = i;
+            SetCharactersPosition(playerCharacters[i], playerCharacterPositions[i]);
         } 
         
         Debug.Log("적군 : ");
         for (int i = 0; i < enemyCharacters.Length; i++)
         {
             enemyCharacters[i].GetCharacterBattleData().DebugPrintStatusData();
+            
+            enemyCharacters[i].GetCharacterBattleData().PlacementOrder = i;
+            SetCharactersPosition(enemyCharacters[i], enemyCharacterPositions[i]);
         }
         
+        turnOrderCharacters = DetermineTurnOrder
+        (
+            new List<CharacterHandler>(playerCharacters), 
+            new List<CharacterHandler>(enemyCharacters)
+        );
+            
         CompleteOpenPhaseProcess();
     }
     
@@ -86,37 +77,60 @@ public class OpenPhaseController : MonoBehaviour
         Debug.Log("Open Phase Started");
         
         // Open Phase End
-        battlePhaseCoordinator.CompleteOpenPhaseStart();
+        battlePhaseCoordinator.CompleteOpenPhaseStart( playerCharacters, enemyCharacters, turnOrderCharacters);
     }
     
-    private void SetCharactersPosition(CharacterHandler[] _characterBattleDatas, Transform[] _characterPositions)
+    // 두개를 하나로 묶는거
+    private CharacterHandler[] DetermineTurnOrder(List<CharacterHandler> _playerCharacterBattleDatas, List<CharacterHandler> _enemyCharacterTargetDatas)
     {
-        for (int i = 0; i < _characterBattleDatas.Length; i++)
+        // 속도에 따른 행동 순서 결정
+        // 아군, 적군 혼합
+        // 속도가 정렬된 값들이 들어와야 기능함
+        
+        List<CharacterHandler> _allCharacterTargetDatas = new List<CharacterHandler>();
+        
+        // 속도 비교하여 행동 순서 결정
+        // 내림차순 정렬
+        
+        int i = 0;
+        
+        while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
         {
-            // 캐릭터 위치 설정
-             _characterBattleDatas[i].transform.position = _characterPositions[i].position;
-             if (_characterBattleDatas[i].characterType == CharacterHandler.CharacterType.Friendly)
-                 _characterBattleDatas[i].transform.rotation = new Quaternion(0, 0, 0, 0);
-             else
-                 _characterBattleDatas[i].transform.rotation = new Quaternion(0, 180, 0, 0);
-        }
-    }
-
-    private CharacterHandler[] SetCharactersSpeed(CharacterHandler[] _characterBattleDatas)
-    {
-        CharacterHandler[] _returnBattleDataArray = new CharacterHandler[_characterBattleDatas.Length];
-
-        for (int i = 0; i < _characterBattleDatas.Length; i++)
-        {
-            _characterBattleDatas[i].GetCharacterBattleData().SetRandomSpeed();
             
-            _returnBattleDataArray[i] = _characterBattleDatas[i];
+            if (_playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >= _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed)
+            {
+                _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
+                _playerCharacterBattleDatas.RemoveAt(0);
+            }
+            else
+            {
+                _allCharacterTargetDatas.Add(_enemyCharacterTargetDatas[0]);
+                _enemyCharacterTargetDatas.RemoveAt(0);
+                
+                _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
+            }
+
+            i++;
         }
         
-        return _returnBattleDataArray;
-    }
+        if (_playerCharacterBattleDatas.Count == 0)
+            _allCharacterTargetDatas.AddRange(_enemyCharacterTargetDatas);
+        
+        else 
+            _allCharacterTargetDatas.AddRange(_playerCharacterBattleDatas);
+        
+        return _allCharacterTargetDatas.ToArray();
+    }    
 
-    private CharacterHandler[] SortByCurrentSpeedCharacterBattleDatas(CharacterHandler[] _characterBattleDatas)
+    private void SetPlacementOrder(CharacterHandler[] _characterBattleDatas)
+    {
+        for (int i = 0; i < _characterBattleDatas.Length; i++)
+        {
+            _characterBattleDatas[i].GetCharacterBattleData().PlacementOrder = i;
+        }
+    }
+    
+    private CharacterHandler[] SortBySpeedDescending(CharacterHandler[] _characterBattleDatas)
     {
         if (_characterBattleDatas == null || _characterBattleDatas.Length <= 1)
             return _characterBattleDatas;
@@ -149,26 +163,30 @@ public class OpenPhaseController : MonoBehaviour
 
         return _characterBattleDatas;
     }
+     
+    private CharacterHandler[] SetCharactersSpeed(CharacterHandler[] _characterBattleDatas)
+    {
+        CharacterHandler[] _returnBattleDataArray = new CharacterHandler[_characterBattleDatas.Length];
 
-    private CharacterHandler[] SetBattleDataToHandlers(CharacterHandler[] _characterHandlers , CharacterBattleData[] _characterBattleDatas)
-    {
-        for( int i = 0; i < _characterHandlers.Length; i++)
-            _characterHandlers[i].SetCharacterBattleData(_characterBattleDatas[i]);
-        
-        return _characterHandlers;
-    }
-    
-    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
-    {
-        CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
-        
-        for (int i = 0; i < _characterStatuses.Length; i++)
+        for (int i = 0; i < _characterBattleDatas.Length; i++)
         {
-            _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
+            _characterBattleDatas[i].GetCharacterBattleData().SetRandomSpeed();
+            
+            _returnBattleDataArray[i] = _characterBattleDatas[i];
         }
-
+        
         return _returnBattleDataArray;
     }
     
-    
+    private void SetCharactersPosition(CharacterHandler _characterBattleDatas, Transform _characterPositions)
+    {
+        // 캐릭터 위치 설정
+        _characterBattleDatas.transform.position = _characterPositions.position;
+        if (_characterBattleDatas.characterType == CharacterHandler.CharacterType.Friendly)
+            _characterBattleDatas.transform.rotation = new Quaternion(0, 0, 0, 0);
+        else
+            _characterBattleDatas.transform.rotation = new Quaternion(0, 180, 0, 0);
+    }
+   
+}
 }

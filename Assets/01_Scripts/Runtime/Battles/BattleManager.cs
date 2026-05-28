@@ -4,6 +4,7 @@ using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
+using _01_Scripts.Runtime.Battles.Phase.Open;
 
 namespace _01_Scripts.Runtime.Battles
 {
@@ -16,6 +17,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private ClosePhaseController closePhaseController;
     
     [SerializeField] private BattlePhaseCoordinator battlePhaseCoordinator;
+
+    [SerializeField] private int maxPartyMembers;
     
     // data Variables
     [SerializeField] private CharacterHandler originCharacter;
@@ -46,6 +49,13 @@ public class BattleManager : MonoBehaviour
     // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
     public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
     {
+        if(_playerBattleDatas.Length > maxPartyMembers
+           || _enemyBattleDatas.Length > maxPartyMembers)
+        {
+            Debug.LogError("파티원 수가 최대 파티원 수를 초과했습니다.");
+            return;
+        }
+        
         Debug.Log(_playerBattleDatas);
         
         playerCharacters = new CharacterHandler[_playerBattleDatas.Length];
@@ -57,6 +67,7 @@ public class BattleManager : MonoBehaviour
             playerCharacters[i] = Instantiate(originCharacter, transform);
             playerCharacters[i].SetCharacterBattleData(_playerBattleDatas[i]);
             SetRefCharacterBattleData(playerCharacters[i]);
+            playerCharacters[i].characterType = CharacterHandler.CharacterType.Friendly;
         }
         
         for(int i = 0; i < enemyCharacters.Length; i++)
@@ -64,10 +75,11 @@ public class BattleManager : MonoBehaviour
             enemyCharacters[i] = Instantiate(originCharacter, transform);
             enemyCharacters[i].SetCharacterBattleData(_enemyBattleDatas[i]);
             SetRefCharacterBattleData(enemyCharacters[i]);
+            enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
         }
         
         // 전투 시작 신호 보내기
-        battlePhaseCoordinator.BattleStart(_playerBattleDatas, _enemyBattleDatas);
+        battlePhaseCoordinator.BattleStart(playerCharacters, enemyCharacters);
     }
     
     // public Methods

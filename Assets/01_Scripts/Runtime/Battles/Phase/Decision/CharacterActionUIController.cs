@@ -11,7 +11,8 @@ public class CharacterActionUIController : MonoBehaviour
     [SerializeField] private Vector2 menuScreenOffset = new Vector2(120f, 0f);
     
     // 행동대상을 선택해야 할 때 외부에 알리는 이벤트
-    public event Action CompletedActionSetting; 
+    public event Action CompletedAttackActionSetting;
+    public event Action CompletedSkillActionSetting;
     
     private RectTransform activeActionSettingMenu;
 
@@ -87,8 +88,14 @@ public class CharacterActionUIController : MonoBehaviour
     
     public void PressedAttackButton()
     {
-        Debug.Log("Action Button Pressed");
-        CompletedActionSetting?.Invoke();
+        Debug.Log("Attack Button Pressed");
+        CompletedAttackActionSetting?.Invoke();
+    }
+
+    public void PressedSkillButton()
+    {
+        Debug.Log("Skill Button Pressed");
+        CompletedSkillActionSetting.Invoke();
     }
     
     // 아래에 UI 버튼 클릭 시 호출할 메서드 추가 (예: PressedDefendButton, PressedItemButton 등)

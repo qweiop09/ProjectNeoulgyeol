@@ -39,8 +39,11 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         characterChoiceController.OnSelectionCleared += HandleSelectionClearedSignal;
         
         // 객체의 수명이 길기 때문에 굳이 구독취소 안함(메서드로 빼기 귀찮)
-        characterActionUIController.CompletedActionSetting +=
+        characterActionUIController.CompletedAttackActionSetting +=
             () => { ChangeSelectionState(SelectionState.SelectingActTarget); };
+
+        characterActionUIController.CompletedSkillActionSetting +=
+            () => { };
     }
 
     private void OnDisable()

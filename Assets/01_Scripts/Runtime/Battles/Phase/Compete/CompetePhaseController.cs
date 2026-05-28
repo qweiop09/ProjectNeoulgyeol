@@ -69,6 +69,8 @@ public class CompetePhaseController : MonoBehaviour
         // 속도가 더 높은 쪽이 앞쪽에 있음
         while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
         {
+            int i = 0;
+            
             if (_playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >= _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed)
             {
                 _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
@@ -78,8 +80,13 @@ public class CompetePhaseController : MonoBehaviour
             {
                 _allCharacterTargetDatas.Add(_enemyCharacterTargetDatas[0]);
                 _enemyCharacterTargetDatas.RemoveAt(0);
+                
+                _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
             }
+
+            i++;
         }
+        
         if (_playerCharacterBattleDatas.Count == 0)
         {
             _allCharacterTargetDatas.AddRange(_enemyCharacterTargetDatas);

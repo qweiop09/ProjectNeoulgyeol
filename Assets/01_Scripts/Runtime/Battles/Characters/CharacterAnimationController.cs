@@ -31,6 +31,11 @@ public class CharacterAnimationController : MonoBehaviour
             case "IsNotRuning":
                 animator.SetBool("IsRuning", false);
                 break;
+            
+            case "UseSkill":
+                animator.SetTrigger("UseSkill");
+                break;
+            
         }
     }
 }

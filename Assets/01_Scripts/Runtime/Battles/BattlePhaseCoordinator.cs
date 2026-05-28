@@ -19,7 +19,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
     // 송신
     // 시작 메세지
     // Battle Start Actions
-    public event Action<CharacterBattleData[], CharacterBattleData[]> OnBattleStart;
+    public event Action<CharacterHandler[], CharacterHandler[]> OnBattleStart;
    
     // Open Phase Actions
     public event Action OnOpenPhaseStart;  
@@ -39,7 +39,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
    
     // 수신
     // Start Battle
-    public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
+    public void BattleStart(CharacterHandler[] _playerBattleDatas, CharacterHandler[] _enemyBattleDatas)
     {
         currentPhase = PhaseState.Open; 
 
@@ -47,7 +47,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
     }
    
     // Open Phase Actions
-    public void CompleteOpenPhaseStart()
+    public void CompleteOpenPhaseStart(CharacterHandler[] _playerBattleDatas, CharacterHandler[] _enemyBattleDatas, CharacterHandler[] turnOrderCharacters)
     {
         if( currentPhase != PhaseState.Open) return;
         currentPhase = PhaseState.Decision;

@@ -269,12 +269,15 @@ MonoBehaviour:
   competePhaseController: {fileID: 1341329603}
   closePhaseController: {fileID: 1101826395}
   battlePhaseCoordinator: {fileID: 109294628}
-  playerCharacters:
-  - {fileID: 212971026991054560}
-  enemyCharacters:
-  - {fileID: 533880743}
+  maxPartyMembers: 6
+  originCharacter: {fileID: 212971026991054560}
+  playerCharacters: []
+  enemyCharacters: []
   StartButton: {fileID: 850343676}
-  testCharacterData: {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  testFlendlyCharacterDatas:
+  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  testEnemyCharacterDatas:
+  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
 --- !u!4 &109294630
 Transform:
   m_ObjectHideFlags: 0
@@ -1507,8 +1510,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -376}
-  m_SizeDelta: {x: 320, y: 60}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 480, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &850343678
 MonoBehaviour:
@@ -1754,7 +1757,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -550, y: -376}
+  m_AnchoredPosition: {x: 0, y: -376}
   m_SizeDelta: {x: 320, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1050982732
@@ -2419,7 +2422,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OpenPhaseController
   battleManager: {fileID: 109294629}
-  characterHandlerPrefab: {fileID: 212971026991054560}
   playerCharacterPositions:
   - {fileID: 641327318}
   enemyCharacterPositions:
