@@ -18,16 +18,16 @@ public class CameraHandler : Singleton<CameraHandler>
     {
         base.Awake();
         
-        if (camera == null){}
+        if (camera == null)
             camera = gameObject.GetComponent<UnityEngine.Camera>();
     }
 
-    public void FixedUpdate()
+    public void LateUpdate()
     {
         if (followTargetTransfrom != null && isFollowing)
         {
             transform.position = 
-                Vector3.Lerp(transform.position, followTargetTransfrom.position, 0.1f)
+                Vector3.Lerp(transform.position, followTargetTransfrom.position, 0.1f * Time.deltaTime * 60)
                 + new Vector3( 0,0,-10);
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, followTargetSize, 0.3f);
         }
@@ -61,11 +61,11 @@ public class CameraHandler : Singleton<CameraHandler>
         if (isFollowing)
             return;
         
-        while (Vector3.Distance(transform.position, targetPosition) > 0.001f
-               || Mathf.Abs(camera.orthographicSize - targetSize) > 0.001f)
+        while (Vector3.Distance(transform.position, targetPosition) > 0.01f
+               || Mathf.Abs(camera.orthographicSize - targetSize) > 0.05f)
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.065f);
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetSize, 0.065f);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.15f * Time.deltaTime * 60);
+            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetSize, 0.15f * Time.deltaTime * 60);
             await Wait(0.001f);
         }
 
@@ -89,11 +89,11 @@ public class CameraHandler : Singleton<CameraHandler>
         
         Vector3 temp = new Vector3(0,0,-10);
         
-        while ( Vector3.Distance(transform.position,temp) > 0.001f 
-               || Mathf.Abs( 5 - camera.orthographicSize) > 0.001f)
+        while ( Vector3.Distance(transform.position,temp) > 0.01f 
+               || Mathf.Abs( 5 - camera.orthographicSize) > 0.05f)
         {
-            transform.position = Vector3.Lerp(transform.position, temp, 0.05f);
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, 5, 0.05f);
+            transform.position = Vector3.Lerp(transform.position, temp, 0.15f * Time.deltaTime * 60);
+            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, 5, 0.15f * Time.deltaTime * 60);
             await Wait(0.001f);
         }
         
