@@ -1,54 +1,57 @@
 using _01_Scripts.DTO;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace _01_Scripts.Runtime.Battles.Decision
+namespace _01_Scripts.Runtime.Battles.Phase.Decision
 {
 public class DecisionPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
-    private BattlePhaseCoordinator battlePhaseCoordinator;
+    private BattlePhaseCoordinator _battlePhaseCoordinator;
     
     [SerializeField] private ActionSelectionPhaseManager actionSelectionPhaseManager;
     
-    private CharacterHandler[] playerCharacterTargetingDatas;
-    private CharacterHandler[] enemyCharacterTargetingDatas;
+    private CharacterHandler[] _turnOrderCharacters;
+    private CharacterHandler[] _playerCharacterTargetingData;
+    private CharacterHandler[] _enemyCharacterTargetingData;
     
     
     private void Awake()
     {
-        battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        battlePhaseCoordinator.OnDecisionPhaseStart += StartDecisionPhase;
-        battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
-        battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
+        _battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
+        _battlePhaseCoordinator.OnDecisionPhaseStart += StartDecisionPhase;
+        _battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
+        _battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
         
         actionSelectionPhaseManager.OnActSelected += SetSelectedActData;
     }
     
-    private void SetSelectedActData(ActData actData)
+    private void SetSelectedActData(CharacterHandler characterHandler)
     {
-        Debug.Log("Setting Selected Act Data: " + actData);
+        Debug.Log("Setting Selected Act Data: " + characterHandler);
         
-        CharacterBattleData actPlayerCharacterBattleData = actData.CastPlayerCharacter.GetCharacterBattleData();
+        // CharacterBattleData actPlayerCharacterBattleData = actData.CastPlayerCharacter.GetCharacterBattleData();
 
         // 선택된 행동의 타겟팅 데이터를 저장 (배열의 편성 순서에 맞게)
         
-        playerCharacterTargetingDatas
-                [actPlayerCharacterBattleData.PlacementOrder].
-            GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
+        // _playerCharacterTargetingData
+        //         [actPlayerCharacterBattleData.PlacementOrder].
+        //     GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
         
-        Debug.Log($"Updated Targeting Data for {actPlayerCharacterBattleData.CharacterData.name} at Slot {actData.UseSlot}");
+        // 타겟팅 데이터 반영
+        _playerCharacterTargetingData[characterHandler.GetCharacterBattleData().TurnOrder] = characterHandler;
+        
+        // Debug.Log($"Updated Targeting Data for {actPlayerCharacterBattleData.CharacterData.name} at Slot {characterHandler.UseSlot}");
 
     }
     
     
     // Start Phase Actions
-    private void StartDecisionPhase()
-    {
-        playerCharacterTargetingDatas = battleManager.GetPlayerCharacters();
-        enemyCharacterTargetingDatas = battleManager.GetEnemyCharacters();
+    private void StartDecisionPhase(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData, CharacterHandler[] turnOrderCharacters)    {
         
-        // 속도 초기화 (배열 정렬까지)
+        _playerCharacterTargetingData = playerBattleData;
+        _enemyCharacterTargetingData = enemyBattleData;
+        
+        _turnOrderCharacters = turnOrderCharacters;
         
         CompleteDecisionPhaseStartProcess();
     }
@@ -56,33 +59,30 @@ public class DecisionPhaseController : MonoBehaviour
     private void CompleteDecisionPhaseStartProcess()
     {
         Debug.Log("Decision Phase Started");
-        battlePhaseCoordinator.CompleteDecisionStart();
+        _battlePhaseCoordinator.CompleteDecisionStart();
     }
     
     
     // Middle Phase Actions
     private void StartDecisionPhaseMiddleProcess()
     {
-        actionSelectionPhaseManager.ActivateCharacterSelectionPhase();
-        
-        return;
+        actionSelectionPhaseManager.StartActionSelectionPhase();
     }
-    
-    private void CompleteDecisionPhaseMiddleProcess()
-    {
-        Debug.Log("Decision Phase Performing");
-        actionSelectionPhaseManager.DeactivateCharacterSelectionPhase();
-        
-        // 타겟팅 데이터 설정
-        
-        battlePhaseCoordinator.CompleteDecisionPerform();
-    }
-    
+
     public void PressedCompetePhaseStartButton()
     {
         CompleteDecisionPhaseMiddleProcess();
     }
     
+    private void CompleteDecisionPhaseMiddleProcess()
+    {
+        Debug.Log("Decision Phase Performing");
+        actionSelectionPhaseManager.EndActionSelectionPhase();
+        
+        _battlePhaseCoordinator.CompleteDecisionPerform();
+    }
+    
+    // / 여기까지 검수함
     
     // End Phase Actions
     private void StartDecisionPhaseEndProcess()
@@ -94,7 +94,7 @@ public class DecisionPhaseController : MonoBehaviour
     {
         Debug.Log("Decision Phase Ended");
         
-        battlePhaseCoordinator.CompleteDecisionEnd(playerCharacterTargetingDatas, enemyCharacterTargetingDatas);
+        _battlePhaseCoordinator.CompleteDecisionEnd(_playerCharacterTargetingData, _enemyCharacterTargetingData);
         
         
     }

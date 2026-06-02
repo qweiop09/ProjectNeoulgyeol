@@ -1,12 +1,9 @@
 using System;
-using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.CameraControlle;
+using _01_Scripts.Runtime.Battles.Decision;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
-namespace _01_Scripts.Runtime.Battles.Decision
+namespace _01_Scripts.Runtime.Battles.Phase.Decision
 {
 public class ActionSelectionPhaseManager : MonoBehaviour
 {
@@ -16,16 +13,14 @@ public class ActionSelectionPhaseManager : MonoBehaviour
          SelectingActCharacter,
          SelectingAction,
          SelectingActTarget
-         
      }
     
     [SerializeField] private SelectionState currentState = SelectionState.Idle;
     
     [SerializeField] private CharacterChoiceController characterChoiceController;
-    [FormerlySerializedAs("commandMenuController")] [SerializeField] private ActionBuilder actionBuilder;
-    [FormerlySerializedAs("characterActionUI")] [SerializeField] private CharacterActionUIController characterActionUIController;
+    [SerializeField] private CharacterActionUIController characterActionUIController;
     
-    public event Action<ActData> OnActSelected;
+    public event Action<CharacterHandler> OnActSelected;
     
     [Space(10)]
     [Header("Internal Fields")]
@@ -35,21 +30,58 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     
     private void OnEnable()
     {
-        characterChoiceController.OnCharacterSelected += SpreadSelectedSignal;
+        characterChoiceController.OnCharacterSelected += HandleSelectionSignal;
         characterChoiceController.OnSelectionCleared += HandleSelectionClearedSignal;
         
+        // 설정된 행동 받아와서 반영하기
         // 객체의 수명이 길기 때문에 굳이 구독취소 안함(메서드로 빼기 귀찮)
-        characterActionUIController.CompletedAttackActionSetting +=
-            () => { ChangeSelectionState(SelectionState.SelectingActTarget); };
-
-        characterActionUIController.CompletedSkillActionSetting +=
-            () => { };
+        characterActionUIController.CompletedActionSetting +=
+            (data) =>
+            {
+                selectedActCharacter.GetCharacterBattleData().TargetingData[0] = data.characterBattleData.TargetingData[0];
+                OnActSelected?.Invoke(selectedActCharacter);
+                ChangeSelectionState(SelectionState.SelectingActTarget);
+            };
     }
-
+    
     private void OnDisable()
     {
-        characterChoiceController.OnCharacterSelected -= SpreadSelectedSignal;
+        characterChoiceController.OnCharacterSelected -= HandleSelectionSignal;
         characterChoiceController.OnSelectionCleared -= HandleSelectionClearedSignal;
+    }
+    
+    
+    // 매니저 기능 시작점
+    public void StartActionSelectionPhase()
+    {
+        Debug.Log("Starting Action Selection Phase");
+        characterChoiceController.ActivateActionSelectionPhase();
+        
+        ActivateCharacterSelectionPhase();
+    }
+    
+    public void EndActionSelectionPhase()
+    {
+        Debug.Log("Ending Action Selection Phase");
+        characterChoiceController.DeactivateActionSelectionPhase();
+        
+        DeactivateCharacterSelectionPhase();
+    }
+    
+    // 액션 선택 단계(ray기반 클릭) 활성화
+    public void ActivateCharacterSelectionPhase()
+    {
+        Debug.Log("Action Selection Phase Activated");
+        
+        ChangeSelectionState(SelectionState.SelectingActCharacter);
+    }
+
+    // 액션 선택 단계(ray기반 클릭) 비활성화
+    public void DeactivateCharacterSelectionPhase()
+    {
+        Debug.Log("Action Selection Phase Deactivated");
+        
+        ChangeSelectionState(SelectionState.Idle);
     }
     
     private async void ChangeSelectionState(SelectionState newState)
@@ -57,21 +89,26 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         // 행동선택에서 다른 상태로 바뀔 때 UI 초기화
         if (currentState == SelectionState.SelectingAction && newState != SelectionState.SelectingAction)
         {
-            characterActionUIController.HandleSelectionCleared();
             await CameraHandler.Instance.PositionResetToLerp();
             
             // 이전으로 돌아가면 선택된 행동 캐릭터 초기화
             if (currentState == newState + 1)
             {
                 Debug.Log("Clearing selected act character: " + selectedActCharacter.name);
+                characterActionUIController.HandleSelectionCleared();
+                
+                selectedActCharacter.GetCharacterBattleData().TargetingData[0] = null;
                 selectedActCharacter = null;
             }
-            
+            else
+                characterActionUIController.HideMenu();
+
         }
             
         if (currentState == newState) return;
         
         Debug.Log("Changing Selection State: " + currentState + " -> " + newState);
+        
         currentState = newState;
         if (currentState == SelectionState.Idle)
         {
@@ -94,9 +131,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
     }
     
-    private void SpreadSelectedSignal(CharacterHandler characterHandler)
+    private void HandleSelectionSignal(CharacterHandler characterHandler)
      {
-            Debug.Log("Character Selected: " + characterHandler.name + " in state: " + currentState);
+         Debug.Log("Character Selected: " + characterHandler.name + " in state: " + currentState);
             
          // 현재 상태에 따른 전파 위치 선별
          if ( currentState == SelectionState.SelectingActCharacter )
@@ -105,14 +142,22 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                  return;
              
              selectedActCharacter = characterHandler;
+             selectedActCharacter.GetCharacterBattleData()
+                 .TargetingData[0] = new ActData();
+             
+             selectedActCharacter.GetCharacterBattleData()
+                 .TargetingData[0].CastPlayerCharacter = characterHandler;
+             
              ChangeSelectionState(SelectionState.SelectingAction);
          }
          else if ( currentState == SelectionState.SelectingActTarget )
          {
              selectedActTarget = characterHandler;
-             ChangeSelectionState(SelectionState.SelectingActCharacter);
              
-             SetAct(BuildAct());
+             selectedActCharacter.GetCharacterBattleData()
+                 .TargetingData[0].TargetPlayerCharacter = characterHandler;
+             
+             ChangeSelectionState(SelectionState.SelectingActCharacter);
          }
          else
          {
@@ -124,69 +169,14 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     
     private void HandleSelectionClearedSignal()
     {
+        Debug.Log("Selection Cleared in state: " + currentState);
+        
         if (currentState == SelectionState.Idle) return;
         if (currentState == SelectionState.SelectingActCharacter ) return;
         
         ChangeSelectionState(currentState - 1 );
     }
 
-    private ActData BuildAct()
-    {
-        Debug.Log("Building ActData with Character: " + selectedActCharacter.name + " and Target: " + selectedActTarget.name);
-        
-        ActData tempActData
-            = actionBuilder.BuildAction(selectedActCharacter, 0, 0, selectedActTarget, 0);
-        
-        selectedActCharacter = null;
-        selectedActTarget = null;
-
-        return
-            tempActData;
-    }
-    
-    private void SetAct(ActData actData)
-    {
-        OnActSelected?.Invoke(actData);
-    }
-    
-    // 매니저 기능 시작점
-    // 액션 선택 단계(ray기반 클릭) 활성화
-    public void ActivateCharacterSelectionPhase()
-    {
-        Debug.Log("Action Selection Phase Activated");
-        
-        characterChoiceController.ActivateActionSelectionPhase();
-        ChangeSelectionState(SelectionState.SelectingActCharacter);
-
-        // 액션 선택 UI 활성화
-    }
-
-    // 액션 선택 단계(ray기반 클릭) 비활성화
-    public void DeactivateCharacterSelectionPhase()
-    {
-        Debug.Log("Action Selection Phase Deactivated");
-        
-        ChangeSelectionState(SelectionState.Idle);
-        
-        // 액션 선택 UI 비활성화
-    }
-    
-    // 행동선택 기능 시작점
-    // UI기반의 행동 선택
-    private void ActivateActionSelectionUI(CharacterHandler characterHandler)
-    {
-        Debug.Log("Activating Action Selection UI for: " + characterHandler.name);
-        ChangeSelectionState(SelectionState.SelectingAction);
-        
-        // 선택된 캐릭터에 대한 액션 메뉴 표시
-    }
-    
-    private void DeactivateActionSelectionUI()
-    {
-        Debug.Log("Deactivating Action Selection UI");
-        ChangeSelectionState(SelectionState.Idle);
-        
-    }
     
 }
 }

@@ -4,6 +4,7 @@ using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
+using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
 
 namespace _01_Scripts.Runtime.Battles

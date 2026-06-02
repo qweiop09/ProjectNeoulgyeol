@@ -18,6 +18,9 @@ public class CharacterData : ScriptableObject
     
     
     // 캐릭터가 보유한 스킬들의 정보
+    // 일반공격
+    public CharacterSkill[] characterAttacks;
+    // 스킬
     public CharacterSkill[] characterSkills;
     
     public int GetRandomSpeed()

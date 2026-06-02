@@ -25,4 +25,6 @@ public class ActData
         TargetPlayerCharacter = targetPlayerCharacter;
         TargetSlot = targetSlot;
     }
+
+    public ActData() { }
 }

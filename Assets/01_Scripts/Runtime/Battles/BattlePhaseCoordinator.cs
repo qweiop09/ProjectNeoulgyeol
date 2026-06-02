@@ -25,7 +25,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
     public event Action OnOpenPhaseStart;  
    
     // Decision Phase Actions
-    public event Action OnDecisionPhaseStart;
+    public event Action<CharacterHandler[], CharacterHandler[], CharacterHandler[]> OnDecisionPhaseStart;
     public event Action OnDecisionPhasePerform;             
     public event Action OnDecisionPhaseEnd;                
    
@@ -39,20 +39,20 @@ public class BattlePhaseCoordinator : MonoBehaviour
    
     // 수신
     // Start Battle
-    public void BattleStart(CharacterHandler[] _playerBattleDatas, CharacterHandler[] _enemyBattleDatas)
+    public void BattleStart(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData)
     {
         currentPhase = PhaseState.Open; 
 
-        OnBattleStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
+        OnBattleStart?.Invoke(playerBattleData, enemyBattleData);
     }
    
     // Open Phase Actions
-    public void CompleteOpenPhaseStart(CharacterHandler[] _playerBattleDatas, CharacterHandler[] _enemyBattleDatas, CharacterHandler[] turnOrderCharacters)
+    public void CompleteOpenPhaseStart(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData, CharacterHandler[] turnOrderCharacters)
     {
         if( currentPhase != PhaseState.Open) return;
         currentPhase = PhaseState.Decision;
         
-        OnDecisionPhaseStart?.Invoke();
+        OnDecisionPhaseStart?.Invoke(playerBattleData, enemyBattleData, turnOrderCharacters);
     }
     
     // Decision Phase Actions
@@ -68,12 +68,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
         OnDecisionPhaseEnd?.Invoke();
     }
     
-    public void CompleteDecisionEnd(CharacterHandler[] _playerBattleDatas, CharacterHandler[] _enemyBattleDatas)
+    public void CompleteDecisionEnd(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData)
     {
         if( currentPhase != PhaseState.Decision) return;
         currentPhase = PhaseState.Compete;
         
-        OnCompetePhaseStart?.Invoke(_playerBattleDatas, _enemyBattleDatas);
+        OnCompetePhaseStart?.Invoke(playerBattleData, enemyBattleData);
     }
     
     // Compete Phase Actions

@@ -92,14 +92,6 @@ public class CharacterChoiceController : MonoBehaviour
             OnSelectionCleared?.Invoke();
             return;
         }
-        // UI 레이어 클릭 감지
-        if(hitCharacterHandler.transform.gameObject.layer == LayerMask.NameToLayer("UI"))
-        {
-            Debug.Log("Clicked on UI, ignoring selection.");
-            
-            selectedCharacter = null;
-            return;
-        }
 
         selectedCharacter = hitCharacterHandler;
         OnCharacterSelected?.Invoke(selectedCharacter);

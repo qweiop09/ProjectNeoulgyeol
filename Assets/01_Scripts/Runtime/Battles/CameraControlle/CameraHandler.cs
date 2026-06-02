@@ -61,7 +61,7 @@ public class CameraHandler : Singleton<CameraHandler>
         if (isFollowing)
             return;
         
-        while (Vector3.Distance(transform.position, targetPosition) > 0.01f
+        while (Vector3.Distance(transform.position, targetPosition) > 0.05f
                || Mathf.Abs(camera.orthographicSize - targetSize) > 0.05f)
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, 0.15f * Time.deltaTime * 60);
@@ -89,7 +89,7 @@ public class CameraHandler : Singleton<CameraHandler>
         
         Vector3 temp = new Vector3(0,0,-10);
         
-        while ( Vector3.Distance(transform.position,temp) > 0.01f 
+        while ( Vector3.Distance(transform.position,temp) > 0.05f 
                || Mathf.Abs( 5 - camera.orthographicSize) > 0.05f)
         {
             transform.position = Vector3.Lerp(transform.position, temp, 0.15f * Time.deltaTime * 60);

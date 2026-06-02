@@ -15,6 +15,7 @@ public int currentMp;
 public int CurrentSpeed;
 
 public int PlacementOrder;
+public int TurnOrder;
 
 // 캐릭터가 보유한 스킬들의 정보
 // private CharacterSkill[] characterSkills;

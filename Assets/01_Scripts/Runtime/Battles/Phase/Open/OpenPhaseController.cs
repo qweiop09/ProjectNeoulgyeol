@@ -27,8 +27,34 @@ public class OpenPhaseController : MonoBehaviour
 
     private void StartBattle(CharacterHandler[] _playerCharacters, CharacterHandler[] _enemyCharacters)
     {
+        Debug.Log("Starting Battle in Open Phase Controller");
+        
         playerCharacters = _playerCharacters;
         enemyCharacters = _enemyCharacters;
+        
+        for(int i = 0; i < playerCharacters.Length; i++)
+        {
+            playerCharacters[i].GetCharacterBattleData().TargetingData = 
+                new ActData[playerCharacters[i].characterBattleData.CharacterData.slotCount];
+            
+            // for( int ii = 0; ii < playerCharacters[i].characterBattleData.CharacterData.slotCount; ii++)
+            // {
+            //     Debug.Log(ii);
+            //     
+            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii] = new ActData();
+            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii].CastPlayerCharacter = playerCharacters[i];
+            // }
+        }
+        for (int i = 0; i < enemyCharacters.Length; i++)
+        {
+            enemyCharacters[i].GetCharacterBattleData().TargetingData = 
+                new ActData[enemyCharacters[i].characterBattleData.CharacterData.slotCount];
+            // for(int ii = 0; ii < enemyCharacters[i].characterBattleData.CharacterData.slotCount; ii++)
+            // {
+            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii] = new ActData();
+            //     enemyCharacters[i].GetCharacterBattleData().TargetingData[ii].CastPlayerCharacter = enemyCharacters[i];
+            // }
+        }
         
         StartOpenPhase();
     }
@@ -94,30 +120,37 @@ public class OpenPhaseController : MonoBehaviour
         
         int i = 0;
         
-        while (_playerCharacterBattleDatas.Count > 0 && _enemyCharacterTargetDatas.Count > 0)
+        while (_playerCharacterBattleDatas.Count == 0 && _enemyCharacterTargetDatas.Count == 0)
         {
+            // 이거 하나 다 되면 오류날 예정
+            // 하고 오류나는 부분만 고치고 테스트
             
-            if (_playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >= _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed)
+            if (_playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >= _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed
+                || _enemyCharacterTargetDatas.Count == 0 || _playerCharacterBattleDatas.Count != 0)
             {
                 _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
                 _playerCharacterBattleDatas.RemoveAt(0);
+                
+                _allCharacterTargetDatas[i].GetCharacterBattleData().TurnOrder = i;
+                _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
             }
-            else
+            else 
             {
                 _allCharacterTargetDatas.Add(_enemyCharacterTargetDatas[0]);
                 _enemyCharacterTargetDatas.RemoveAt(0);
                 
+                _allCharacterTargetDatas[i].GetCharacterBattleData().TurnOrder = i;
                 _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
             }
 
             i++;
         }
         
-        if (_playerCharacterBattleDatas.Count == 0)
-            _allCharacterTargetDatas.AddRange(_enemyCharacterTargetDatas);
-        
-        else 
-            _allCharacterTargetDatas.AddRange(_playerCharacterBattleDatas);
+        // if (_playerCharacterBattleDatas.Count == 0)
+        //     _allCharacterTargetDatas.AddRange(_enemyCharacterTargetDatas);
+        //
+        // else 
+        //     _allCharacterTargetDatas.AddRange(_playerCharacterBattleDatas);
         
         return _allCharacterTargetDatas.ToArray();
     }    
