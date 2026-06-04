@@ -140,7 +140,7 @@ public class CompetePhaseController : MonoBehaviour
         Debug.Log("Compete Phase Ended");
         
         // Compete Phase End
-        battlePhaseCoordinator.CompleteCompeteEnd();
+        battlePhaseCoordinator.CompleteCompeteEnd(allCharacterHandlers);
     }
 }
 }

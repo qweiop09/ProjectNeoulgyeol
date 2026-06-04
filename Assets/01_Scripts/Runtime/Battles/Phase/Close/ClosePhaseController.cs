@@ -15,14 +15,23 @@ public class ClosePhaseController : MonoBehaviour
         battlePhaseCoordinator.OnClosePhaseEnd += StartClosePhase;
     }
     
-    private void StartClosePhase()
+    private void StartClosePhase(CharacterHandler[] allCharacterHandlers )
     {
-        CompleteClosePhaseProcess();
+        CompleteClosePhaseProcess(allCharacterHandlers);
     }
     
-    private async void CompleteClosePhaseProcess()
+    private async void CompleteClosePhaseProcess(CharacterHandler[] allCharacterHandlers)
     {
         // Close Phase Logic
+        
+        for(int i = 0; i < allCharacterHandlers.Length; i++)
+        {
+            Debug.Log("Character " + i + ": " + allCharacterHandlers[i].name);
+            allCharacterHandlers[i].GetCharacterBattleData().TargetingData
+                = new ActData[allCharacterHandlers[i].GetCharacterBattleData().TargetingData.Length];
+        }
+        
+        
         Debug.Log("Close Phase Ended");
         await Wait(0.4f);
 

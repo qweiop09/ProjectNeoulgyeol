@@ -35,7 +35,7 @@ public class BattlePhaseCoordinator : MonoBehaviour
     public event Action OnCompetePhaseEnd;
    
     // Close Phase Actions
-    public event Action OnClosePhaseEnd;
+    public event Action<CharacterHandler[]> OnClosePhaseEnd;
    
     // 수신
     // Start Battle
@@ -89,12 +89,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
         OnCompetePhaseEnd?.Invoke();
     }
     
-    public void CompleteCompeteEnd()
+    public void CompleteCompeteEnd(CharacterHandler[] allCharacterHandlers)
     {
         if( currentPhase != PhaseState.Compete) return;
         currentPhase = PhaseState.Close;
         
-        OnClosePhaseEnd?.Invoke();
+        OnClosePhaseEnd?.Invoke(allCharacterHandlers);
     }
     
     // Close Phase Actions

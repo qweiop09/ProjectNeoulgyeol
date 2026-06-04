@@ -29,19 +29,9 @@ public class DecisionPhaseController : MonoBehaviour
     {
         Debug.Log("Setting Selected Act Data: " + characterHandler);
         
-        // CharacterBattleData actPlayerCharacterBattleData = actData.CastPlayerCharacter.GetCharacterBattleData();
-
-        // 선택된 행동의 타겟팅 데이터를 저장 (배열의 편성 순서에 맞게)
-        
-        // _playerCharacterTargetingData
-        //         [actPlayerCharacterBattleData.PlacementOrder].
-        //     GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
-        
         // 타겟팅 데이터 반영
         _playerCharacterTargetingData[characterHandler.GetCharacterBattleData().TurnOrder] = characterHandler;
         
-        // Debug.Log($"Updated Targeting Data for {actPlayerCharacterBattleData.CharacterData.name} at Slot {characterHandler.UseSlot}");
-
     }
     
     
@@ -62,7 +52,6 @@ public class DecisionPhaseController : MonoBehaviour
         _battlePhaseCoordinator.CompleteDecisionStart();
     }
     
-    
     // Middle Phase Actions
     private void StartDecisionPhaseMiddleProcess()
     {
@@ -81,8 +70,6 @@ public class DecisionPhaseController : MonoBehaviour
         
         _battlePhaseCoordinator.CompleteDecisionPerform();
     }
-    
-    // / 여기까지 검수함
     
     // End Phase Actions
     private void StartDecisionPhaseEndProcess()
