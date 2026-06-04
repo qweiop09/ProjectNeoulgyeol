@@ -6,8 +6,11 @@ namespace _01_Scripts.DTO
 public class CharacterData : ScriptableObject
 {
     // TODO: 캐릭터 스테이터스 및 정보
+    public string name;
+    
     public int maxHp;
     public int maxMp;
+    public int maxStamina;
     public int attack;
     public int defense;
 

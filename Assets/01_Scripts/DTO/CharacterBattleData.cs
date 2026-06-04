@@ -11,6 +11,7 @@ public CharacterData CharacterData;
 
 public int currentHp;
 public int currentMp;
+public int currentStamina;
 
 public int CurrentSpeed;
 
@@ -33,6 +34,7 @@ public CharacterBattleData(CharacterData characterData)
 
     currentHp = CharacterData.maxHp;
     currentMp = CharacterData.maxMp;
+    currentStamina = CharacterData.maxStamina;
 }
 
 public void SetRandomSpeed()

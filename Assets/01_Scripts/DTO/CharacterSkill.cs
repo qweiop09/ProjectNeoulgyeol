@@ -13,6 +13,9 @@ public class CharacterSkill : ScriptableObject
     
     [SerializeField] public string skillName; // 스킬 이름
     
+    [SerializeField] public int skillMpCost; // 스킬 사용에 필요한 마나 비용
+    [SerializeField] public int skillStaminaCost; // 스킬 사용에 필요한 스태미나 비용
+    
     [SerializeField] public int skillStartDistance; // 스킬의 행동 시작 거리 타입 (근거리, 원거리 등)
     
     [SerializeField] public ITimelineBinder timelineBinder; // 스킬이 실행될 때 타임라인과 데이터를 바인딩하는 인터페이스

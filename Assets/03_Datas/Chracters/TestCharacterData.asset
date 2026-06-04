@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c34f73ac0a14859b3913d7bb83e876, type: 3}
   m_Name: TestCharacterData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStatus
+  name: 
   maxHp: 100
   maxMp: 50
+  maxStamina: 0
   attack: 30
   defense: 20
   slotCount: 1
   characterSpeedLowLimit: 1
   characterSpeedHighLimit: 5
+  characterAttacks:
+  - {fileID: 11400000, guid: 7215831baef7b49d39ec39ed7f32496e, type: 2}
   characterSkills:
   - {fileID: 11400000, guid: 6e836568c2397472b982952a664f45e3, type: 2}

@@ -15,7 +15,8 @@ public class MoveToTargetBinder : ITimelineBinder
     {
         if (director == null || director.playableAsset == null || data == null ||
             data.CastPlayerCharacter == null || data.TargetPlayerCharacter == null ||
-            data.CastPlayerCharacter.transform == null || data.TargetPlayerCharacter.transform == null)
+            data.CastPlayerCharacter.transform == null || data.TargetPlayerCharacter.transform == null
+            || data.UseSkill == null)
         {
             Debug.LogError("MoveToTargetBinder: 바인딩에 필요한 값이 비어있습니다.");
             return;
@@ -35,6 +36,14 @@ public class MoveToTargetBinder : ITimelineBinder
         {
             Debug.LogError("MoveToTargetBinder: MoveToTargetTrack을 찾을 수 없습니다.");
             return;
+        }
+
+        foreach (TimelineClip clip in targetTrack.GetClips())
+        {
+            if (clip.asset is MoveToTargetClip moveToTargetClip)
+            {
+                moveToTargetClip.arrivalDistance = data.UseSkill.skillStartDistance;
+            }
         }
 
         director.SetGenericBinding(targetTrack, data.CastPlayerCharacter.transform);

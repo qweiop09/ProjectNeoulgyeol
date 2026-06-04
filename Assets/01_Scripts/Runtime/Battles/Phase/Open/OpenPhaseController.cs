@@ -11,7 +11,7 @@ public class OpenPhaseController : MonoBehaviour
     private CharacterHandler[] playerCharacters;
     private CharacterHandler[] enemyCharacters;
     
-    private CharacterHandler[] turnOrderCharacters;
+    [SerializeField] private CharacterHandler[] turnOrderCharacters;
     
     [SerializeField] private Transform[] playerCharacterPositions;
     [SerializeField] private Transform[] enemyCharacterPositions;

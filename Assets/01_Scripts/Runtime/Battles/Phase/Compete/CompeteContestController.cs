@@ -21,8 +21,6 @@ public class CompeteContestController : MonoBehaviour
     {
         Debug.Log("Compete Cycle Started with " + actDatas.Length + " actions.");
         
-        
-
         for (int i = 0; i < actDatas.Length; i++)
         {
             if (actDatas[i] == null) continue;

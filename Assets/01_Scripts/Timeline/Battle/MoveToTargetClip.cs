@@ -9,7 +9,7 @@ public class MoveToTargetClip : PlayableAsset
     public static readonly PropertyName TargetId = new PropertyName("targetEnemy");
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    [Min(0f)] public float arrivalDistance;
+    public float arrivalDistance;
     public Vector3 distanceAxisWeight = new Vector3(1f, 2f, 1f);
     public bool followTarget = true;
     public bool faceMoveDirection = true;

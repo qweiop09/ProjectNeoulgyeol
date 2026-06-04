@@ -8,4 +8,3 @@ namespace _01_Scripts.Timeline.Battle
 [TrackClipType(typeof(MoveToTargetClip))] // 이 트랙에는 MoveToTargetClip만 올림
 public class MoveToTargetTrack : TrackAsset { }
 }
-

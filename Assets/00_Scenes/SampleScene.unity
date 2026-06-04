@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 95625649}
   - component: {fileID: 95625650}
   - component: {fileID: 95625652}
-  - component: {fileID: 95625651}
   m_Layer: 0
   m_Name: ActSelectionManager
   m_TagString: Untagged
@@ -172,18 +171,6 @@ MonoBehaviour:
   actionSettingPanel: {fileID: 5832070059906060190}
   actionSettingCanvas: {fileID: 2115617653}
   menuScreenOffset: {x: 1, y: 0}
---- !u!114 &95625651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 95625648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f930d8811b3d645159fe94af19aa5e04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActionSettingController
 --- !u!114 &95625652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2454,6 +2441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OpenPhaseController
   battleManager: {fileID: 109294629}
+  turnOrderCharacters: []
   playerCharacterPositions:
   - {fileID: 641327318}
   - {fileID: 478501696}
