@@ -2,6 +2,7 @@ using System;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Decision;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace _01_Scripts.Runtime.Battles.Phase.Decision
 {
@@ -19,6 +20,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     
     [SerializeField] private CharacterChoiceController characterChoiceController;
     [SerializeField] private CharacterActionUIController characterActionUIController;
+    [SerializeField] private AttackArrowController attackArrowController;
+    [SerializeField] private Camera trackingCamera;
     
     public event Action<CharacterHandler> OnActSelected;
     
@@ -30,6 +33,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     
     private void OnEnable()
     {
+        EnsureAttackArrowController();
+        EnsureTrackingCamera();
+        
         characterChoiceController.OnCharacterSelected += HandleSelectionSignal;
         characterChoiceController.OnSelectionCleared += HandleSelectionClearedSignal;
         
@@ -48,6 +54,18 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     {
         characterChoiceController.OnCharacterSelected -= HandleSelectionSignal;
         characterChoiceController.OnSelectionCleared -= HandleSelectionClearedSignal;
+        attackArrowController?.HideTrackingArrow();
+    }
+
+    private void LateUpdate()
+    {
+        if (currentState != SelectionState.SelectingActTarget || selectedActCharacter == null)
+        {
+            attackArrowController?.HideTrackingArrow();
+            return;
+        }
+
+        attackArrowController?.ShowTrackingArrow(selectedActCharacter, GetPointerWorldPosition());
     }
     
     
@@ -64,6 +82,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     {
         Debug.Log("Ending Action Selection Phase");
         characterChoiceController.DeactivateActionSelectionPhase();
+        attackArrowController?.ClearAll();
         
         DeactivateCharacterSelectionPhase();
     }
@@ -97,6 +116,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 Debug.Log("Clearing selected act character: " + selectedActCharacter.name);
                 characterActionUIController.HandleSelectionCleared();
                 
+                attackArrowController?.HideFixedArrow(selectedActCharacter);
+                attackArrowController?.HideTrackingArrow();
                 selectedActCharacter.GetCharacterBattleData().TargetingData[0] = null;
                 selectedActCharacter = null;
             }
@@ -157,6 +178,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
              selectedActCharacter.GetCharacterBattleData()
                  .TargetingData[0].TargetPlayerCharacter = characterHandler;
              
+             attackArrowController?.ShowFixedArrow(selectedActCharacter, selectedActTarget);
+             attackArrowController?.HideTrackingArrow();
+             
              ChangeSelectionState(SelectionState.SelectingActCharacter);
          }
          else
@@ -175,6 +199,65 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         if (currentState == SelectionState.SelectingActCharacter ) return;
         
         ChangeSelectionState(currentState - 1 );
+    }
+
+    public void SetAttackArrowsVisible(bool visible)
+    {
+        attackArrowController?.SetFixedArrowsVisible(visible);
+    }
+
+    public void ShowAttackArrows()
+    {
+        attackArrowController?.ShowFixedArrows();
+    }
+
+    public void HideAttackArrows()
+    {
+        attackArrowController?.HideFixedArrows();
+    }
+
+    public void ToggleAttackArrows()
+    {
+        attackArrowController?.ToggleFixedArrows();
+    }
+
+    private void EnsureAttackArrowController()
+    {
+        if (attackArrowController != null)
+            return;
+
+        attackArrowController = FindFirstObjectByType<AttackArrowController>();
+
+        if (attackArrowController != null)
+            return;
+
+        GameObject attackArrowControllerObject = new GameObject("AttackArrowController");
+        attackArrowController = attackArrowControllerObject.AddComponent<AttackArrowController>();
+    }
+
+    private void EnsureTrackingCamera()
+    {
+        if (trackingCamera == null)
+            trackingCamera = Camera.main;
+    }
+
+    private Vector3 GetPointerWorldPosition()
+    {
+        EnsureTrackingCamera();
+
+        if (trackingCamera == null)
+            return selectedActCharacter.transform.position;
+
+        Vector2 pointerScreenPosition = Pointer.current != null
+            ? Pointer.current.position.ReadValue()
+            : Vector2.zero;
+
+        Vector3 screenPosition = new Vector3(
+            pointerScreenPosition.x,
+            pointerScreenPosition.y,
+            Mathf.Abs(trackingCamera.transform.position.z - selectedActCharacter.transform.position.z));
+
+        return trackingCamera.ScreenToWorldPoint(screenPosition);
     }
 
     
