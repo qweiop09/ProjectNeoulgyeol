@@ -26,24 +26,48 @@ public class CharacterChoiceController : MonoBehaviour
 
     // 캐릭터가 선택됐을 때 외부에 알리는 이벤트
     public event System.Action<CharacterHandler> OnCharacterSelected;
-    // 빈 곳 클릭했을 때 (선택 해제)
-    public event System.Action OnSelectionCleared;
 
     // 선택 페이즈 시작
     public void ActivateActionSelectionPhase()
     {
+        Debug.Log("Activating Action Selection Phase");
+        
         isActive = true;
         EnableLeftClickAction();
+        selectedCharacter = null;
     }
 
     // 선택 페이즈 종료
     public void DeactivateActionSelectionPhase()
     {
+        Debug.Log("Deactivating Action Selection Phase");
+        
         isActive = false;
-        DisableLeftClickActionIfNeeded();
+        DisableLeftClickAction();
         selectedCharacter = null;
     }
+    
+    // 클릭 감지 활성화
+    private void EnableLeftClickAction()
+    {
+        if (leftClickAction.action == null) return;
 
+        if (!leftClickAction.action.enabled)
+        {
+            leftClickAction.action.Enable();
+            enabledLeftClickActionInternally = true;
+        }
+    }
+
+    // 클릭 감지 비활성화
+    private void DisableLeftClickAction()
+    {
+        if (enabledLeftClickActionInternally && leftClickAction?.action != null)
+            leftClickAction.action.Disable();
+
+        enabledLeftClickActionInternally = false;
+    }
+    
     private void Awake()
     {
         if (raycastCamera == null)
@@ -63,6 +87,9 @@ public class CharacterChoiceController : MonoBehaviour
 
         DeactivateActionSelectionPhase();
     }
+    
+    
+    // 기능
 
     // 클릭 시 캐릭터 선택 시도
     private void OnLeftClickPerformed(InputAction.CallbackContext context)
@@ -82,16 +109,6 @@ public class CharacterChoiceController : MonoBehaviour
         CharacterHandler hitCharacterHandler = GetRayCastHitTransform(ray);
         
         Debug.Log("RayCast hit: " + (hitCharacterHandler != null ? hitCharacterHandler.name : "None"));
-
-        // 빈공간 클릭했을 때 UI지우기용 클릭 감지
-        if (hitCharacterHandler == null)
-        {
-            Debug.Log("No character hit, clearing selection.");
-            
-            selectedCharacter = null;
-            OnSelectionCleared?.Invoke();
-            return;
-        }
 
         selectedCharacter = hitCharacterHandler;
         OnCharacterSelected?.Invoke(selectedCharacter);
@@ -113,35 +130,14 @@ public class CharacterChoiceController : MonoBehaviour
         return null;
     }
 
-    // 클릭 감지 활성화
-    private void EnableLeftClickAction()
-    {
-        if (leftClickAction.action == null) return;
-
-        if (!leftClickAction.action.enabled)
-        {
-            leftClickAction.action.Enable();
-            enabledLeftClickActionInternally = true;
-        }
-    }
-
-    // 클릭 감지 비활성화
-    private void DisableLeftClickActionIfNeeded()
-    {
-        if (enabledLeftClickActionInternally && leftClickAction?.action != null)
-            leftClickAction.action.Disable();
-
-        enabledLeftClickActionInternally = false;
-    }
-
     private Vector2 GetPointerScreenPosition()
     {
         if (pointerPositionAction.action != null)
             return pointerPositionAction.action.ReadValue<Vector2>();
-
+    
         if (Pointer.current != null)
             return Pointer.current.position.ReadValue();
-
+    
         return Vector2.zero;
     }
 }

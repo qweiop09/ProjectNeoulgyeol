@@ -25,12 +25,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
     public event Action OnOpenPhaseStart;  
    
     // Decision Phase Actions
-    public event Action<CharacterHandler[], CharacterHandler[], CharacterHandler[]> OnDecisionPhaseStart;
+    public event Action<CharacterHandler[]> OnDecisionPhaseStart;
     public event Action OnDecisionPhasePerform;             
     public event Action OnDecisionPhaseEnd;                
    
     // Compete Phase Actions
-    public event Action<CharacterHandler[], CharacterHandler[]> OnCompetePhaseStart;
+    public event Action<CharacterHandler[]> OnCompetePhaseStart;
     public event Action OnCompetePhasePerform;
     public event Action OnCompetePhaseEnd;
    
@@ -47,12 +47,12 @@ public class BattlePhaseCoordinator : MonoBehaviour
     }
    
     // Open Phase Actions
-    public void CompleteOpenPhaseStart(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData, CharacterHandler[] turnOrderCharacters)
+    public void CompleteOpenPhaseStart(CharacterHandler[] turnOrderCharacters)
     {
         if( currentPhase != PhaseState.Open) return;
         currentPhase = PhaseState.Decision;
         
-        OnDecisionPhaseStart?.Invoke(playerBattleData, enemyBattleData, turnOrderCharacters);
+        OnDecisionPhaseStart?.Invoke(turnOrderCharacters);
     }
     
     // Decision Phase Actions
@@ -67,13 +67,13 @@ public class BattlePhaseCoordinator : MonoBehaviour
         if( currentPhase != PhaseState.Decision) return;
         OnDecisionPhaseEnd?.Invoke();
     }
-    
-    public void CompleteDecisionEnd(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData)
+
+    public void CompleteDecisionEnd(CharacterHandler[] allCharacterHandlers)
     {
         if( currentPhase != PhaseState.Decision) return;
         currentPhase = PhaseState.Compete;
         
-        OnCompetePhaseStart?.Invoke(playerBattleData, enemyBattleData);
+        OnCompetePhaseStart?.Invoke(allCharacterHandlers);
     }
     
     // Compete Phase Actions

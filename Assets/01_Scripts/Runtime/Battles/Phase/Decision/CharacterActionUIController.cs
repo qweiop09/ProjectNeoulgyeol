@@ -1,4 +1,5 @@
 using System;
+using _01_Scripts.DTO;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles.Phase.Decision
@@ -11,7 +12,7 @@ public class CharacterActionUIController : MonoBehaviour
     [SerializeField] private Vector2 menuScreenOffset = new Vector2(120f, 0f);
     
     // 행동대상을 선택해야 할 때 외부에 알리는 이벤트
-    public event Action<CharacterHandler> CompletedActionSetting;
+    public event Action<CharacterSkill> CompletedActionSetting;
     private CharacterHandler _currentHandler; // 행동을 설정 중인 캐릭터 핸들러
     
     private RectTransform _activeActionSettingMenu;
@@ -29,13 +30,13 @@ public class CharacterActionUIController : MonoBehaviour
         }
     }
 
-    public void HandleCharacterSelected(CharacterHandler characterHandler)
+    public void HandleCharacterSelected(ActData actData)
     {
         Debug.Log("setting action for character: "
-                  + characterHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.name);
-        _currentHandler = characterHandler;
+                  + actData.CastPlayerCharacter.characterBattleData.CharacterData.name);
+        _currentHandler = actData.CastPlayerCharacter;
         
-        ShowActionMenu(characterHandler);
+        ShowActionMenu(actData);
     }
 
     public void HandleSelectionCleared()
@@ -51,18 +52,19 @@ public class CharacterActionUIController : MonoBehaviour
     }
     
 
-    private void ShowActionMenu(CharacterHandler actData)
+    private void ShowActionMenu(ActData actData)
     {
         Debug.Log("ShowActionMenu called for character: "
-                  + actData.characterBattleData.TargetingData[0].CastPlayerCharacter.name);
+                  + actData.CastPlayerCharacter.name);
         
         RectTransform menu = GetActionMenu();
         if (menu == null) return;
         
-        Vector3 menuScreenPosition = actData.characterBattleData.TargetingData[0].CastPlayerCharacter.transform.position + (Vector3)menuScreenOffset;
+        Vector3 menuScreenPosition =
+            actData.CastPlayerCharacter.transform.position + (Vector3)menuScreenOffset;
         
         GetActionMenu().gameObject.SetActive(true);
-
+    
         menu.position = menuScreenPosition;
     }
 
@@ -88,27 +90,29 @@ public class CharacterActionUIController : MonoBehaviour
     {
         Debug.Log("Attack Button Pressed");
 
-        Debug.Log(_currentHandler == null);
-        Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter == null);
-        Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData() == null);
-        Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0] == null);
-        Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData == null);
-        Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterAttacks[0] == null);
+        // Debug.Log(_currentHandler == null);
+        // Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter == null);
+        // Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData() == null);
+        // Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0] == null);
+        // Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData == null);
+        // Debug.Log(_currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterAttacks[0] == null);
         
-         _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0].UseSkill = 
-            _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterAttacks[useAttackNumber];
+         // _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0].UseSkill = 
+         //    _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterAttacks[useAttackNumber];
          
-        CompletedActionSetting?.Invoke(_currentHandler);
+        
+         
+        CompletedActionSetting?.Invoke(_currentHandler.characterBattleData.CharacterData.characterAttacks[useAttackNumber]);
     }
     
     public void PressedSkillButton(int useSkillNumber)
     {
         Debug.Log("Skill Button Pressed");
         
-        _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0].UseSkill = 
-            _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterSkills[useSkillNumber];
+        // _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().TargetingData[0].UseSkill = 
+        //     _currentHandler.characterBattleData.TargetingData[0].CastPlayerCharacter.GetCharacterBattleData().CharacterData.characterSkills[useSkillNumber];
         
-        CompletedActionSetting?.Invoke(_currentHandler);
+        CompletedActionSetting?.Invoke(_currentHandler.characterBattleData.CharacterData.characterSkills[useSkillNumber]);
     }
     
     // 아래에 UI 버튼 클릭 시 호출할 메서드 추가 (예: PressedDefendButton, PressedItemButton 등)

@@ -103,7 +103,7 @@ public class OpenPhaseController : MonoBehaviour
         Debug.Log("Open Phase Started");
         
         // Open Phase End
-        battlePhaseCoordinator.CompleteOpenPhaseStart( playerCharacters, enemyCharacters, turnOrderCharacters);
+        battlePhaseCoordinator.CompleteOpenPhaseStart(turnOrderCharacters);
     }
     
     // 두개를 하나로 묶는거
@@ -120,13 +120,15 @@ public class OpenPhaseController : MonoBehaviour
         
         int i = 0;
         
-        while (_playerCharacterBattleDatas.Count == 0 && _enemyCharacterTargetDatas.Count == 0)
+        while (_playerCharacterBattleDatas.Count != 0 || _enemyCharacterTargetDatas.Count != 0)
         {
             // 이거 하나 다 되면 오류날 예정
             // 하고 오류나는 부분만 고치고 테스트
             
-            if (_playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >= _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed
-                || _enemyCharacterTargetDatas.Count == 0 || _playerCharacterBattleDatas.Count != 0)
+            if (_enemyCharacterTargetDatas.Count == 0 ||
+                (_playerCharacterBattleDatas.Count > 0 &&
+                 _playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >=
+                 _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed))
             {
                 _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
                 _playerCharacterBattleDatas.RemoveAt(0);

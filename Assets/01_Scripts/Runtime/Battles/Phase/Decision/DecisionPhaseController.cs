@@ -11,8 +11,8 @@ public class DecisionPhaseController : MonoBehaviour
     [SerializeField] private ActionSelectionPhaseManager actionSelectionPhaseManager;
     
     private CharacterHandler[] _turnOrderCharacters;
-    private CharacterHandler[] _playerCharacterTargetingData;
-    private CharacterHandler[] _enemyCharacterTargetingData;
+    // private CharacterHandler[] _playerCharacterTargetingData;
+    // private CharacterHandler[] _enemyCharacterTargetingData;
     
     
     private void Awake()
@@ -22,25 +22,29 @@ public class DecisionPhaseController : MonoBehaviour
         _battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
         _battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
         
-        actionSelectionPhaseManager.OnActSelected += SetSelectedActData;
+        actionSelectionPhaseManager.CompleteActSelected += SetSelectedActData;
     }
     
-    private void SetSelectedActData(CharacterHandler characterHandler)
+    private void SetSelectedActData(ActData actData)
     {
-        Debug.Log("Setting Selected Act Data: " + characterHandler);
+        Debug.Log("Setting Selected Act Data: " + actData);
         
         // 타겟팅 데이터 반영
-        _playerCharacterTargetingData[characterHandler.GetCharacterBattleData().TurnOrder] = characterHandler;
+        Debug.Log(actData.CastPlayerCharacter.GetCharacterBattleData().TurnOrder);
+        Debug.Log(_turnOrderCharacters.Length);
         
+        Debug.Log(actData.UseSlot);
+        Debug.Log(actData.CastPlayerCharacter.GetCharacterBattleData().TargetingData.Length);
+        
+        _turnOrderCharacters
+            [actData.CastPlayerCharacter.GetCharacterBattleData().TurnOrder]
+            .GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
     }
     
     
     // Start Phase Actions
-    private void StartDecisionPhase(CharacterHandler[] playerBattleData, CharacterHandler[] enemyBattleData, CharacterHandler[] turnOrderCharacters)    {
-        
-        _playerCharacterTargetingData = playerBattleData;
-        _enemyCharacterTargetingData = enemyBattleData;
-        
+    private void StartDecisionPhase(CharacterHandler[] turnOrderCharacters)    
+    {
         _turnOrderCharacters = turnOrderCharacters;
         
         CompleteDecisionPhaseStartProcess();
@@ -81,7 +85,7 @@ public class DecisionPhaseController : MonoBehaviour
     {
         Debug.Log("Decision Phase Ended");
         
-        _battlePhaseCoordinator.CompleteDecisionEnd(_playerCharacterTargetingData, _enemyCharacterTargetingData);
+        _battlePhaseCoordinator.CompleteDecisionEnd(_turnOrderCharacters);
         
         
     }
