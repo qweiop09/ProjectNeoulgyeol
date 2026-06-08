@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c34f73ac0a14859b3913d7bb83e876, type: 3}
   m_Name: TestCharacterData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStatus
-  name: 
+  name: "\uC911\uC9C0 \uC81C\uC790 \uC774\uC2A4\uB9C8\uC5D8"
   maxHp: 100
   maxMp: 50
   maxStamina: 0

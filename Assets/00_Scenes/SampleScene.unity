@@ -153,7 +153,9 @@ MonoBehaviour:
   currentState: 0
   characterChoiceController: {fileID: 95625652}
   characterActionUIController: {fileID: 95625650}
-  selectedActCharacter: {fileID: 0}
+  attackArrowController: {fileID: 2011622471}
+  trackingCamera: {fileID: 330585545}
+  selectedActCaster: {fileID: 0}
   selectedActTarget: {fileID: 0}
 --- !u!114 &95625650
 MonoBehaviour:
@@ -282,6 +284,7 @@ Transform:
   - {fileID: 1222975763}
   - {fileID: 1341329608}
   - {fileID: 1101826396}
+  - {fileID: 2011622473}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &117546378
@@ -2628,6 +2631,80 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &2011622470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2011622473}
+  - component: {fileID: 2011622471}
+  - component: {fileID: 2011622472}
+  m_Layer: 0
+  m_Name: ArrayController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2011622471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011622470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfc7e780bdf494d9323396c094fda8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.AttackArrowController
+  arrowPrefab: {fileID: 0}
+  arrowMaterial: {fileID: 0}
+  arrowColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  lineWidth: 0.06
+  outlineWidth: 0.12
+  arrowHeadSize: 0.35
+--- !u!114 &2011622472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011622470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ac2f74fe88402398173b25bfca156b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.AttackArrowView
+  outlineLineRenderer: {fileID: 0}
+  lineRenderer: {fileID: 0}
+  outlineArrowHead: {fileID: 0}
+  arrowHead: {fileID: 0}
+  verticalOffset: 0.8
+  startPadding: 0.35
+  endPadding: 0.45
+  arcHeight: 1.2
+  distanceArcHeightRatio: 0.15
+  segmentCount: 24
+--- !u!4 &2011622473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011622470}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 109294630}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2033895993
 GameObject:
   m_ObjectHideFlags: 0

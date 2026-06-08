@@ -11,9 +11,6 @@ public class DecisionPhaseController : MonoBehaviour
     [SerializeField] private ActionSelectionPhaseManager actionSelectionPhaseManager;
     
     private CharacterHandler[] _turnOrderCharacters;
-    // private CharacterHandler[] _playerCharacterTargetingData;
-    // private CharacterHandler[] _enemyCharacterTargetingData;
-    
     
     private void Awake()
     {
