@@ -1,6 +1,7 @@
 using System;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Decision;
+using _01_Scripts.Runtime.Battles.Phase.Decision.ActionMenu;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -202,7 +203,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         {
             characterActionUIController.HandleCharacterSelected(_currentActData);
             await CameraHandler.Instance.MoveToLerp(
-                selectedActCaster.transform.position + new Vector3(1f, 0, -10), 1);
+                selectedActCaster.transform.position + new Vector3(1.2f, 0.2f, -10), 1.2f);
         }
     }
     public void SetAttackArrowsVisible(bool visible) => attackArrowController?.SetFixedArrowsVisible(visible);

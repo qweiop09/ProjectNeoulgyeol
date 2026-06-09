@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c34f73ac0a14859b3913d7bb83e876, type: 3}
+  m_Name: TestCharacterData
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStatus
+  name: "\uC911\uC9C0 \uC81C\uC790 \uC774\uC2A4\uB9C8\uC5D8"
+  maxHp: 100
+  maxMp: 50
+  maxStamina: 100
+  attack: 30
+  defense: 20
+  slotCount: 1
+  characterSpeedLowLimit: 1
+  characterSpeedHighLimit: 5
+  characterAttacks:
+  - {fileID: 11400000, guid: 7215831baef7b49d39ec39ed7f32496e, type: 2}
+  characterSkills:
+  - {fileID: 11400000, guid: 6e836568c2397472b982952a664f45e3, type: 2}

@@ -56,7 +56,7 @@ public class CameraHandler : Singleton<CameraHandler>
         camera.orthographicSize = targetSize;
     }
     
-    public async Task MoveToLerp(Vector3 targetPosition, int targetSize)
+    public async Task MoveToLerp(Vector3 targetPosition, float targetSize)
     {
         if (isFollowing)
             return;
