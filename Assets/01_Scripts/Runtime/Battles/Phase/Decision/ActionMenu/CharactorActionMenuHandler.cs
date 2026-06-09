@@ -35,6 +35,10 @@ public class CharacterActionMenuHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI actCharacterNameText; // 행동 메뉴에 표시될 캐릭터 이름 텍스트
     [SerializeField] private TextMeshProUGUI[] texts = new TextMeshProUGUI[5]; // 바뀔 텍스트들
     
+    [SerializeField] private Button previousPageButton; // 이전 페이지 버튼
+    [SerializeField] private Button nextPageButton; // 다음 페이지 버튼
+    [SerializeField] private Button backButton; // 뒤로가기 버튼
+    
     [SerializeField] private Slider hpSlider; // 체력 슬라이더
     [SerializeField] private Slider staminaSlider; // 스테미너 슬라이더
 
@@ -73,9 +77,39 @@ public class CharacterActionMenuHandler : MonoBehaviour
     {
         UpdateActionMenuCharacterStatus();
         UpdateActionMenuTexts();
+
+        if (currentActionType == ActionType.None)
+        {
+            previousPageButton.gameObject.SetActive(false);
+            nextPageButton.gameObject.SetActive(false);
+            backButton.gameObject.SetActive(false);
+            
+            return;
+        }
+
+        SetPageMoveButtons();
+    }
+
+    public void SetPageMoveButtons()
+    {
+        if (currentActionType == ActionType.Attack)
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().CharacterData.characterAttacks.Length);
+
+        if (currentActionType == ActionType.Skill)
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length);
         
-        // 페이지 이동버튼 활성화 여부 업데이트
-        // 이전 버튼 활성화 여부
+        if(currentActionType == ActionType.Item){}
+            // 아이템 관련 기능 추가되면 개발하기
+        
+    }
+
+    private void SetPageMoveButtonsRefInt(int arrayCount)
+    {
+        previousPageButton.gameObject.SetActive(actMenuPage != 0);
+                        
+        nextPageButton.gameObject.SetActive(actMenuPage != Mathf.CeilToInt(arrayCount / 5f) - 1);
+        
+        backButton.gameObject.SetActive(currentActionType != ActionType.None);
     }
 
     public void UpdateActionMenuCharacterStatus()
@@ -110,9 +144,9 @@ public class CharacterActionMenuHandler : MonoBehaviour
     
     private void SetTexts(CharacterSkill[] skills)
     {
-        for (int i = 0; i < texts.Length; i++)
+        for (int i = 0; i < 5; i++)
         {
-            if (i < skills.Length)
+            if (i + actMenuPage * 5 < skills.Length)
             {
                 texts[i].text = skills[i + actMenuPage * 5].skillName;
                 texts[i].GameObject().SetActive(true);
@@ -127,9 +161,9 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void SetTexts(String[] names)
     {
-        for (int i = 0; i < texts.Length; i++)
+        for (int i = 0; i < 5; i++)
         {
-            if (i < names.Length)
+            if (i + actMenuPage * 5 < names.Length)
             {
                 texts[i].text = names[i];
                 texts[i].GameObject().SetActive(true);
@@ -192,7 +226,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
                 break;
         }
         
-        UpdateActionMenuTexts();
+        UpdateMenu();
     }
 
     private void AttackStatePressed(int pressedButtonNumber)
@@ -202,6 +236,8 @@ public class CharacterActionMenuHandler : MonoBehaviour
         
         CompletedActionSetting?.Invoke(currentHandler.GetCharacterBattleData().CharacterData
             .characterAttacks[pressedButtonNumber]);
+        
+        UpdateMenu(); 
     }
 
     private void SkillStatePressed(int pressedButtonNumber)
@@ -211,6 +247,8 @@ public class CharacterActionMenuHandler : MonoBehaviour
         
         CompletedActionSetting?.Invoke(currentHandler.GetCharacterBattleData().CharacterData
             .characterSkills[pressedButtonNumber]);
+        
+        UpdateMenu(); 
     }
 
     private void ItemStatePressed(int pressedButtonNumber)
@@ -226,12 +264,13 @@ public class CharacterActionMenuHandler : MonoBehaviour
         actMenuPage = Mathf.Clamp(actMenuPage, 0, maxPage - 1);
         // 아이템 불러와지면 클램프 범위 조정 필요
         
-        UpdateActionMenuTexts();
+        UpdateMenu();
     }
 
     public void BackPage()
     {
         currentActionType = ActionType.None;
+        actMenuPage = 0;
         
         UpdateMenu();
     }
