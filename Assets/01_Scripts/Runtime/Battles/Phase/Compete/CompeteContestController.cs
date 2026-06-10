@@ -29,6 +29,8 @@ public class CompeteContestController : MonoBehaviour
             
             await PlayMoveToTarget(actDatas[i]);
             Debug.Log("PlayCompete Start");
+            
+            CharacterStatusCalculator.Instance.UseSkill(actDatas[i].CastPlayerCharacter,actDatas[i].UseSkill);
             await PlayCompete(actDatas[i]);
             
             CameraHandler.Instance.UnsetFollowTransform();
