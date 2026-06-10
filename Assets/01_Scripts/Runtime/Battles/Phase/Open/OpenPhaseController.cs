@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _01_Scripts.Runtime.Battles.Phase.Open.EnemyTargeting;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles.Phase.Open
@@ -7,6 +8,9 @@ public class OpenPhaseController : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
     private BattlePhaseCoordinator battlePhaseCoordinator;
+    
+    [SerializeField] private EnemyActionController enemyActionController;
+    [SerializeField] private AttackArrowController attackArrowController;
     
     private CharacterHandler[] playerCharacters;
     private CharacterHandler[] enemyCharacters;
@@ -33,28 +37,14 @@ public class OpenPhaseController : MonoBehaviour
         enemyCharacters = _enemyCharacters;
         
         for(int i = 0; i < playerCharacters.Length; i++)
-        {
             playerCharacters[i].GetCharacterBattleData().TargetingData = 
                 new ActData[playerCharacters[i].characterBattleData.CharacterData.slotCount];
             
-            // for( int ii = 0; ii < playerCharacters[i].characterBattleData.CharacterData.slotCount; ii++)
-            // {
-            //     Debug.Log(ii);
-            //     
-            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii] = new ActData();
-            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii].CastPlayerCharacter = playerCharacters[i];
-            // }
-        }
+        
         for (int i = 0; i < enemyCharacters.Length; i++)
-        {
             enemyCharacters[i].GetCharacterBattleData().TargetingData = 
                 new ActData[enemyCharacters[i].characterBattleData.CharacterData.slotCount];
-            // for(int ii = 0; ii < enemyCharacters[i].characterBattleData.CharacterData.slotCount; ii++)
-            // {
-            //     playerCharacters[i].GetCharacterBattleData().TargetingData[ii] = new ActData();
-            //     enemyCharacters[i].GetCharacterBattleData().TargetingData[ii].CastPlayerCharacter = enemyCharacters[i];
-            // }
-        }
+        
         
         StartOpenPhase();
     }
@@ -92,7 +82,10 @@ public class OpenPhaseController : MonoBehaviour
             new List<CharacterHandler>(playerCharacters), 
             new List<CharacterHandler>(enemyCharacters)
         );
-            
+        
+        enemyActionController.SetTargeting(enemyCharacters, playerCharacters);
+        attackArrowController.RedrawArrows(turnOrderCharacters);
+        
         CompleteOpenPhaseProcess();
     }
     
