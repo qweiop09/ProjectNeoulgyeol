@@ -1,6 +1,8 @@
+using System;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Timeline;
+using _01_Scripts.Timeline.Battle.Marker;
 
 namespace _01_Scripts.Runtime.Battles.Compete
 {using System.Threading.Tasks;
@@ -14,7 +16,25 @@ public class CompeteContestController : MonoBehaviour
     [SerializeField] private TimelineAsset moveToTargetTimelineAsset;
     [SerializeField] private MoveToTargetBinder moveToTargetBinder;
     
+    [SerializeField] private QTEListner qteListner;
+    
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
+
+    public void OnEnable()
+    {
+        qteListner.OnQteCompleted += ApplyQteResult;
+    }
+    
+    public void OnDisable()
+    {
+        qteListner.OnQteCompleted -= ApplyQteResult;
+    }
+    
+    private void ApplyQteResult(QTEResult result, QTEDataMarker data)
+    {
+        Debug.Log("QTE Result: " + result);
+        // QTE 결과에 따른 추가 효과 적용 로직을 여기에 구현
+    }
 
     // 한 캐릭터의 모든 행동을 실행
     public async Task StartCompeteCycle(ActData[] actDatas)

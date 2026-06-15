@@ -203,7 +203,7 @@ Transform:
   m_GameObject: {fileID: 95625648}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.9554601, y: 6.18952, z: -14.77132}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -264,11 +264,7 @@ MonoBehaviour:
   StartButton: {fileID: 850343676}
   testFlendlyCharacterDatas:
   - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
-  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
-  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
   testEnemyCharacterDatas:
-  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
-  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
   - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
 --- !u!4 &109294630
 Transform:
@@ -279,7 +275,7 @@ Transform:
   m_GameObject: {fileID: 109294627}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.04454, y: -5.18952, z: 14.77132}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -288,6 +284,7 @@ Transform:
   - {fileID: 1222975763}
   - {fileID: 1341329608}
   - {fileID: 1101826396}
+  - {fileID: 2139087396}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &117546378
@@ -586,6 +583,7 @@ MonoBehaviour:
   timelineDirector: {fileID: 117546390}
   director: {fileID: 117546389}
   characterType: 0
+  animator: {fileID: 0}
 --- !u!320 &117546389
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -1623,6 +1621,7 @@ MonoBehaviour:
   timelineDirector: {fileID: 533880745}
   director: {fileID: 533880744}
   characterType: 0
+  animator: {fileID: 0}
 --- !u!320 &533880744
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -1919,8 +1918,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccb07ec44181a44118cd2add8bc58f0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
-  animator: {fileID: 533880750}
-  markerReceiver: {fileID: 533880751}
 --- !u!4 &533880753
 Transform:
   m_ObjectHideFlags: 0
@@ -3236,6 +3233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompeteContestController
   moveToTargetTimelineAsset: {fileID: 11400000, guid: d4b0bf5340597481b9565cd34477085c, type: 2}
   moveToTargetBinder: {fileID: 11400000, guid: 20eb2e47acc30485e980873366b8f1a1, type: 2}
+  qteListner: {fileID: 2139087397}
   MoveToTargetWaitTime: 500
 --- !u!4 &1341329608
 Transform:
@@ -4911,6 +4909,51 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2139087395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2139087396}
+  - component: {fileID: 2139087397}
+  m_Layer: 0
+  m_Name: QTEController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2139087396
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139087395}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 109294630}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2139087397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139087395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee49f0bad02304a2e8e89a8f3d774de0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.QTEController
+  qteInputAction: {fileID: -7213540289254391809, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
 --- !u!1 &1377239804249712
 GameObject:
   m_ObjectHideFlags: 0
@@ -5203,12 +5246,14 @@ PlayableDirector:
   m_GameObject: {fileID: 1377239804249712}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 0}
+  m_PlayableAsset: {fileID: 11400000, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
   m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
-  m_SceneBindings: []
+  m_SceneBindings:
+  - key: {fileID: 6091614318856208523, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
+    value: {fileID: 95975119788970268}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &212971026991054560
@@ -5226,6 +5271,7 @@ MonoBehaviour:
   timelineDirector: {fileID: 212971026991054561}
   director: {fileID: 212971026991054559}
   characterType: 0
+  animator: {fileID: 95975119788970268}
 --- !u!114 &212971026991054561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5263,8 +5309,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccb07ec44181a44118cd2add8bc58f0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
-  animator: {fileID: 95975119788970268}
-  markerReceiver: {fileID: 212971026991054562}
 --- !u!224 &246248306340448913
 RectTransform:
   m_ObjectHideFlags: 0

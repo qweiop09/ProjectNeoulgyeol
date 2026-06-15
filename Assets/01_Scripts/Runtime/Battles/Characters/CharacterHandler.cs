@@ -15,12 +15,14 @@ public class CharacterHandler : MonoBehaviour
         , Enemy
     }
     
-    [SerializeField] public TimelineDirector timelineDirector; 
+    [SerializeField] public TimelineDirector timelineDirector;
     [SerializeField] public PlayableDirector director;
 
     [SerializeField] public CharacterType characterType;
     
     // 애니메니터 (대기모션 등 타임라인 재생이 필요없는 애니메이션을 관리)
+    // [SerializeField] public CharacterAnimationMonitor animationMonitor;
+    [SerializeField] public Animator animator;
     
     [Space(10)]
     [Header("internal fields")]

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.CharacterSkill
   skillName: "\uBC1C\uCC28\uAE30"
   skillMpCost: 0
-  skillStaminaCost: 0
+  skillStaminaCost: 10
   skillStartDistance: 1
-  timelineBinder: {fileID: 0}
+  timelineBinder: {fileID: 11400000, guid: 095e822eea6064748847b1a723b76a65, type: 2}
   skillTimelineAsset: {fileID: 11400000, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}

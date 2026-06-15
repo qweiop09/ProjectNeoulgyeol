@@ -49,6 +49,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "QTEInput",
+            "id": "0abff2ed-344f-4442-bd07-0e2062d35918",
+            "actions": [
+                {
+                    "name": "QTEInput",
+                    "type": "Button",
+                    "id": "84a0a03e-e550-466f-b765-4fe2b3ff2984",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "cc07bfc6-138a-4382-9cde-7acb91935eb9",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QTEInput",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

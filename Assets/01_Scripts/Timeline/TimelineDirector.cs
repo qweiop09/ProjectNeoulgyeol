@@ -32,8 +32,8 @@ public class TimelineDirector : MonoBehaviour
             return;
         }
         
-        castCharacterHandler.director.playableAsset = timelineAsset; // PlayAsync를 호출하는 캐릭터의 Director에 TimelineAsset 할당
         castCharacterHandler.director = director; // PlayAsync를 호출하는 캐릭터에 Director 할당
+        castCharacterHandler.director.playableAsset = timelineAsset; // PlayAsync를 호출하는 캐릭터의 Director에 TimelineAsset 할당
                 
         director.playableAsset = timelineAsset;
         if (data != null)
@@ -41,6 +41,7 @@ public class TimelineDirector : MonoBehaviour
         else
             Debug.LogWarning("TimelineDirector: ActData가 비어있습니다.");
 
+        Debug.Log("TimelineDirector: 타임라인 재생 시작");
         director.Play();
     }
 
