@@ -11,6 +11,11 @@ public class EnemyActionController : MonoBehaviour
         for (int i = 0; i < casters.Length; i++)
         {
             CharacterHandler caster = casters[i];
+            
+            if(caster.GetCharacterBattleData().currentState == CharacterState.Dead
+               || caster.GetCharacterBattleData().currentState == CharacterState.Staggered)
+                continue; // 행동 불가 상태면 스킵
+            
             int remainingStamina = caster.GetCharacterBattleData().currentStamina; // 참조만, 차감 안 함
             CharacterSkill[] availableAttacks = caster.characterBattleData.CharacterData.characterAttacks;
 

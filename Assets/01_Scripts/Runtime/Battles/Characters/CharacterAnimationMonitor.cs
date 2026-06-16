@@ -16,6 +16,17 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
     // animator: 재생할 캐릭터의 Animator
     // characterData: 클립을 가져올 캐릭터 데이터
     // state: 재생하고자 하는 상태
+    public void PlayAnimation(CharacterHandler characterHandler, CharacterState state)
+    {
+        CharacterAnimationState characterAnimationState = CharacterAnimationState.Idle;
+        
+        if(state == CharacterState.Normal) characterAnimationState = CharacterAnimationState.Idle;
+        // else if(state == CharacterState.Staggered) characterAnimationState = CharacterAnimationState.Idle;
+        else if(state == CharacterState.Dead) characterAnimationState = CharacterAnimationState.Dead;
+
+        PlayAnimation(characterHandler, characterAnimationState);
+    }
+    
     public void PlayAnimation(CharacterHandler characterHandler, CharacterAnimationState state)
     {
         if (characterHandler.animator == null || characterHandler == null) return;

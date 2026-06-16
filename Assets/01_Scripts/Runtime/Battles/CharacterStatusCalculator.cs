@@ -31,9 +31,12 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         target.GetCharacterBattleData().currentHp 
             = Mathf.Clamp(target.GetCharacterBattleData().currentHp,
                 0, target.GetCharacterBattleData().CharacterData.maxHp);
-        
-        if(IsDead(target))
+
+        if (IsDead(target))
+        {
+            target.GetCharacterBattleData().SetCurrentState(CharacterState.Dead);
             isCharacterDead?.Invoke(target);
+        }
 
         Debug.Log(target.name + " 회복: " + amount + " / 현재 HP: " + target.GetCharacterBattleData().currentHp);
     }
@@ -58,8 +61,11 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
             = Mathf.Clamp(target.GetCharacterBattleData().currentStamina,
                 0, target.GetCharacterBattleData().CharacterData.maxStamina);
 
-        if(IsStaggered(target))
+        if (IsStaggered(target))
+        {
+            target.GetCharacterBattleData().SetCurrentState(CharacterState.Staggered);
             isCharacterStagger?.Invoke(target);
+        }
         
         Debug.Log(target.name + " 스테미나 회복: " + amount + " / 현재 스테미나: " + target.GetCharacterBattleData().currentStamina);
     }

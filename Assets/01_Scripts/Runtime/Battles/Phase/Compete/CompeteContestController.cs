@@ -64,6 +64,9 @@ public class CompeteContestController : MonoBehaviour
         for (int i = 0; i < actDatas.Length; i++)
         {
             if (actDatas[i] == null) continue;
+            if (actDatas[i].CastPlayerCharacter.characterBattleData.currentState == CharacterState.Dead
+                || actDatas[i].CastPlayerCharacter.characterBattleData.currentState == CharacterState.Staggered) continue;
+            if (actDatas[i].TargetPlayerCharacter.characterBattleData.currentState == CharacterState.Dead) continue;
             
             CameraHandler.Instance.SetFollowTransform(actDatas[i].CastPlayerCharacter.transform, 1.5f);
             
