@@ -17,4 +17,4 @@ MonoBehaviour:
   skillStaminaCost: 10
   skillStartDistance: 1
   timelineBinder: {fileID: 11400000, guid: 095e822eea6064748847b1a723b76a65, type: 2}
-  skillTimelineAsset: {fileID: 11400000, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
+  skillTimelineAsset: {fileID: 11400000, guid: 8d2583d5e26a34a8589f93fae183d393, type: 2}

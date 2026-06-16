@@ -32,19 +32,19 @@ public class SkillTimelineBinder : ITimelineBinder
             return;
         }
 
-        // // 애니메이션 트랙 바인딩
-        // TrackAsset animationTrack = timeline.GetOutputTracks()
-        //     .FirstOrDefault(t => t is AnimationTrack && t.name == animationTrackName);
-        //
-        // if (animationTrack != null)
-        // {
-        //     director.SetGenericBinding(animationTrack, data.CastPlayerCharacter.animator);
-        //     Debug.Log("SkillTimelineBinder: 애니메이션 트랙 바인딩 완료");
-        // }
-        // else
-        // {
-        //     Debug.LogWarning($"SkillTimelineBinder: '{animationTrackName}' 트랙을 찾을 수 없습니다.");
-        // }
+        // 애니메이션 트랙 바인딩
+        TrackAsset animationTrack = timeline.GetOutputTracks()
+            .FirstOrDefault(t => t is AnimationTrack && t.name == animationTrackName);
+        
+        if (animationTrack != null)
+        {
+            director.SetGenericBinding(animationTrack, data.CastPlayerCharacter.animator);
+            Debug.Log("SkillTimelineBinder: 애니메이션 트랙 바인딩 완료");
+        }
+        else
+        {
+            Debug.LogWarning($"SkillTimelineBinder: '{animationTrackName}' 트랙을 찾을 수 없습니다.");
+        }
 
         // QTE 트랙 바인딩
         TrackAsset qteTrack = timeline.GetOutputTracks()
@@ -53,6 +53,8 @@ public class SkillTimelineBinder : ITimelineBinder
         if (qteTrack != null)
         {
             director.SetGenericBinding(qteTrack, data.CastPlayerCharacter.qteListner);
+            
+            
             Debug.Log("SkillTimelineBinder: QTE 트랙 바인딩 완료");
         }
         else
