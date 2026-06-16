@@ -51,6 +51,14 @@ public class OpenPhaseController : MonoBehaviour
     }
     
     // 개막 페이즈 로직 구현
+    private void StartOpenPhase(CharacterHandler[] _playerCharacters, CharacterHandler[] _enemyCharacters)
+    {
+        playerCharacters = _playerCharacters;
+        enemyCharacters = _enemyCharacters;
+        
+        StartOpenPhase();
+    }
+    
     private void StartOpenPhase()
     {
         Debug.Log("Start Open Phase");

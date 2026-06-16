@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using _01_Scripts.DTO;
@@ -6,6 +7,7 @@ using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
+using TMPro;
 
 namespace _01_Scripts.Runtime.Battles
 {
@@ -32,7 +34,27 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private CharacterData[] testFlendlyCharacterDatas;
     [SerializeField] private CharacterData[] testEnemyCharacterDatas;
     
+    [SerializeField] private TextMeshProUGUI endText;
+
+    public void OnEnable()
+    {
+        battlePhaseCoordinator.OnBattleEnd += BattleEnd;
+    }
     
+    private void OnDisable()
+    {
+        battlePhaseCoordinator.OnBattleEnd -= BattleEnd;
+    }
+    
+    private void BattleEnd(CharacterHandler[] playerCharacterHandlers, bool isWin)
+    {
+        endText.text = isWin ? "You Win!" : "You Lose!";
+        
+        // 전투 종료 후 처리 로직 (예: 결과 화면으로 이동, 데이터 저장 등)
+        Debug.Log("Battle Ended");
+    }
+
+
     // private Methods
     public void TestStart()
     {
@@ -89,16 +111,6 @@ public class BattleManager : MonoBehaviour
         return battlePhaseCoordinator;
     }
 
-    public CharacterHandler[] GetPlayerCharacters()
-    {
-        return playerCharacters;
-    }
-    
-    public CharacterHandler[] GetEnemyCharacters()
-    {
-        return enemyCharacters;
-    }
-
     // private Methods
     private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
     {
@@ -113,7 +125,7 @@ public class BattleManager : MonoBehaviour
     }
     
     // 배틀 데이터 기반의 참조 데이터 설정 (ex. 타겟의 트랜스폼)
-    public CharacterHandler SetRefCharacterBattleData(CharacterHandler characterHandlers)
+    private CharacterHandler SetRefCharacterBattleData(CharacterHandler characterHandlers)
     {
         CharacterBattleData _characterBattleData;
         
