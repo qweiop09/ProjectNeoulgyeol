@@ -12,6 +12,8 @@ public class CompeteContestController : MonoBehaviour
     [SerializeField] private TimelineAsset moveToTargetTimelineAsset;
     [SerializeField] private MoveToTargetBinder moveToTargetBinder;
     
+    [SerializeField] private ActData currentActData; // 현재 실행 중인 ActData를 저장하는 변수
+    
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
 
     public void OnEnable()
@@ -28,6 +30,12 @@ public class CompeteContestController : MonoBehaviour
     {
         Debug.LogError("QTE Result: " + result);
         // QTE 결과에 따른 추가 효과 적용 로직을 여기에 구현
+        
+        float damageMultiplier = (result == QTEResult.Perfect) ? 1.5f : (result == QTEResult.Good) ? 1.0f : 0.5f;;
+        
+        DamageTextSpawner.Instance.SpawnDamageText(currentActData.TargetPlayerCharacter.transform.position,
+            (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier)
+            , result);
     }
 
     // 한 캐릭터의 모든 행동을 실행
@@ -40,6 +48,8 @@ public class CompeteContestController : MonoBehaviour
             if (actDatas[i] == null) continue;
             
             CameraHandler.Instance.SetFollowTransform(actDatas[i].CastPlayerCharacter.transform, 1.5f);
+            
+            currentActData = actDatas[i]; // 현재 실행 중인 ActData 업데이트
             
             await PlayMoveToTarget(actDatas[i]);
             Debug.Log("PlayCompete Start");
