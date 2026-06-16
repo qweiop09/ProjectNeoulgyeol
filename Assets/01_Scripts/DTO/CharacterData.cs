@@ -7,7 +7,7 @@ public class CharacterData : ScriptableObject
 {
     // TODO: 캐릭터 스테이터스 및 정보
     public string name;
-    
+
     public int maxHp;
     public int maxMp;
     public int maxStamina;
@@ -15,17 +15,24 @@ public class CharacterData : ScriptableObject
     public int defense;
 
     public int slotCount; // 스킬 슬롯 갯수
-    
+
     public int characterSpeedLowLimit;
     public int characterSpeedHighLimit;
     
+    [Space(10)]
+
+    [SerializeField] public AnimationClip idleAnimation;
+    [SerializeField] public AnimationClip runAnimation;
+    [SerializeField] public AnimationClip deadAnimation;
     
+    // 피격이랑 회피랑 가드랑 흐트러짐 만들기
+
     // 캐릭터가 보유한 스킬들의 정보
     // 일반공격
     public CharacterSkill[] characterAttacks;
     // 스킬
     public CharacterSkill[] characterSkills;
-    
+
     public int GetRandomSpeed()
     {
         return Random.Range(characterSpeedLowLimit, characterSpeedHighLimit + 1);

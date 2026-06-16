@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.CameraControlle;
+using _01_Scripts.Runtime.Battles.Characters;
 using _01_Scripts.Timeline;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -19,23 +20,40 @@ public class CompeteContestController : MonoBehaviour
     public void OnEnable()
     {
         QTECoordinator.Instance.OnQTEMarkerReceived += ApplyQteResult;
+
+        CharacterStatusCalculator.Instance.isCharacterDead +=
+            CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Dead); };
+        
+        // CharacterStatusCalculator.Instance.isCharacterStagger +=
+        //     CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Idle); };
     }
     
     public void OnDisable()
     {
         QTECoordinator.Instance.OnQTEMarkerReceived -= ApplyQteResult;
+        
+        CharacterStatusCalculator.Instance.isCharacterDead -=
+            CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Dead); };
+        
+        // CharacterStatusCalculator.Instance.isCharacterStagger -=
+        //     CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Idle); };
+
     }
     
+    // qte 피드백
     private void ApplyQteResult(QTEResult result)
     {
         Debug.LogError("QTE Result: " + result);
-        // QTE 결과에 따른 추가 효과 적용 로직을 여기에 구현
         
         float damageMultiplier = (result == QTEResult.Perfect) ? 1.5f : (result == QTEResult.Good) ? 1.15f : 1f;
         
         DamageTextSpawner.Instance.SpawnDamageText(currentActData.TargetPlayerCharacter.transform.position,
             (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier)
             , result);
+        
+        // 데미지 반영
+        CharacterStatusCalculator.Instance.ApplyHpModify(currentActData.TargetPlayerCharacter,
+            -(int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier));                     
     }
 
     // 한 캐릭터의 모든 행동을 실행
@@ -51,8 +69,12 @@ public class CompeteContestController : MonoBehaviour
             
             currentActData = actDatas[i]; // 현재 실행 중인 ActData 업데이트
             
+            CharacterAnimationMonitor.Instance.PlayAnimation(actDatas[i].CastPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Run);
+            
             await PlayMoveToTarget(actDatas[i]);
             Debug.Log("PlayCompete Start");
+            
+            CharacterAnimationMonitor.Instance.PlayAnimation(actDatas[i].CastPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Idle);
             
             CharacterStatusCalculator.Instance.UseSkill(actDatas[i].CastPlayerCharacter,actDatas[i].UseSkill);
             await PlayCompete(actDatas[i]);

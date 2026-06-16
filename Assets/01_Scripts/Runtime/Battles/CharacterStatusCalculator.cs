@@ -20,17 +20,20 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
 
     public void SkillHit(CharacterHandler hitTarget, int hpDecisivePower, int staminaDecisivePower)
     {
-        ApplyHPModify(hitTarget, -hpDecisivePower);
+        ApplyHpModify(hitTarget, -hpDecisivePower);
         ApplyStaminaModify(hitTarget, -staminaDecisivePower);
     }
 
     // HP 변화
-    public void ApplyHPModify(CharacterHandler target, int amount)
+    public void ApplyHpModify(CharacterHandler target, int amount)
     {
         target.GetCharacterBattleData().currentHp += amount;
         target.GetCharacterBattleData().currentHp 
             = Mathf.Clamp(target.GetCharacterBattleData().currentHp,
                 0, target.GetCharacterBattleData().CharacterData.maxHp);
+        
+        if(IsDead(target))
+            isCharacterDead?.Invoke(target);
 
         Debug.Log(target.name + " 회복: " + amount + " / 현재 HP: " + target.GetCharacterBattleData().currentHp);
     }
@@ -42,7 +45,7 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         target.GetCharacterBattleData().currentMp 
             = Mathf.Clamp(target.GetCharacterBattleData().currentMp,
                 0, target.GetCharacterBattleData().CharacterData.maxMp);
-
+            
         Debug.Log(target.name + " MP 회복: " + amount + " / 현재 MP: " + target.GetCharacterBattleData().currentMp);
     }
 
@@ -67,7 +70,7 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         return target.GetCharacterBattleData().currentHp == 0;
     }
     
-    public bool IsStaggered(CharacterHandler target)
+    private bool IsStaggered(CharacterHandler target)
     {
         return target.GetCharacterBattleData().currentStamina == 0;
     }

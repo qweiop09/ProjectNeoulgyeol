@@ -21,6 +21,9 @@ MonoBehaviour:
   slotCount: 1
   characterSpeedLowLimit: 1
   characterSpeedHighLimit: 5
+  idleAnimation: {fileID: 7400000, guid: 6f718819a77de4c62b06ded5f6edcc35, type: 2}
+  runAnimation: {fileID: 7400000, guid: 4a317bda73ccf41b885cb1c78783f2b9, type: 2}
+  deadAnimation: {fileID: 7400000, guid: 04ebf6eebb85f40de9cc57fe8d4c1881, type: 2}
   characterAttacks:
   - {fileID: 11400000, guid: 7215831baef7b49d39ec39ed7f32496e, type: 2}
   characterSkills:

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _01_Scripts.Runtime.Battles.Characters;
 using _01_Scripts.Runtime.Battles.Phase.Open.EnemyTargeting;
 using UnityEngine;
 
@@ -66,6 +67,8 @@ public class OpenPhaseController : MonoBehaviour
             
             playerCharacters[i].GetCharacterBattleData().PlacementOrder = i;
             SetCharactersPosition(playerCharacters[i], playerCharacterPositions[i]);
+            
+            CharacterAnimationMonitor.Instance.PlayAnimation(playerCharacters[i], CharacterAnimationMonitor.CharacterAnimationState.Idle);
         } 
         
         Debug.Log("적군 : ");
@@ -75,6 +78,8 @@ public class OpenPhaseController : MonoBehaviour
             
             enemyCharacters[i].GetCharacterBattleData().PlacementOrder = i;
             SetCharactersPosition(enemyCharacters[i], enemyCharacterPositions[i]);
+            
+            CharacterAnimationMonitor.Instance.PlayAnimation(enemyCharacters[i], CharacterAnimationMonitor.CharacterAnimationState.Idle);
         }
         
         turnOrderCharacters = DetermineTurnOrder
