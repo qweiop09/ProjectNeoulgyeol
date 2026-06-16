@@ -24,6 +24,9 @@ public class CharacterHandler : MonoBehaviour
     // [SerializeField] public CharacterAnimationMonitor animationMonitor;
     [SerializeField] public Animator animator;
     
+    // 임시
+    [SerializeField] public QTEListner qteListner;
+    
     [Space(10)]
     [Header("internal fields")]
     

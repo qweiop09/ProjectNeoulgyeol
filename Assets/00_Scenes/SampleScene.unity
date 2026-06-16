@@ -584,6 +584,7 @@ MonoBehaviour:
   director: {fileID: 117546389}
   characterType: 0
   animator: {fileID: 0}
+  qteListner: {fileID: 0}
 --- !u!320 &117546389
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -1622,6 +1623,7 @@ MonoBehaviour:
   director: {fileID: 533880744}
   characterType: 0
   animator: {fileID: 0}
+  qteListner: {fileID: 0}
 --- !u!320 &533880744
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -3233,7 +3235,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompeteContestController
   moveToTargetTimelineAsset: {fileID: 11400000, guid: d4b0bf5340597481b9565cd34477085c, type: 2}
   moveToTargetBinder: {fileID: 11400000, guid: 20eb2e47acc30485e980873366b8f1a1, type: 2}
-  qteListner: {fileID: 2139087397}
   MoveToTargetWaitTime: 500
 --- !u!4 &1341329608
 Transform:
@@ -4918,6 +4919,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2139087396}
+  - component: {fileID: 2139087398}
   - component: {fileID: 2139087397}
   m_Layer: 0
   m_Name: QTEController
@@ -4925,7 +4927,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2139087396
 Transform:
   m_ObjectHideFlags: 0
@@ -4954,6 +4956,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.QTEController
   qteInputAction: {fileID: -7213540289254391809, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
+--- !u!114 &2139087398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139087395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91a67eee28704e8a9f0fd8cbad67df87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Receiver.QTEMarkerReceiver
 --- !u!1 &1377239804249712
 GameObject:
   m_ObjectHideFlags: 0
@@ -4968,6 +4982,7 @@ GameObject:
   - component: {fileID: 212971026991054559}
   - component: {fileID: 212971026991054563}
   - component: {fileID: 212971026991054562}
+  - component: {fileID: 212971026991054564}
   - component: {fileID: 95975119788970268}
   - component: {fileID: 212971026991054558}
   - component: {fileID: 50738828400564736}
@@ -5254,6 +5269,8 @@ PlayableDirector:
   m_SceneBindings:
   - key: {fileID: 6091614318856208523, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
     value: {fileID: 95975119788970268}
+  - key: {fileID: 8404666023515913057, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
+    value: {fileID: 212971026991054564}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &212971026991054560
@@ -5272,6 +5289,7 @@ MonoBehaviour:
   director: {fileID: 212971026991054559}
   characterType: 0
   animator: {fileID: 95975119788970268}
+  qteListner: {fileID: 212971026991054564}
 --- !u!114 &212971026991054561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5309,6 +5327,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccb07ec44181a44118cd2add8bc58f0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
+--- !u!114 &212971026991054564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377239804249712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee49f0bad02304a2e8e89a8f3d774de0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Battles.QTEListner
+  qteInputAction: {fileID: -7213540289254391809, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
 --- !u!224 &246248306340448913
 RectTransform:
   m_ObjectHideFlags: 0

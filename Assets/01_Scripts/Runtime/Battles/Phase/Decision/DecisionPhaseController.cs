@@ -27,12 +27,6 @@ public class DecisionPhaseController : MonoBehaviour
         Debug.Log("Setting Selected Act Data: " + actData);
         
         // 타겟팅 데이터 반영
-        Debug.Log(actData.CastPlayerCharacter.GetCharacterBattleData().TurnOrder);
-        Debug.Log(_turnOrderCharacters.Length);
-        
-        Debug.Log(actData.UseSlot);
-        Debug.Log(actData.CastPlayerCharacter.GetCharacterBattleData().TargetingData.Length);
-        
         _turnOrderCharacters
             [actData.CastPlayerCharacter.GetCharacterBattleData().TurnOrder]
             .GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;

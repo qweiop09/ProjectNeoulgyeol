@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using _01_Scripts.DTO;
-using _01_Scripts.Runtime.Battles.Compete._01_Scripts.Runtime.Battles.Compete;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles.Compete

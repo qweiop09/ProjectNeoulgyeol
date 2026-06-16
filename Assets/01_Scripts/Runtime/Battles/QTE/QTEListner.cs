@@ -1,88 +1,87 @@
 using System;
-using System.Collections;
-using _01_Scripts.Timeline.Battle.Marker;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace _01_Scripts.Runtime.Battles
 {
-    public enum QTEResult
-    {
-        Perfect,
-        Good,
-        Bad,
-        Fail
-    }
+    public enum QTEResult { Perfect, Good, Bad, Fail }
 
     public class QTEListner : MonoBehaviour
     {
-        public event Action<QTEResult, QTEDataMarker> OnQteCompleted;
-
         [SerializeField] private InputActionReference qteInputAction;
 
-        private bool isInputButtonPressed;
-        private bool hasInputInWindow;
-        private float elapsedTime;
-        private float inputElapsedTime;
+        private bool isActive;
+        private bool hasJudged;
+        private float currentTime;
+        private float duration;
+        
+        private float perfectTime;
+        private float goodTime;
+        private float badTime;
 
         private void OnEnable()
         {
             qteInputAction.action.Enable();
-            qteInputAction.action.performed += OnQteInput;
             qteInputAction.action.started += OnButtonDown;
-            qteInputAction.action.canceled += OnButtonUp;
         }
 
         private void OnDisable()
         {
-            qteInputAction.action.performed -= OnQteInput;
             qteInputAction.action.started -= OnButtonDown;
-            qteInputAction.action.canceled -= OnButtonUp;
             qteInputAction.action.Disable();
         }
 
-        private void Update()
+        // Mixer가 매 프레임 호출
+        public void UpdateQteState(float localTime, float clipDuration, float perfect, float good, float bad)
         {
-            elapsedTime += Time.deltaTime;
-        }
-
-        private void OnButtonDown(InputAction.CallbackContext ctx) => isInputButtonPressed = true;
-        private void OnButtonUp(InputAction.CallbackContext ctx) => isInputButtonPressed = false;
-
-        private void OnQteInput(InputAction.CallbackContext ctx)
-        {
-            if (!hasInputInWindow)
+            if (!isActive)
             {
-                hasInputInWindow = true;
-                inputElapsedTime = elapsedTime;
-            }
-        }
-
-        public void ReceiveQteSignal(QTEDataMarker data)
-        {
-            elapsedTime = 0f;
-            hasInputInWindow = false;
-            StartCoroutine(WaitAndJudge(data));
-        }
-
-        private IEnumerator WaitAndJudge(QTEDataMarker data)
-        {
-            yield return new WaitForSeconds(data.qteBadTime);
-
-            QTEResult result = JudgmentQte(data);
-            OnQteCompleted?.Invoke(result, data);
-        }
-
-        private QTEResult JudgmentQte(QTEDataMarker data)
-        {
-            if (hasInputInWindow)
-            {
-                if (inputElapsedTime <= data.qtePerfectTime) return QTEResult.Perfect;
-                if (inputElapsedTime <= data.qteGoodTime)    return QTEResult.Good;
-                return QTEResult.Bad;
+                isActive = true;
+                hasJudged = false;
             }
 
-            return isInputButtonPressed ? QTEResult.Bad : QTEResult.Fail;
+            currentTime = localTime;
+            duration = clipDuration;
+            perfectTime = perfect;
+            goodTime = good;
+            badTime = bad;
+
+            if (!hasJudged && currentTime >= duration)
+            {
+                hasJudged = true;
+                QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(QTEResult.Fail);
+            }
+            
         }
+
+        private QTEResult JudgeByTime(float time)
+        {
+            float center = duration / 2f;
+            float diff = Mathf.Abs(time - center);
+
+            if (diff <= perfectTime) return QTEResult.Perfect;
+            if (diff <= goodTime)    return QTEResult.Good;
+            if (diff <= badTime)     return QTEResult.Bad;
+            return QTEResult.Fail;
+        }
+
+        // Mixer가 클립이 끝났을 때 호출
+        public void ClearQteState()
+        {
+            isActive = false;
+        }
+
+        private void OnButtonDown(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("QTE Button Pressed at: " + currentTime + " seconds");
+            
+            if (!isActive || hasJudged) return;
+            
+            Debug.Log("QTE Judging at: " + currentTime + " seconds");
+
+            hasJudged = true;
+            QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(JudgeByTime(currentTime));
+        }
+
     }
 }
