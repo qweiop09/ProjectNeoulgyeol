@@ -31,7 +31,7 @@ public class CompeteContestController : MonoBehaviour
         Debug.LogError("QTE Result: " + result);
         // QTE 결과에 따른 추가 효과 적용 로직을 여기에 구현
         
-        float damageMultiplier = (result == QTEResult.Perfect) ? 1.5f : (result == QTEResult.Good) ? 1.0f : 0.5f;;
+        float damageMultiplier = (result == QTEResult.Perfect) ? 1.5f : (result == QTEResult.Good) ? 1.15f : 1f;
         
         DamageTextSpawner.Instance.SpawnDamageText(currentActData.TargetPlayerCharacter.transform.position,
             (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier)

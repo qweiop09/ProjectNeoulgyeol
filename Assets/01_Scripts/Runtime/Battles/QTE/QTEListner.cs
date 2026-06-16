@@ -4,16 +4,20 @@ using UnityEngine.InputSystem;
 
 namespace _01_Scripts.Runtime.Battles
 {
-    public enum QTEResult { Perfect, Good, Bad, Fail }
+    // Bad 막음,  Hit 맞음
+    public enum QTEResult { Perfect, Good, Bad, Hit }
 
     public class QTEListner : MonoBehaviour
     {
         [SerializeField] private InputActionReference qteInputAction;
 
         private bool isActive;
+        private bool stayPressed;
         private bool hasJudged;
         private float currentTime;
         private float duration;
+
+        private bool isJudged;
         
         private float perfectTime;
         private float goodTime;
@@ -21,13 +25,18 @@ namespace _01_Scripts.Runtime.Battles
 
         private void OnEnable()
         {
+            isJudged = false;
+            hasJudged = false;
+            
             qteInputAction.action.Enable();
             qteInputAction.action.started += OnButtonDown;
+            qteInputAction.action.canceled += OnButtonUp;
         }
 
         private void OnDisable()
         {
             qteInputAction.action.started -= OnButtonDown;
+            qteInputAction.action.canceled -= OnButtonUp;
             qteInputAction.action.Disable();
         }
 
@@ -37,7 +46,6 @@ namespace _01_Scripts.Runtime.Battles
             if (!isActive)
             {
                 isActive = true;
-                hasJudged = false;
             }
 
             currentTime = localTime;
@@ -45,42 +53,52 @@ namespace _01_Scripts.Runtime.Battles
             perfectTime = perfect;
             goodTime = good;
             badTime = bad;
-
-            if (!hasJudged && currentTime >= duration)
-            {
-                hasJudged = true;
-                QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(QTEResult.Fail);
-            }
             
         }
 
         private QTEResult JudgeByTime(float time)
         {
+            isJudged = true;
+            
             float center = duration / 2f;
             float diff = Mathf.Abs(time - center);
 
             if (diff <= perfectTime) return QTEResult.Perfect;
             if (diff <= goodTime)    return QTEResult.Good;
-            if (diff <= badTime)     return QTEResult.Bad;
-            return QTEResult.Fail;
+            return QTEResult.Bad;
         }
 
         // Mixer가 클립이 끝났을 때 호출
         public void ClearQteState()
         {
+            if(!hasJudged)
+                if(isActive)
+                    if (!stayPressed)
+                        QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(QTEResult.Bad);
+                    else
+                        QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(QTEResult.Hit);
+            
+            hasJudged = false;
             isActive = false;
         }
 
         private void OnButtonDown(InputAction.CallbackContext ctx)
         {
-            Debug.Log("QTE Button Pressed at: " + currentTime + " seconds");
-            
-            if (!isActive || hasJudged) return;
-            
-            Debug.Log("QTE Judging at: " + currentTime + " seconds");
+            if (!isActive || stayPressed)
+                return;
 
             hasJudged = true;
+            stayPressed = true;
             QTECoordinator.Instance.OnQTEMarkerReceived?.Invoke(JudgeByTime(currentTime));
+        }
+
+        
+        private void OnButtonUp(InputAction.CallbackContext ctx)
+        {
+            if (!isActive)
+                return;
+            
+            stayPressed = false;
         }
 
     }
