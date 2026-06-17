@@ -1,5 +1,6 @@
+using System.Collections.Generic;
+using _01_Scripts.DTO.Item;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _01_Scripts.DTO
 {
@@ -40,7 +41,10 @@ public class CharacterBattleData
     // 사용하는 행동의 정보 ( 사용 스킬, 대상 등 )
     // 본 배열의 인덱스는 슬롯의 순서와 같음
     public ActData[] TargetingData;
-    
+
+    // 캐릭터가 소지한 아이템 목록
+    public List<Item.Item> inventory = new List<Item.Item>(15);
+
     public Transform CharacterTransform;
     
     

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using _01_Scripts.DTO;
+using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.Close;
 using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
@@ -34,6 +35,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private CharacterData[] testFlendlyCharacterDatas;
     [SerializeField] private CharacterData[] testEnemyCharacterDatas;
     
+    [SerializeField] private Item testItem1;
+    
     [SerializeField] private TextMeshProUGUI endText;
 
     public void OnEnable()
@@ -65,6 +68,10 @@ public class BattleManager : MonoBehaviour
         
         a = ChangeCharacterDataToCharacterBattleData(testFlendlyCharacterDatas);
         b = ChangeCharacterDataToCharacterBattleData(testEnemyCharacterDatas);
+        
+        for(int i = 0; i < a.Length; i++)
+            for(int ii = 0; ii < 6; ii++)
+                a[i].inventory.Add(testItem1);
                         
         BattleStart(a, b);
     }

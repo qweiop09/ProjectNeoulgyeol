@@ -1,9 +1,8 @@
 using System;
-using System.Net.Mime;
+using System.Collections.Generic;
 using _01_Scripts.DTO;
-using NUnit.Framework.Internal.Filters;
+using _01_Scripts.DTO.Item;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +26,6 @@ public class CharacterActionMenuHandler : MonoBehaviour
         "Attack", "Skill", "Item", "Defend", "Run"
     };
     
-    static int maxPage = 3; // TODO: 아이템 페이지 수에 따라 조정 필요
 
     private CharacterHandler currentHandler; // 행동을 설정 중인 캐릭터 핸들러
 
@@ -46,7 +44,8 @@ public class CharacterActionMenuHandler : MonoBehaviour
     [SerializeField] private ActionType currentActionType = ActionType.None; // 현재 선택된 행동 유형
 
 
-    public Action<CharacterSkill> CompletedActionSetting; // 수행할 행동이 선택되었을 때 외부에 어떤 행동을 수행하는지 알리는 Action
+    public Action<CharacterSkill> CompletedActionSetting; // 스킬/공격 선택 완료 시 외부에 알리는 Action
+    public Action<Item> CompletedItemActionSetting; // 아이템 선택 완료 시 외부에 알리는 Action
 
     private bool isActive = false; // 메뉴가 활성화되어 있는지 여부
     
@@ -97,9 +96,9 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
         if (currentActionType == ActionType.Skill)
             SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length);
-        
-        if(currentActionType == ActionType.Item){}
-            // 아이템 관련 기능 추가되면 개발하기
+
+        if (currentActionType == ActionType.Item)
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().inventory.Count);
         
     }
 
@@ -136,9 +135,8 @@ public class CharacterActionMenuHandler : MonoBehaviour
         if (currentActionType == ActionType.Skill)
             SetTexts(currentHandler.characterBattleData.CharacterData.characterSkills);
 
-        if (currentActionType == ActionType.Item) { }
-            // TODO: 아이템들 가져오는 기능 필요
-            // SetTexts();
+        if (currentActionType == ActionType.Item)
+            SetTexts(currentHandler.GetCharacterBattleData().inventory);
 
     }
     
@@ -149,11 +147,29 @@ public class CharacterActionMenuHandler : MonoBehaviour
             if (i + actMenuPage * 5 < skills.Length)
             {
                 texts[i].text = skills[i + actMenuPage * 5].skillName;
-                texts[i].GameObject().SetActive(true);
+                texts[i].gameObject.SetActive(true);
             }
             else
             {
-                texts[i].GameObject().SetActive(false);
+                texts[i].gameObject.SetActive(false);
+                texts[i].text = "";
+            }
+        }
+    }
+
+    private void SetTexts(List<Item> items)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            int index = i + actMenuPage * 5;
+            if (index < items.Count &&  items[index] != null)
+            {
+                texts[i].text = items[index].itemName;
+                texts[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                texts[i].gameObject.SetActive(false);
                 texts[i].text = "";
             }
         }
@@ -166,11 +182,11 @@ public class CharacterActionMenuHandler : MonoBehaviour
             if (i + actMenuPage * 5 < names.Length)
             {
                 texts[i].text = names[i];
-                texts[i].GameObject().SetActive(true);
+                texts[i].gameObject.SetActive(true);
             }
             else
             {
-                texts[i].GameObject().SetActive(false);
+                texts[i].gameObject.SetActive(false);
                 texts[i].text = "";
             }
         }
@@ -253,18 +269,33 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void ItemStatePressed(int pressedButtonNumber)
     {
-        // 기능
+        List<Item> inventory = currentHandler.GetCharacterBattleData().inventory;
+        int index = pressedButtonNumber + actMenuPage * 5;
+        if (index >= inventory.Count) return;
+
+        CompletedItemActionSetting?.Invoke(inventory[index]);
     }
 
 
     public void MovePage(int moveDirection)
     {
         actMenuPage += moveDirection;
-
-        actMenuPage = Mathf.Clamp(actMenuPage, 0, maxPage - 1);
-        // 아이템 불러와지면 클램프 범위 조정 필요
-        
+        actMenuPage = Mathf.Clamp(actMenuPage, 0, GetMaxPage() - 1);
         UpdateMenu();
+    }
+
+    private int GetMaxPage()
+    {
+        return currentActionType switch
+        {
+            ActionType.Attack => Mathf.CeilToInt(
+                currentHandler.GetCharacterBattleData().CharacterData.characterAttacks.Length / 5f),
+            ActionType.Skill  => Mathf.CeilToInt(
+                currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length / 5f),
+            ActionType.Item   => Mathf.Max(1, Mathf.CeilToInt(
+                currentHandler.GetCharacterBattleData().inventory.Count / 5f)),
+            _                 => 1
+        };
     }
 
     public void BackPage()
