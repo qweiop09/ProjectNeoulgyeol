@@ -25,17 +25,16 @@ public class CharacterActionUIController : MonoBehaviour
             actionMenuHandler.CompletedActionSetting += skill => CompletedActionSetting?.Invoke(skill);
     }
 
-    public void HandleCharacterSelected(ActData actData)
+    public void HandleCharacterSelected(CharacterHandler caster)
     {
         Debug.Log("setting action for character: "
-                  + actData.CastPlayerCharacter.characterBattleData.CharacterData.name);
+                  + caster.characterBattleData.CharacterData.name);
 
-        // 메뉴 위치 설정 후 CharacterActionMenuHandler에 위임
         if (actionSettingPanel != null)
-            actionSettingPanel.position = 
-                actData.CastPlayerCharacter.transform.position + (Vector3)menuScreenOffset + new Vector3(0,0,0.1f);
+            actionSettingPanel.position =
+                caster.transform.position + (Vector3)menuScreenOffset + new Vector3(0, 0, 0.1f);
 
-        actionMenuHandler.ShowMenu(actData.CastPlayerCharacter);
+        actionMenuHandler.ShowMenu(caster);
     }
 
     public void HandleSelectionCleared()

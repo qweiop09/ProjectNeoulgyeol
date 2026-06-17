@@ -14,7 +14,7 @@ public class SkillTimelineBinder : ITimelineBinder
     [SerializeField] private string animationTrackName = "AnimationTrack";
     [SerializeField] private string particleTrackName = "ParticleTrack";
 
-    public override void Bind(PlayableDirector director, ActData data)
+    public override void Bind(PlayableDirector director, SkillActData data)
     {
         Debug.Log("SkillTimelineBinder: 바인딩 시작");
     

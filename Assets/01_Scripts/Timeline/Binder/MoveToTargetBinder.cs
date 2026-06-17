@@ -11,7 +11,7 @@ namespace _01_Scripts.Timeline
 [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Binder/MoveToTarget", fileName = "MoveToTargetBinder")]
 public class MoveToTargetBinder : ITimelineBinder
 {
-    public override void Bind(PlayableDirector director, ActData data)
+    public override void Bind(PlayableDirector director, SkillActData data)
     {
         if (director == null || director.playableAsset == null || data == null ||
             data.CastPlayerCharacter == null || data.TargetPlayerCharacter == null ||
@@ -41,9 +41,7 @@ public class MoveToTargetBinder : ITimelineBinder
         foreach (TimelineClip clip in targetTrack.GetClips())
         {
             if (clip.asset is MoveToTargetClip moveToTargetClip)
-            {
                 moveToTargetClip.arrivalDistance = data.UseSkill.skillStartDistance;
-            }
         }
 
         director.SetGenericBinding(targetTrack, data.CastPlayerCharacter.transform);

@@ -32,7 +32,7 @@ public class EnemyActionController : MonoBehaviour
 
                 CharacterHandler selectedTarget = aliveTargets[Random.Range(0, aliveTargets.Length)];
 
-                caster.GetCharacterBattleData().TargetingData[slotIndex] = new ActData(
+                caster.GetCharacterBattleData().TargetingData[slotIndex] = new SkillActData(
                     caster,
                     slotIndex,
                     selectedSkill,

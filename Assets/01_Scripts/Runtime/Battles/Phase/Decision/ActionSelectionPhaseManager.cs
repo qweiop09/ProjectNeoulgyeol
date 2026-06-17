@@ -44,7 +44,12 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         characterActionUIController.CompletedActionSetting +=
             (data) =>
             {
-                _currentActData.UseSkill = data;
+                _currentActData = new SkillActData
+                {
+                    CastPlayerCharacter = selectedActCaster,
+                    UseSlot             = _currentActData?.UseSlot ?? 0,
+                    UseSkill            = data
+                };
                 ChangeSelectionState(SelectionState.SelectingActTarget);
             };
     }
@@ -64,7 +69,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
 
         // [변경] 트래킹 시작 시 해당 슬롯의 기존 고정 화살표 숨김
-        attackArrowController?.HideFixedArrow(selectedActCaster, _currentActData.UseSlot);
+        attackArrowController?.HideFixedArrow(selectedActCaster, _currentActData?.UseSlot ?? 0);
         attackArrowController?.ShowTrackingArrow(selectedActCaster, GetPointerWorldPosition());
     }
 
@@ -132,13 +137,6 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
             Debug.Log("Setting selected act caster: " + characterHandler.name);
             selectedActCaster = characterHandler;
-
-            _currentActData = new ActData
-            {
-                CastPlayerCharacter = characterHandler,
-                UseSlot = 0 // TODO: 슬롯 선택 기능 추가되면 변경
-            };
-
             ChangeSelectionState(SelectionState.SelectingAction);
         }
         else if (currentState == SelectionState.SelectingActTarget)
@@ -201,7 +199,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         if (currentState == SelectionState.SelectingAction)
         {
-            characterActionUIController.HandleCharacterSelected(_currentActData);
+            characterActionUIController.HandleCharacterSelected(selectedActCaster);
             await CameraHandler.Instance.MoveToLerp(
                 selectedActCaster.transform.position + new Vector3(1.2f, 0.2f, -10), 1.2f);
         }

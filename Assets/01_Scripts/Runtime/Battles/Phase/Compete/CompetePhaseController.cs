@@ -52,7 +52,7 @@ public class CompetePhaseController : MonoBehaviour
 
             // Compete Cycle Phase
             // 한 캐릭터의 모든 행동을 실행
-            await competeContestController.StartCompeteCycle(currentCharacter.GetCharacterBattleData().TargetingData);
+            await competeContestController.StartCompeteCycle(currentCharacter.GetCharacterBattleData().TargetingData  );
             Debug.Log("Compete Cycle Completed for Character: " + currentCharacter.name);
         }
 
