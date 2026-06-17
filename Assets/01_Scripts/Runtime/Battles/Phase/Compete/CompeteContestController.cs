@@ -40,17 +40,44 @@ public class CompeteContestController : MonoBehaviour
     // qte 피드백
     private void ApplyQteResult(QTEResult result)
     {
-        Debug.LogError("QTE Result: " + result);
-        
-        float damageMultiplier = (result == QTEResult.Perfect) ? 1.5f : (result == QTEResult.Good) ? 1.15f : 1f;
-        
-        DamageTextSpawner.Instance.SpawnDamageText(currentActData.TargetPlayerCharacter.transform.position,
-            (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier)
-            , result);
-        
-        // 데미지 반영
-        CharacterStatusCalculator.Instance.ApplyHpModify(currentActData.TargetPlayerCharacter,
-            -(int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack * damageMultiplier));                     
+        Debug.Log("QTE Result: " + result);
+
+        bool isCasterFriendly = currentActData.CastPlayerCharacter.characterType
+                                == CharacterHandler.CharacterType.Friendly;
+
+        float damageMultiplier;
+        if (isCasterFriendly)
+        {
+            // 아군 공격 QTE: 성공할수록 데미지 증가
+            damageMultiplier = result switch
+            {
+                QTEResult.Perfect => 1.5f,
+                QTEResult.Good    => 1.15f,
+                _                 => 1.0f
+            };
+        }
+        else
+        {
+            // 적군 공격 QTE: 성공할수록 데미지 경감
+            damageMultiplier = result switch
+            {
+                QTEResult.Perfect => 0.5f,
+                QTEResult.Good    => 0.75f,
+                _                 => 1.0f
+            };
+        }
+
+        int finalDamage = (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack
+                                * damageMultiplier);
+
+        DamageTextSpawner.Instance.SpawnDamageText(
+            currentActData.TargetPlayerCharacter.transform.position,
+            finalDamage,
+            result);
+
+        CharacterStatusCalculator.Instance.ApplyHpModify(
+            currentActData.TargetPlayerCharacter,
+            -finalDamage);
     }
 
     // 한 캐릭터의 모든 행동을 실행
