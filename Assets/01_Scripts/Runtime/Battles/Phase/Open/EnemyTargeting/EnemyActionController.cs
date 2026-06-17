@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _01_Scripts.DTO;
 using UnityEngine;
 
@@ -24,7 +25,12 @@ public class EnemyActionController : MonoBehaviour
                 CharacterSkill selectedSkill = SelectSkillByStamina(availableAttacks, remainingStamina);
                 if (selectedSkill == null) break;
 
-                CharacterHandler selectedTarget = targets[Random.Range(0, targets.Length)];
+                CharacterHandler[] aliveTargets = targets
+                    .Where(t => t.GetCharacterBattleData().currentState != CharacterState.Dead)
+                    .ToArray();
+                if (aliveTargets.Length == 0) break;
+
+                CharacterHandler selectedTarget = aliveTargets[Random.Range(0, aliveTargets.Length)];
 
                 caster.GetCharacterBattleData().TargetingData[slotIndex] = new ActData(
                     caster,
