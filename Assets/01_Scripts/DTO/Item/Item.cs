@@ -20,6 +20,9 @@ public class Item : ScriptableObject
 
     [SerializeField] public ItemTargetType targetType;
 
+    [Tooltip("사용 후 인벤토리에서 제거할지 여부")]
+    [SerializeField] public bool isConsumable = true;
+
     [SerializeField] public ItemEffectBase[] effects;
 
     /// <summary>아이템의 모든 효과를 대상에게 적용합니다.</summary>
