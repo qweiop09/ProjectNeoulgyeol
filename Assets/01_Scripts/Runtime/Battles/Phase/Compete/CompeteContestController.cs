@@ -2,19 +2,16 @@ using System.Threading.Tasks;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Characters;
-using _01_Scripts.Timeline;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 namespace _01_Scripts.Runtime.Battles.Compete
 {
 public class CompeteContestController : MonoBehaviour
 {
-    [SerializeField] private TimelineAsset moveToTargetTimelineAsset;
-    [SerializeField] private MoveToTargetBinder moveToTargetBinder;
-    
+    [SerializeField] private MoveToTargetExecutor moveToTargetExecutor;
+
     [SerializeField] private ActData currentActData; // 현재 실행 중인 ActData를 저장하는 변수
-    
+
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
 
     public void OnEnable()
@@ -91,9 +88,11 @@ public class CompeteContestController : MonoBehaviour
     private Task PlayMoveToTarget(ActData actData)
     {
         Debug.Log("actData is null? " + (actData == null));
-        
-        return actData.CastPlayerCharacter.timelineDirector
-            .PlayAsync(actData.CastPlayerCharacter , moveToTargetTimelineAsset, moveToTargetBinder, actData);
+
+        return moveToTargetExecutor.ExecuteAsync(
+            actData.CastPlayerCharacter.transform,
+            actData.TargetPlayerCharacter.transform,
+            actData.UseSkill.skillStartDistance);
     }
 
     private async Task PlayCompete(ActData actData)

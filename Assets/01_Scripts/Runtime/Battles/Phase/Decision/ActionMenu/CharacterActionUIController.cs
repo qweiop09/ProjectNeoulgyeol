@@ -33,7 +33,7 @@ public class CharacterActionUIController : MonoBehaviour
         // 메뉴 위치 설정 후 CharacterActionMenuHandler에 위임
         if (actionSettingPanel != null)
             actionSettingPanel.position = 
-                actData.CastPlayerCharacter.transform.position + (Vector3)menuScreenOffset;
+                actData.CastPlayerCharacter.transform.position + (Vector3)menuScreenOffset + new Vector3(0,0,0.1f);
 
         actionMenuHandler.ShowMenu(actData.CastPlayerCharacter);
     }
