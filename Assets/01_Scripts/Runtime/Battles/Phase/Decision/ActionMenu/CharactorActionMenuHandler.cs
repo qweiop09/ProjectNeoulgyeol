@@ -23,7 +23,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     static String[] actionNames = new string[]
     {
-        "Attack", "Skill", "Item", "Defend", "Run"
+        "Attack", "Skill", "Item", "Stay", "Run"
     };
     
 
@@ -46,6 +46,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     public Action<CharacterSkill> CompletedActionSetting; // 스킬/공격 선택 완료 시 외부에 알리는 Action
     public Action<Item> CompletedItemActionSetting; // 아이템 선택 완료 시 외부에 알리는 Action
+    public Action CompletedStayActionSetting; // Stay(대기) 선택 완료 시 외부에 알리는 Action
 
     private bool isActive = false; // 메뉴가 활성화되어 있는지 여부
     
@@ -234,9 +235,9 @@ public class CharacterActionMenuHandler : MonoBehaviour
             case 2: // Item
                 currentActionType = ActionType.Item;
                 break;
-            case 3: // Defend
-                currentActionType = ActionType.Defend;
-                break;
+            case 3: // Stay — 하위 메뉴 없이 즉시 완료
+                CompletedStayActionSetting?.Invoke();
+                return; // UpdateMenu 호출 없이 바로 종료
             case 4: // Run
                 currentActionType = ActionType.Run;
                 break;

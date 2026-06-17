@@ -13,6 +13,7 @@ public class CompeteContestController : MonoBehaviour
     private ActData currentActData; // 현재 실행 중인 ActData를 저장하는 변수 (abstract — 직렬화 불가)
 
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
+    [SerializeField] private int stayStaminaRecovery = 20; // Stay 시 턴 종료 후 회복되는 스테미나 양
 
     public void OnEnable()
     {
@@ -91,6 +92,10 @@ public class CompeteContestController : MonoBehaviour
             if (actData == null) continue;
             if (actData.CastPlayerCharacter.characterBattleData.currentState == CharacterState.Dead
                 || actData.CastPlayerCharacter.characterBattleData.currentState == CharacterState.Staggered) continue;
+
+            // Stay는 카메라/행동 모두 스킵 — 턴 종료 후 스테미나 회복은 루프 외부에서 처리
+            if (actData is StayActData) continue;
+
             if (actData.TargetPlayerCharacter.characterBattleData.currentState == CharacterState.Dead) continue;
 
             CameraHandler.Instance.SetFollowTransform(actData.CastPlayerCharacter.transform, 1.5f);
@@ -115,6 +120,17 @@ public class CompeteContestController : MonoBehaviour
             }
 
             CameraHandler.Instance.UnsetFollowTransform();
+        }
+
+        // Stay 행동 처리: 모든 행동 종료 후 스테미나 회복
+        foreach (ActData actData in actDatas)
+        {
+            if (actData is StayActData &&
+                actData.CastPlayerCharacter.characterBattleData.currentState != CharacterState.Dead)
+            {
+                CharacterStatusCalculator.Instance.ApplyStaminaModify(
+                    actData.CastPlayerCharacter, stayStaminaRecovery);
+            }
         }
 
         Debug.Log("Compete Cycle Completed.");

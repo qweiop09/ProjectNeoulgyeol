@@ -65,6 +65,23 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 };
                 ChangeSelectionState(SelectionState.SelectingActTarget);
             };
+
+        characterActionUIController.CompletedStayActionSetting +=
+            () =>
+            {
+                int slot = _currentActData?.UseSlot ?? 0;
+                StayActData stayData = new StayActData(selectedActCaster, slot);
+
+                attackArrowController?.HideTrackingArrow();
+
+                CompleteActSelected?.Invoke(stayData);
+
+                // selectedActCaster / _currentActData 의 null 처리는
+                // ChangeSelectionState 내부 분기에서 이미 수행하므로 여기서 하지 않음
+                selectedActTarget = null;
+
+                ChangeSelectionState(SelectionState.SelectingActCaster);
+            };
     }
 
     private void OnDisable()

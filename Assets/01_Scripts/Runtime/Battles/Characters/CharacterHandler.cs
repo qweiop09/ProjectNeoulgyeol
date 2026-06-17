@@ -14,7 +14,7 @@ public class CharacterHandler : MonoBehaviour
           Friendly
         , Enemy
     }
-    
+
     [SerializeField] public TimelineDirector timelineDirector;
     [SerializeField] public PlayableDirector director;
 
