@@ -1,5 +1,6 @@
 using System;
 using _01_Scripts.DTO;
+using _01_Scripts.DTO.Item;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles.Phase.Decision.ActionMenu
@@ -12,17 +13,19 @@ public class CharacterActionUIController : MonoBehaviour
 
     [SerializeField] private CharacterActionMenuHandler actionMenuHandler;
 
-    // CompletedActionSetting을 CharacterActionMenuHandler에서 받아서 외부로 전달
     public event Action<CharacterSkill> CompletedActionSetting;
+    public event Action<Item> CompletedItemActionSetting;
 
     private void Awake()
     {
         if (actionSettingCanvas == null && actionSettingPanel != null)
             actionSettingCanvas = actionSettingPanel.GetComponentInParent<Canvas>();
 
-        // CharacterActionMenuHandler의 이벤트를 외부로 중계
         if (actionMenuHandler != null)
-            actionMenuHandler.CompletedActionSetting += skill => CompletedActionSetting?.Invoke(skill);
+        {
+            actionMenuHandler.CompletedActionSetting     += skill => CompletedActionSetting?.Invoke(skill);
+            actionMenuHandler.CompletedItemActionSetting += item  => CompletedItemActionSetting?.Invoke(item);
+        }
     }
 
     public void HandleCharacterSelected(CharacterHandler caster)

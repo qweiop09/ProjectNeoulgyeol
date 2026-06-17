@@ -1,4 +1,5 @@
 using System;
+using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision.ActionMenu;
@@ -49,6 +50,18 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                     CastPlayerCharacter = selectedActCaster,
                     UseSlot             = _currentActData?.UseSlot ?? 0,
                     UseSkill            = data
+                };
+                ChangeSelectionState(SelectionState.SelectingActTarget);
+            };
+
+        characterActionUIController.CompletedItemActionSetting +=
+            (item) =>
+            {
+                _currentActData = new ItemActData
+                {
+                    CastPlayerCharacter = selectedActCaster,
+                    UseSlot             = _currentActData?.UseSlot ?? 0,
+                    UseItem             = item
                 };
                 ChangeSelectionState(SelectionState.SelectingActTarget);
             };

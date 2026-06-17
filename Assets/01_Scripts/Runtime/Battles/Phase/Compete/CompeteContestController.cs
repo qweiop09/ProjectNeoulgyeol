@@ -78,9 +78,9 @@ public class CompeteContestController : MonoBehaviour
                 CharacterStatusCalculator.Instance.UseSkill(actData.CastPlayerCharacter, skillActData.UseSkill);
                 await PlayCompete(skillActData);
             }
-            else if (actData is ItemActData)
+            else if (actData is ItemActData itemActData)
             {
-                // TODO: 아이템 사용 로직
+                itemActData.UseItem.Use(actData.TargetPlayerCharacter);
             }
 
             CameraHandler.Instance.UnsetFollowTransform();
