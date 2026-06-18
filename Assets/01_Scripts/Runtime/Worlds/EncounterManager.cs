@@ -9,8 +9,6 @@ namespace _01_Scripts.Runtime.Worlds
         [Header("Scene")]
         [SerializeField] private string _battleSceneName = "Battle";
 
-        [Header("Temp Player Party")]
-        [SerializeField] private CharacterData[] _tempPlayerParty;
 
         public void TryEncounter(RoomData roomData)
         {
@@ -51,10 +49,7 @@ namespace _01_Scripts.Runtime.Worlds
 
         private CharacterBattleData[] BuildPlayerParty()
         {
-            var party = new CharacterBattleData[_tempPlayerParty.Length];
-            for (int i = 0; i < _tempPlayerParty.Length; i++)
-                party[i] = new CharacterBattleData(_tempPlayerParty[i]);
-            return party;
+            return WorldPartyManager.Instance.BuildBattleParty();
         }
     }
 }
