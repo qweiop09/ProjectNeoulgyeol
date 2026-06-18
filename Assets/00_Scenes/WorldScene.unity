@@ -256,6 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 739140280}
   - component: {fileID: 739140279}
+  - component: {fileID: 739140281}
   m_Layer: 0
   m_Name: RoomManager
   m_TagString: Untagged
@@ -277,6 +278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.RoomManager
   _transition: {fileID: 1890793280}
   _startRoom: {fileID: 11400000, guid: 00aab6a3216844a58a6096269b922c21, type: 2}
+  _encounterManager: {fileID: 739140281}
   _player: {fileID: 1875287724}
 --- !u!4 &739140280
 Transform:
@@ -287,13 +289,26 @@ Transform:
   m_GameObject: {fileID: 739140278}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.54404, y: 0, z: 0.3032}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1890793281}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &739140281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739140278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7196eae5e63c94e7c961f0061bd973f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.EncounterManager
+  _battleSceneName: BattleScene
 --- !u!1 &1875287717
 GameObject:
   m_ObjectHideFlags: 0

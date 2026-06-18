@@ -16,6 +16,8 @@ namespace _01_Scripts.Runtime.Worlds
         [Header("Player")]
         [SerializeField] private Transform _player;
 
+        public RoomData CurrentRoomData => _currentRoom?.data;
+
         private readonly Dictionary<RoomData, RoomInstance> _rooms = new();
         private RoomInstance _currentRoom;
         private bool _isTransitioning;
@@ -96,13 +98,15 @@ namespace _01_Scripts.Runtime.Worlds
             room.Show();
             _currentRoom = room;
 
-            if (_player == null || exitDoorId == null) return;
+            if (_player != null && exitDoorId != null)
+            {
+                var exitDoor = room.GetDoor(exitDoorId);
+                if (exitDoor != null)
+                    _player.position = exitDoor.transform.position;
+                else
+                    Debug.LogWarning($"[RoomManager] 출구 문 '{exitDoorId}'을 찾을 수 없습니다.");
+            }
 
-            var exitDoor = room.GetDoor(exitDoorId);
-            if (exitDoor != null)
-                _player.position = exitDoor.transform.position;
-            else
-                Debug.LogWarning($"[RoomManager] 출구 문 '{exitDoorId}'을 찾을 수 없습니다.");
         }
     }
 }
