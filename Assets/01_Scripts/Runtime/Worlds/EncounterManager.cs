@@ -24,6 +24,8 @@ namespace _01_Scripts.Runtime.Worlds
             foreach (var data in enemies)
                 Debug.Log($"[Encounter] {data.CharacterData.name}");
 
+            RoomManager.Instance.SetPlayerMovement(false);
+
             var playerParty = BuildPlayerParty();
             BattleContext.Set(playerParty, enemies.ToArray());
 

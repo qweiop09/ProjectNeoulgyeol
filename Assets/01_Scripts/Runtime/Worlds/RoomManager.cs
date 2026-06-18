@@ -21,11 +21,20 @@ namespace _01_Scripts.Runtime.Worlds
         private readonly Dictionary<RoomData, RoomInstance> _rooms = new();
         private RoomInstance _currentRoom;
         private bool _isTransitioning;
+        private PlayerCharacterMove _playerMove;
 
         protected override void Awake()
         {
             base.Awake();
+            if (_player != null)
+                _playerMove = _player.GetComponent<PlayerCharacterMove>();
             InitializeRooms(_startRoom);
+        }
+
+        public void SetPlayerMovement(bool enabled)
+        {
+            if (_playerMove != null)
+                _playerMove.enabled = enabled;
         }
 
         private void Start()
@@ -83,6 +92,7 @@ namespace _01_Scripts.Runtime.Worlds
         private IEnumerator TransitionRoutine(RoomInstance targetRoom, string exitDoorId)
         {
             _isTransitioning = true;
+            SetPlayerMovement(false);
 
             yield return _transition.Execute(() =>
             {
@@ -90,6 +100,7 @@ namespace _01_Scripts.Runtime.Worlds
                 ActivateRoom(targetRoom, exitDoorId);
             });
 
+            SetPlayerMovement(true);
             _isTransitioning = false;
         }
 

@@ -46,6 +46,10 @@ public class PlayerCharacterMove : MonoBehaviour
 
         moveAction.action.Disable();
         runAction.action.Disable();
+
+        moveDirection = Vector2.zero;
+        isRunning = false;
+        rb.linearVelocity = Vector2.zero;
     }
 
 
