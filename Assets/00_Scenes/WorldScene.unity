@@ -278,7 +278,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.RoomManager
   _transition: {fileID: 1890793280}
   _startRoom: {fileID: 11400000, guid: 00aab6a3216844a58a6096269b922c21, type: 2}
-  _encounterManager: {fileID: 739140281}
   _player: {fileID: 1875287724}
 --- !u!4 &739140280
 Transform:
@@ -309,6 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.EncounterManager
   _battleSceneName: BattleScene
+  _tempPlayerParty: []
 --- !u!1 &1875287717
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,12 +318,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1875287724}
+  - component: {fileID: 1875287725}
+  - component: {fileID: 1875287726}
   - component: {fileID: 1875287722}
   - component: {fileID: 1875287721}
   - component: {fileID: 1875287720}
   - component: {fileID: 1875287719}
   - component: {fileID: 1875287718}
-  - component: {fileID: 1875287725}
   m_Layer: 3
   m_Name: PlayerCharacter
   m_TagString: Player
@@ -604,6 +605,20 @@ MonoBehaviour:
   runMultiplier: 1.8
   moveAction: {fileID: -4064043131448457527, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
   runAction: {fileID: 3549503731763074837, guid: 4400c1344e36c425c929e9e58eccc482, type: 3}
+--- !u!114 &1875287726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875287717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1422ad19b3d4d819f943c548063f11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.PlayerEncounterTracker
+  _encounterManager: {fileID: 739140281}
+  _stepDistance: 3
 --- !u!1 &1890793279
 GameObject:
   m_ObjectHideFlags: 0

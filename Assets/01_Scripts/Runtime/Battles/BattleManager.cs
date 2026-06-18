@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.Close;
@@ -8,6 +6,7 @@ using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
+using _01_Scripts.Runtime.Worlds;
 using TMPro;
 
 namespace _01_Scripts.Runtime.Battles
@@ -38,6 +37,18 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Item testItem1;
     
     [SerializeField] private TextMeshProUGUI endText;
+
+    private void Start()
+    {
+        if (BattleContext.PlayerParty == null || BattleContext.EnemyParty == null) return;
+
+        var playerParty = BattleContext.PlayerParty;
+        var enemyParty = BattleContext.EnemyParty;
+        BattleContext.Clear();
+
+        StartButton.SetActive(false);
+        BattleStart(playerParty, enemyParty);
+    }
 
     public void OnEnable()
     {
