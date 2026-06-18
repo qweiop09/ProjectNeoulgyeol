@@ -1,43 +1,58 @@
+using System.Collections.Generic;
+using _01_Scripts.DTO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace _01_Scripts.Runtime.Worlds
 {
     public class EncounterManager : MonoBehaviour
     {
+        [Header("Scene")]
         [SerializeField] private string _battleSceneName = "Battle";
+
+        [Header("Temp Player Party")]
+        [SerializeField] private CharacterData[] _tempPlayerParty;
 
         public void TryEncounter(RoomData roomData)
         {
             if (roomData.encounterEntries == null || roomData.encounterEntries.Length == 0) return;
             if (Random.value > roomData.encounterRate) return;
 
-            var result = Roll(roomData);
-            if (!result.hasEncounter) return;
+            var enemies = RollEnemies(roomData);
+            if (enemies.Count == 0) return;
 
-            BattleContext.Set(result);
+            Debug.Log($"[Encounter] 발생! 적 종류: {enemies.Count}");
+            foreach (var data in enemies)
+                Debug.Log($"[Encounter] {data.CharacterData.name}");
 
-            foreach (var (enemy, count) in result.enemies)
-                Debug.Log($"[Encounter] {enemy.characterData.name} x{count}");
+            var playerParty = BuildPlayerParty();
+            BattleContext.Set(playerParty, enemies.ToArray());
 
-            // SceneManager.LoadScene(_battleSceneName);
+            SceneLoader.Instance.LoadScene(_battleSceneName);
         }
 
-        private EncounterResult Roll(RoomData roomData)
+        private List<CharacterBattleData> RollEnemies(RoomData roomData)
         {
-            var result = new EncounterResult();
+            var result = new List<CharacterBattleData>();
 
             foreach (var entry in roomData.encounterEntries)
             {
-                if (entry.enemyData == null) continue;
+                if (entry.enemyData?.characterData == null) continue;
                 if (Random.value > entry.spawnProbability) continue;
 
                 int count = Random.Range(entry.minCount, entry.maxCount + 1);
-                result.enemies.Add((entry.enemyData, count));
+                for (int i = 0; i < count; i++)
+                    result.Add(new CharacterBattleData(entry.enemyData.characterData));
             }
 
-            result.hasEncounter = result.enemies.Count > 0;
             return result;
+        }
+
+        private CharacterBattleData[] BuildPlayerParty()
+        {
+            var party = new CharacterBattleData[_tempPlayerParty.Length];
+            for (int i = 0; i < _tempPlayerParty.Length; i++)
+                party[i] = new CharacterBattleData(_tempPlayerParty[i]);
+            return party;
         }
     }
 }

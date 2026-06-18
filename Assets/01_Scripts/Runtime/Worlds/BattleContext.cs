@@ -1,17 +1,22 @@
+using _01_Scripts.DTO;
+
 namespace _01_Scripts.Runtime.Worlds
 {
     public static class BattleContext
     {
-        public static EncounterResult PendingEncounter { get; private set; }
+        public static CharacterBattleData[] PlayerParty { get; private set; }
+        public static CharacterBattleData[] EnemyParty { get; private set; }
 
-        public static void Set(EncounterResult result)
+        public static void Set(CharacterBattleData[] playerParty, CharacterBattleData[] enemyParty)
         {
-            PendingEncounter = result;
+            PlayerParty = playerParty;
+            EnemyParty = enemyParty;
         }
 
         public static void Clear()
         {
-            PendingEncounter = null;
+            PlayerParty = null;
+            EnemyParty = null;
         }
     }
 }
