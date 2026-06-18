@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30849331b64cb49dfb9770b2599cd76e, type: 3}
   m_Name: New Recovery Effect
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.Item.Effects.RecoveryItemEffect
-  hp: 0
+  hp: 30
   mp: 0
-  stamina: 0
+  stamina: 15
