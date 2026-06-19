@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using _01_Scripts.Interfacese;
 
 namespace _01_Scripts.Runtime.Worlds
 {
-    public class RoomManager : Singleton<RoomManager>
+    public class RoomManager : MonoBehaviour
     {
+        public static RoomManager Instance { get; private set; }
+
         [Header("Transition")]
         [SerializeField] private RoomTransition _transition;
 
@@ -24,12 +25,17 @@ namespace _01_Scripts.Runtime.Worlds
         private bool _isTransitioning;
         private PlayerCharacterMove _playerMove;
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
+            Instance = this;
             if (_player != null)
                 _playerMove = _player.GetComponent<PlayerCharacterMove>();
             InitializeRooms(_startRoom);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
         }
 
         private void Start()
