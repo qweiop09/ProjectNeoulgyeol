@@ -14,21 +14,21 @@ public class CameraHandler : Singleton<CameraHandler>
     private float followTargetSize;
     private bool isFollowing = false;
 
-    public void Awake()
+    protected override void Awake()
     {
         base.Awake();
-        
+        if (this != Instance) return;
         if (camera == null)
-            camera = gameObject.GetComponent<UnityEngine.Camera>();
+            camera = GetComponent<Camera>();
     }
 
     public void LateUpdate()
     {
         if (followTargetTransfrom != null && isFollowing)
         {
-            transform.position = 
-                Vector3.Lerp(transform.position, followTargetTransfrom.position, 0.1f * Time.deltaTime * 60)
-                + new Vector3( 0,0,-10);
+            camera.transform.position =
+                Vector3.Lerp(camera.transform.position, followTargetTransfrom.position, 0.1f * Time.deltaTime * 60)
+                + new Vector3(0, 0, -10);
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, followTargetSize, 0.3f);
         }
     }
@@ -52,7 +52,7 @@ public class CameraHandler : Singleton<CameraHandler>
         if (isFollowing)
             return;
         
-        transform.position = targetPosition;
+        camera.transform.position = targetPosition;
         camera.orthographicSize = targetSize;
     }
     
@@ -61,15 +61,15 @@ public class CameraHandler : Singleton<CameraHandler>
         if (isFollowing)
             return;
         
-        while (Vector3.Distance(transform.position, targetPosition) > 0.05f
+        while (Vector3.Distance(camera.transform.position, targetPosition) > 0.05f
                || Mathf.Abs(camera.orthographicSize - targetSize) > 0.05f)
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.15f * Time.deltaTime * 60);
+            camera.transform.position = Vector3.Lerp(camera.transform.position, targetPosition, 0.15f * Time.deltaTime * 60);
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetSize, 0.15f * Time.deltaTime * 60);
             await Wait(0.001f);
         }
 
-        transform.position = targetPosition;
+        camera.transform.position = targetPosition;
         camera.orthographicSize = targetSize;
     }
 
@@ -78,7 +78,7 @@ public class CameraHandler : Singleton<CameraHandler>
         if (isFollowing)
             return;
         
-        transform.position = new Vector3(0,0,-10);
+        camera.transform.position = new Vector3(0, 0, -10);
         camera.orthographicSize = 5;
     }
 
@@ -89,15 +89,15 @@ public class CameraHandler : Singleton<CameraHandler>
         
         Vector3 temp = new Vector3(0,0,-10);
         
-        while ( Vector3.Distance(transform.position,temp) > 0.05f 
-               || Mathf.Abs( 5 - camera.orthographicSize) > 0.05f)
+        while (Vector3.Distance(camera.transform.position, temp) > 0.05f
+               || Mathf.Abs(5 - camera.orthographicSize) > 0.05f)
         {
-            transform.position = Vector3.Lerp(transform.position, temp, 0.15f * Time.deltaTime * 60);
+            camera.transform.position = Vector3.Lerp(camera.transform.position, temp, 0.15f * Time.deltaTime * 60);
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, 5, 0.15f * Time.deltaTime * 60);
             await Wait(0.001f);
         }
         
-        transform.position = temp;
+        camera.transform.position = temp;
         camera.orthographicSize = 5;
     }
     

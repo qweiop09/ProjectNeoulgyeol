@@ -15,11 +15,18 @@ public class DecisionPhaseController : MonoBehaviour
     private void Awake()
     {
         _battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        _battlePhaseCoordinator.OnDecisionPhaseStart += StartDecisionPhase;
+        _battlePhaseCoordinator.OnDecisionPhaseStart   += StartDecisionPhase;
         _battlePhaseCoordinator.OnDecisionPhasePerform += StartDecisionPhaseMiddleProcess;
-        _battlePhaseCoordinator.OnDecisionPhaseEnd += StartDecisionPhaseEndProcess;
-        
+        _battlePhaseCoordinator.OnDecisionPhaseEnd     += StartDecisionPhaseEndProcess;
         actionSelectionPhaseManager.CompleteActSelected += SetSelectedActData;
+    }
+
+    private void OnDestroy()
+    {
+        _battlePhaseCoordinator.OnDecisionPhaseStart   -= StartDecisionPhase;
+        _battlePhaseCoordinator.OnDecisionPhasePerform -= StartDecisionPhaseMiddleProcess;
+        _battlePhaseCoordinator.OnDecisionPhaseEnd     -= StartDecisionPhaseEndProcess;
+        actionSelectionPhaseManager.CompleteActSelected -= SetSelectedActData;
     }
     
     private void SetSelectedActData(ActData actData)
@@ -34,10 +41,11 @@ public class DecisionPhaseController : MonoBehaviour
     
     
     // Start Phase Actions
-    private void StartDecisionPhase(CharacterHandler[] turnOrderCharacters)    
+    private void StartDecisionPhase(CharacterHandler[] turnOrderCharacters)
     {
+        _turnOrderCharacters = null;
         _turnOrderCharacters = turnOrderCharacters;
-        
+
         CompleteDecisionPhaseStartProcess();
     }
     
@@ -75,10 +83,11 @@ public class DecisionPhaseController : MonoBehaviour
     private void CompleteDecisionPhaseEndProcess()
     {
         Debug.Log("Decision Phase Ended");
-        
-        _battlePhaseCoordinator.CompleteDecisionEnd(_turnOrderCharacters);
-        
-        
+
+        var characters = _turnOrderCharacters;
+        _turnOrderCharacters = null;
+
+        _battlePhaseCoordinator.CompleteDecisionEnd(characters);
     }
     
 }

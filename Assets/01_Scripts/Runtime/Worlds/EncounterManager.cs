@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _01_Scripts.DTO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _01_Scripts.Runtime.Worlds
 {
@@ -8,7 +9,6 @@ namespace _01_Scripts.Runtime.Worlds
     {
         [Header("Scene")]
         [SerializeField] private string _battleSceneName = "Battle";
-
 
         public void TryEncounter(RoomData roomData)
         {
@@ -24,8 +24,13 @@ namespace _01_Scripts.Runtime.Worlds
 
             RoomManager.Instance.SetPlayerMovement(false);
 
-            var playerParty = BuildPlayerParty();
-            BattleContext.Set(playerParty, enemies.ToArray());
+            BattleContext.SetEncounter(
+                playerParty: WorldPartyManager.Instance.GetBattleParty(),
+                enemyParty: enemies.ToArray(),
+                worldSceneName: SceneManager.GetActiveScene().name,
+                playerWorldPosition: RoomManager.Instance.PlayerPosition,
+                currentRoomData: RoomManager.Instance.CurrentRoomData
+            );
 
             SceneLoader.Instance.LoadScene(_battleSceneName);
         }
@@ -45,11 +50,6 @@ namespace _01_Scripts.Runtime.Worlds
             }
 
             return result;
-        }
-
-        private CharacterBattleData[] BuildPlayerParty()
-        {
-            return WorldPartyManager.Instance.BuildBattleParty();
         }
     }
 }

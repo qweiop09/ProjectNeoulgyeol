@@ -19,20 +19,25 @@ public class CompetePhaseController : MonoBehaviour
     
     private void Awake()
     {
-        // 이벤트 구독
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
-        
-        battlePhaseCoordinator.OnCompetePhaseStart += StartCompetePhaseStartProcess;
-        
+        battlePhaseCoordinator.OnCompetePhaseStart   += StartCompetePhaseStartProcess;
         battlePhaseCoordinator.OnCompetePhasePerform += StartCompetePhaseMiddleProcess;
-        battlePhaseCoordinator.OnCompetePhaseEnd += StartCompetePhaseEndProcess;
+        battlePhaseCoordinator.OnCompetePhaseEnd     += StartCompetePhaseEndProcess;
+    }
+
+    private void OnDestroy()
+    {
+        battlePhaseCoordinator.OnCompetePhaseStart   -= StartCompetePhaseStartProcess;
+        battlePhaseCoordinator.OnCompetePhasePerform -= StartCompetePhaseMiddleProcess;
+        battlePhaseCoordinator.OnCompetePhaseEnd     -= StartCompetePhaseEndProcess;
     }
     
     // Start Phase Actions
     private void StartCompetePhaseStartProcess(CharacterHandler[] _allCharacterHandlers)
     {
-        allCharacterHandlers = _allCharacterHandlers; ;
-        
+        allCharacterHandlers = null;
+        allCharacterHandlers = _allCharacterHandlers;
+
         CompleteCompetePhaseStartProcess();
     }
     
@@ -73,11 +78,12 @@ public class CompetePhaseController : MonoBehaviour
     
     private void CompleteCompetePhaseEndProcess()
     {
-        // Compete Phase Logic
         Debug.Log("Compete Phase Ended");
-        
-        // Compete Phase End
-        battlePhaseCoordinator.CompleteCompeteEnd(allCharacterHandlers);
+
+        var characters = allCharacterHandlers;
+        allCharacterHandlers = null;
+
+        battlePhaseCoordinator.CompleteCompeteEnd(characters);
     }
 }
 }

@@ -1,4 +1,5 @@
 using System;
+using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Decision;
@@ -35,6 +36,10 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
     private ActData _currentActData;
 
+    private Action<CharacterSkill> _onActionSettingCompleted;
+    private Action<Item>           _onItemActionSettingCompleted;
+    private Action                 _onStayActionSettingCompleted;
+
     private void OnEnable()
     {
         EnsureAttackArrowController();
@@ -42,51 +47,56 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         characterChoiceController.OnCharacterSelected += HandleSelectionSignal;
 
-        characterActionUIController.CompletedActionSetting +=
-            (data) =>
+        _onActionSettingCompleted = (data) =>
+        {
+            _currentActData = new SkillActData
             {
-                _currentActData = new SkillActData
-                {
-                    CastPlayerCharacter = selectedActCaster,
-                    UseSlot             = _currentActData?.UseSlot ?? 0,
-                    UseSkill            = data
-                };
-                ChangeSelectionState(SelectionState.SelectingActTarget);
+                CastPlayerCharacter = selectedActCaster,
+                UseSlot             = _currentActData?.UseSlot ?? 0,
+                UseSkill            = data
             };
+            ChangeSelectionState(SelectionState.SelectingActTarget);
+        };
 
-        characterActionUIController.CompletedItemActionSetting +=
-            (item) =>
+        _onItemActionSettingCompleted = (item) =>
+        {
+            _currentActData = new ItemActData
             {
-                _currentActData = new ItemActData
-                {
-                    CastPlayerCharacter = selectedActCaster,
-                    UseSlot             = _currentActData?.UseSlot ?? 0,
-                    UseItem             = item
-                };
-                ChangeSelectionState(SelectionState.SelectingActTarget);
+                CastPlayerCharacter = selectedActCaster,
+                UseSlot             = _currentActData?.UseSlot ?? 0,
+                UseItem             = item
             };
+            ChangeSelectionState(SelectionState.SelectingActTarget);
+        };
 
-        characterActionUIController.CompletedStayActionSetting +=
-            () =>
-            {
-                int slot = _currentActData?.UseSlot ?? 0;
-                StayActData stayData = new StayActData(selectedActCaster, slot);
+        _onStayActionSettingCompleted = () =>
+        {
+            int slot = _currentActData?.UseSlot ?? 0;
+            StayActData stayData = new StayActData(selectedActCaster, slot);
 
-                attackArrowController?.HideTrackingArrow();
+            attackArrowController?.HideTrackingArrow();
+            CompleteActSelected?.Invoke(stayData);
+            selectedActTarget = null;
 
-                CompleteActSelected?.Invoke(stayData);
+            ChangeSelectionState(SelectionState.SelectingActCaster);
+        };
 
-                // selectedActCaster / _currentActData 의 null 처리는
-                // ChangeSelectionState 내부 분기에서 이미 수행하므로 여기서 하지 않음
-                selectedActTarget = null;
-
-                ChangeSelectionState(SelectionState.SelectingActCaster);
-            };
+        characterActionUIController.CompletedActionSetting     += _onActionSettingCompleted;
+        characterActionUIController.CompletedItemActionSetting += _onItemActionSettingCompleted;
+        characterActionUIController.CompletedStayActionSetting += _onStayActionSettingCompleted;
     }
 
     private void OnDisable()
     {
         characterChoiceController.OnCharacterSelected -= HandleSelectionSignal;
+
+        if (characterActionUIController != null)
+        {
+            characterActionUIController.CompletedActionSetting     -= _onActionSettingCompleted;
+            characterActionUIController.CompletedItemActionSetting -= _onItemActionSettingCompleted;
+            characterActionUIController.CompletedStayActionSetting -= _onStayActionSettingCompleted;
+        }
+
         attackArrowController?.HideTrackingArrow();
     }
 
@@ -106,6 +116,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     public void StartActionSelectionPhase()
     {
         Debug.Log("Starting Action Selection Phase");
+        ClearManager();
         SelectActCaster();
     }
 

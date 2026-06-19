@@ -17,6 +17,7 @@ namespace _01_Scripts.Runtime.Worlds
         [SerializeField] private Transform _player;
 
         public RoomData CurrentRoomData => _currentRoom?.data;
+        public Vector3 PlayerPosition => _player != null ? _player.position : Vector3.zero;
 
         private readonly Dictionary<RoomData, RoomInstance> _rooms = new();
         private RoomInstance _currentRoom;
@@ -31,19 +32,57 @@ namespace _01_Scripts.Runtime.Worlds
             InitializeRooms(_startRoom);
         }
 
+        private void Start()
+        {
+            if (BattleContext.Result != null)
+            {
+                HandleBattleReturn();
+                return;
+            }
+
+            if (_currentRoom == null && _rooms.TryGetValue(_startRoom, out var room))
+                ActivateRoom(room, null);
+        }
+
         public void SetPlayerMovement(bool enabled)
         {
             if (_playerMove != null)
                 _playerMove.enabled = enabled;
         }
 
-        private void Start()
+        // 배틀 씬에서 돌아왔을 때 처리
+        private void HandleBattleReturn()
         {
-            if (_currentRoom == null && _rooms.TryGetValue(_startRoom, out var room))
-                ActivateRoom(room, null);
+            var result = BattleContext.Result;
+            var returnRoomData = BattleContext.CurrentRoomData;
+            var returnPosition = BattleContext.PlayerWorldPosition;
+
+            BattleContext.ClearResult();
+            BattleContext.ClearEncounter();
+
+            if (result.IsWin)
+            {
+                WorldPartyManager.Instance.ApplyBattleResults(result.SurvivedParty);
+
+                if (returnRoomData != null && _rooms.TryGetValue(returnRoomData, out var returnRoom))
+                    ActivateRoom(returnRoom, null);
+                else if (_rooms.TryGetValue(_startRoom, out var fallback))
+                    ActivateRoom(fallback, null);
+
+                if (_player != null)
+                    _player.position = returnPosition;
+            }
+            else
+            {
+                WorldPartyManager.Instance.ResetParty();
+
+                if (_rooms.TryGetValue(_startRoom, out var startRoom))
+                    ActivateRoom(startRoom, null);
+            }
+
+            SetPlayerMovement(true);
         }
 
-        // 시작 방부터 연결된 모든 방을 BFS로 순회하며 미리 인스턴스화
         private void InitializeRooms(RoomData root)
         {
             var queue = new Queue<RoomData>();
@@ -117,7 +156,6 @@ namespace _01_Scripts.Runtime.Worlds
                 else
                     Debug.LogWarning($"[RoomManager] 출구 문 '{exitDoorId}'을 찾을 수 없습니다.");
             }
-
         }
     }
 }

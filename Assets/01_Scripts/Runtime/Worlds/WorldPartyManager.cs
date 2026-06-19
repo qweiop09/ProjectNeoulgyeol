@@ -7,19 +7,53 @@ namespace _01_Scripts.Runtime.Worlds
 {
     public class WorldPartyManager : Singleton<WorldPartyManager>
     {
-        [SerializeField] private List<CharacterData> _party = new();
+        [SerializeField] private List<CharacterData> _partyDefinitions = new();
 
-        public IReadOnlyList<CharacterData> Party => _party;
+        private List<CharacterBattleData> _runtimeParty = new();
 
-        public CharacterBattleData[] BuildBattleParty()
+        public IReadOnlyList<CharacterBattleData> RuntimeParty => _runtimeParty;
+
+        protected override void Awake()
         {
-            var result = new CharacterBattleData[_party.Count];
-            for (int i = 0; i < _party.Count; i++)
-                result[i] = new CharacterBattleData(_party[i]);
-            return result;
+            base.Awake();
+            BuildRuntimeParty();
         }
 
-        public void AddMember(CharacterData character) => _party.Add(character);
-        public void RemoveMember(CharacterData character) => _party.Remove(character);
+        public CharacterBattleData[] GetBattleParty() => _runtimeParty.ToArray();
+
+        // 전투 결과(현재 HP/MP/스태미나)를 월드 파티에 반영
+        public void ApplyBattleResults(CharacterBattleData[] survivedParty)
+        {
+            for (int i = 0; i < survivedParty.Length && i < _runtimeParty.Count; i++)
+            {
+                _runtimeParty[i].currentHp = survivedParty[i].currentHp;
+                _runtimeParty[i].currentMp = survivedParty[i].currentMp;
+                _runtimeParty[i].currentStamina = survivedParty[i].currentStamina;
+            }
+        }
+
+        // 패배 시 파티 상태를 최대치로 초기화
+        public void ResetParty() => BuildRuntimeParty();
+
+        public void AddMember(CharacterData character)
+        {
+            _partyDefinitions.Add(character);
+            _runtimeParty.Add(new CharacterBattleData(character));
+        }
+
+        public void RemoveMember(CharacterData character)
+        {
+            int idx = _partyDefinitions.IndexOf(character);
+            if (idx < 0) return;
+            _partyDefinitions.RemoveAt(idx);
+            _runtimeParty.RemoveAt(idx);
+        }
+
+        private void BuildRuntimeParty()
+        {
+            _runtimeParty.Clear();
+            foreach (var def in _partyDefinitions)
+                _runtimeParty.Add(new CharacterBattleData(def));
+        }
     }
 }

@@ -18,11 +18,17 @@ public class ClosePhaseController : MonoBehaviour
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
         battlePhaseCoordinator.OnClosePhaseEnd += StartClosePhase;
     }
-    
-    private void StartClosePhase(CharacterHandler[] allCharacterHandlers )
+
+    private void OnDestroy()
     {
-        allCharacterHandlers = allCharacterHandlers;
-        
+        battlePhaseCoordinator.OnClosePhaseEnd -= StartClosePhase;
+    }
+    
+    private void StartClosePhase(CharacterHandler[] characters)
+    {
+        allCharacterHandlers = null;
+        allCharacterHandlers = characters;
+
         CompleteClosePhaseProcess(allCharacterHandlers);
     }
     
@@ -66,8 +72,11 @@ public class ClosePhaseController : MonoBehaviour
         await CameraHandler.Instance.PositionResetToLerp();
     
         // Close Phase End
-        battlePhaseCoordinator.CompleteClosePhaseEnd(
-            friendlyCharacters.ToArray(), enemyCharacters.ToArray());
+        var friendly = friendlyCharacters.ToArray();
+        var enemy = enemyCharacters.ToArray();
+        allCharacterHandlers = null;
+
+        battlePhaseCoordinator.CompleteClosePhaseEnd(friendly, enemy);
     }
 
     // 해당 진영 전원 사망 여부 체크

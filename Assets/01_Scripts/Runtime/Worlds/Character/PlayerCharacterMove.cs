@@ -44,9 +44,6 @@ public class PlayerCharacterMove : MonoBehaviour
         runAction.action.performed -= OnRunStarted;
         runAction.action.canceled -= OnRunCanceled;
 
-        moveAction.action.Disable();
-        runAction.action.Disable();
-
         moveDirection = Vector2.zero;
         isRunning = false;
         rb.linearVelocity = Vector2.zero;

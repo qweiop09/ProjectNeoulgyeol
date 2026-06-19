@@ -19,8 +19,10 @@ public class CharacterChoiceController : MonoBehaviour
     [Header("Internal Fields")]
     
     [SerializeField] private bool isActive;
-    private bool enabledLeftClickActionInternally;
     [SerializeField] private CharacterHandler selectedCharacter;
+
+    private bool _pendingClick;
+    private Vector2 _pendingClickPosition;
 
     public CharacterHandler SelectedCharacter => selectedCharacter;
 
@@ -31,58 +33,40 @@ public class CharacterChoiceController : MonoBehaviour
     public void ActivateActionSelectionPhase()
     {
         Debug.Log("Activating Action Selection Phase");
-        
         isActive = true;
-        EnableLeftClickAction();
         selectedCharacter = null;
+        _pendingClick = false;
+        _pendingClickPosition = Vector2.zero;
     }
 
     // 선택 페이즈 종료
     public void DeactivateActionSelectionPhase()
     {
         Debug.Log("Deactivating Action Selection Phase");
-        
         isActive = false;
-        DisableLeftClickAction();
         selectedCharacter = null;
+        _pendingClick = false;
+        _pendingClickPosition = Vector2.zero;
     }
     
-    // 클릭 감지 활성화
-    private void EnableLeftClickAction()
-    {
-        if (leftClickAction.action == null) return;
-
-        if (!leftClickAction.action.enabled)
-        {
-            leftClickAction.action.Enable();
-            enabledLeftClickActionInternally = true;
-        }
-    }
-
-    // 클릭 감지 비활성화
-    private void DisableLeftClickAction()
-    {
-        if (enabledLeftClickActionInternally && leftClickAction?.action != null)
-            leftClickAction.action.Disable();
-
-        enabledLeftClickActionInternally = false;
-    }
     
-    private void Awake()
+    private Camera GetCamera()
     {
-        if (raycastCamera == null)
-            raycastCamera = Camera.main;
+        if (raycastCamera != null) return raycastCamera;
+        raycastCamera = Camera.main;
+        return raycastCamera;
     }
 
     private void OnEnable()
     {
-        if (leftClickAction.action != null)
-            leftClickAction.action.performed += OnLeftClickPerformed;
+        if (leftClickAction?.action == null) return;
+        leftClickAction.action.Enable();
+        leftClickAction.action.performed += OnLeftClickPerformed;
     }
 
     private void OnDisable()
     {
-        if (leftClickAction.action != null)
+        if (leftClickAction?.action != null)
             leftClickAction.action.performed -= OnLeftClickPerformed;
 
         DeactivateActionSelectionPhase();
@@ -91,28 +75,48 @@ public class CharacterChoiceController : MonoBehaviour
     
     // 기능
 
-    // 클릭 시 캐릭터 선택 시도
-    private void OnLeftClickPerformed(InputAction.CallbackContext context)
+    private void Update()
     {
-        if (!isActive) return;
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        if (!_pendingClick) return;
+        _pendingClick = false;
 
-        TrySelectCharacter(GetPointerScreenPosition());
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            Debug.Log("[Click] UI에 가려져 무시됨");
+            return;
+        }
+
+        TrySelectCharacter(_pendingClickPosition);
     }
 
     // 화면 클릭 위치에서 캐릭터 선택 시도
     private void TrySelectCharacter(Vector3 screenPosition)
     {
-        if (raycastCamera == null) return;
+        var cam = GetCamera();
+        if (cam == null)
+        {
+            Debug.LogWarning("[Click] Camera.main을 찾을 수 없음");
+            return;
+        }
 
-        Ray ray = raycastCamera.ScreenPointToRay(screenPosition);
+        Ray ray = cam.ScreenPointToRay(screenPosition);
         CharacterHandler hitCharacterHandler = GetRayCastHitTransform(ray);
-        
-        Debug.Log("RayCast hit: " + (hitCharacterHandler != null ? hitCharacterHandler.name : "None"));
+
+        Debug.Log("[Click] RayCast hit: " + (hitCharacterHandler != null ? hitCharacterHandler.name : "None"));
 
         selectedCharacter = hitCharacterHandler;
         OnCharacterSelected?.Invoke(selectedCharacter);
     }
+
+    // 클릭 시 캐릭터 선택 시도
+    private void OnLeftClickPerformed(InputAction.CallbackContext context)
+    {
+        Debug.Log($"[Click] 콜백 수신 — isActive: {isActive}, action enabled: {leftClickAction?.action?.enabled}");
+        if (!isActive) return;
+        _pendingClick = true;
+        _pendingClickPosition = GetPointerScreenPosition();
+    }
+
 
     // 클릭 위치에서 레이캐스트를 쏴서 캐릭터 핸들러 가져오기
     private CharacterHandler GetRayCastHitTransform(Ray ray)

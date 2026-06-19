@@ -15,27 +15,21 @@ public class CompeteContestController : MonoBehaviour
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
     [SerializeField] private int stayStaminaRecovery = 20; // Stay 시 턴 종료 후 회복되는 스테미나 양
 
-    public void OnEnable()
+    private void OnEnable()
     {
         QTECoordinator.Instance.OnQTEMarkerReceived += ApplyQteResult;
-
-        CharacterStatusCalculator.Instance.isCharacterDead +=
-            CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Dead); };
-        
-        // CharacterStatusCalculator.Instance.isCharacterStagger +=
-        //     CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Idle); };
+        CharacterStatusCalculator.Instance.isCharacterDead += OnCharacterDead;
     }
-    
-    public void OnDisable()
+
+    private void OnDisable()
     {
         QTECoordinator.Instance.OnQTEMarkerReceived -= ApplyQteResult;
-        
-        CharacterStatusCalculator.Instance.isCharacterDead -=
-            CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Dead); };
-        
-        // CharacterStatusCalculator.Instance.isCharacterStagger -=
-        //     CH => { CharacterAnimationMonitor.Instance.PlayAnimation(CH, CharacterAnimationMonitor.CharacterAnimationState.Idle); };
+        CharacterStatusCalculator.Instance.isCharacterDead -= OnCharacterDead;
+    }
 
+    private void OnCharacterDead(CharacterHandler ch)
+    {
+        CharacterAnimationMonitor.Instance.PlayAnimation(ch, CharacterAnimationMonitor.CharacterAnimationState.Dead);
     }
     
     // qte 피드백

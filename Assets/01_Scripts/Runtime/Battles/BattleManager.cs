@@ -44,7 +44,7 @@ public class BattleManager : MonoBehaviour
 
         var playerParty = BattleContext.PlayerParty;
         var enemyParty = BattleContext.EnemyParty;
-        BattleContext.Clear();
+        BattleContext.ClearEncounter();
 
         StartButton.SetActive(false);
         BattleStart(playerParty, enemyParty);
@@ -63,9 +63,22 @@ public class BattleManager : MonoBehaviour
     private void BattleEnd(CharacterHandler[] playerCharacterHandlers, bool isWin)
     {
         endText.text = isWin ? "You Win!" : "You Lose!";
-        
-        // 전투 종료 후 처리 로직 (예: 결과 화면으로 이동, 데이터 저장 등)
-        Debug.Log("Battle Ended");
+        ClearCharacters();
+
+        var survivedParty = new CharacterBattleData[playerCharacterHandlers.Length];
+        for (int i = 0; i < playerCharacterHandlers.Length; i++)
+            survivedParty[i] = playerCharacterHandlers[i].GetCharacterBattleData();
+
+        BattleContext.SetResult(new BattleResult { IsWin = isWin, SurvivedParty = survivedParty });
+
+        string worldScene = BattleContext.WorldSceneName;
+        if (string.IsNullOrEmpty(worldScene))
+        {
+            Debug.LogWarning("[BattleManager] 월드 씬 이름이 없습니다. 직접 실행 시에는 BattleContext가 비어있습니다.");
+            return;
+        }
+
+        SceneLoader.Instance.LoadScene(worldScene);
     }
 
 
@@ -96,9 +109,11 @@ public class BattleManager : MonoBehaviour
             Debug.LogError("파티원 수가 최대 파티원 수를 초과했습니다.");
             return;
         }
-        
+
+        ClearCharacters();
+
         Debug.Log(_playerBattleDatas);
-        
+
         playerCharacters = new CharacterHandler[_playerBattleDatas.Length];
         enemyCharacters = new CharacterHandler[_enemyBattleDatas.Length];
         
@@ -127,6 +142,23 @@ public class BattleManager : MonoBehaviour
     public BattlePhaseCoordinator GetBattlePhaseCoordinator()
     {
         return battlePhaseCoordinator;
+    }
+
+    private void ClearCharacters()
+    {
+        if (playerCharacters != null)
+        {
+            foreach (var c in playerCharacters)
+                if (c != null) Destroy(c.gameObject);
+            playerCharacters = null;
+        }
+
+        if (enemyCharacters != null)
+        {
+            foreach (var c in enemyCharacters)
+                if (c != null) Destroy(c.gameObject);
+            enemyCharacters = null;
+        }
     }
 
     // private Methods

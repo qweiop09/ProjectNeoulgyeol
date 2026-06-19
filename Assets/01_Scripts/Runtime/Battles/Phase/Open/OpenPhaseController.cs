@@ -26,10 +26,17 @@ public class OpenPhaseController : MonoBehaviour
     {
         battlePhaseCoordinator = battleManager.GetBattlePhaseCoordinator();
         battlePhaseCoordinator.OnOpenPhaseStart += StartOpenPhase;
-        
-        battlePhaseCoordinator.OnBattleStart += (data1, data2)
-            => StartBattle(data1, data2);
+        battlePhaseCoordinator.OnBattleStart    += OnBattleStart;
     }
+
+    private void OnDestroy()
+    {
+        battlePhaseCoordinator.OnOpenPhaseStart -= StartOpenPhase;
+        battlePhaseCoordinator.OnBattleStart    -= OnBattleStart;
+    }
+
+    private void OnBattleStart(CharacterHandler[] players, CharacterHandler[] enemies)
+        => StartBattle(players, enemies);
 
     private void StartBattle(CharacterHandler[] _playerCharacters, CharacterHandler[] _enemyCharacters)
     {

@@ -308,7 +308,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.EncounterManager
   _battleSceneName: BattleScene
-  _tempPlayerParty: []
+--- !u!1 &1415690543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1415690545}
+  - component: {fileID: 1415690544}
+  m_Layer: 0
+  m_Name: PlayerPlayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1415690544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415690543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f737858dd824487cbb26e97933c3da2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.WorldPartyManager
+  _partyDefinitions:
+  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+--- !u!4 &1415690545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415690543}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.89542, y: 0.5658, z: -4.66927}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1875287717
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,3 +873,4 @@ SceneRoots:
   - {fileID: 48219832}
   - {fileID: 1875287724}
   - {fileID: 739140280}
+  - {fileID: 1415690545}
