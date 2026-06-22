@@ -7,6 +7,7 @@ using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
 using _01_Scripts.Runtime.Worlds;
+using _01_Scripts.Runtime.Worlds.Loot;
 using TMPro;
 
 namespace _01_Scripts.Runtime.Battles
@@ -35,8 +36,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private CharacterData[] testEnemyCharacterDatas;
     
     [SerializeField] private Item testItem1;
-    
+
     [SerializeField] private TextMeshProUGUI endText;
+
+    private EnemyData[] _enemyDatas;
 
     private void Start()
     {
@@ -44,6 +47,7 @@ public class BattleManager : MonoBehaviour
 
         var playerParty = BattleContext.PlayerParty;
         var enemyParty = BattleContext.EnemyParty;
+        _enemyDatas = BattleContext.EnemyDatas;   // 드랍 계산을 위해 씬 로드 전 저장
         BattleContext.ClearEncounter();
 
         StartButton.SetActive(false);
@@ -69,7 +73,8 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < playerCharacterHandlers.Length; i++)
             survivedParty[i] = playerCharacterHandlers[i].GetCharacterBattleData();
 
-        BattleContext.SetResult(new BattleResult { IsWin = isWin, SurvivedParty = survivedParty });
+        LootResult loot = isWin ? LootCalculator.Calculate(_enemyDatas) : null;
+        BattleContext.SetResult(new BattleResult { IsWin = isWin, SurvivedParty = survivedParty, Loot = loot });
 
         string worldScene = BattleContext.WorldSceneName;
         if (string.IsNullOrEmpty(worldScene))

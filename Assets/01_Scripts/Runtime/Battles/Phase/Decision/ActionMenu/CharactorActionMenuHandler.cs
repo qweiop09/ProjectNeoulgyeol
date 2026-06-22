@@ -114,7 +114,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     public void UpdateActionMenuCharacterStatus()
     {
-        actCharacterNameText.text = currentHandler.GetCharacterBattleData().CharacterData.name;
+        actCharacterNameText.text = currentHandler.GetCharacterBattleData().CharacterData.characterName;
         
         CharacterBattleData battleData = currentHandler.GetCharacterBattleData();
         

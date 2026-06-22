@@ -13,3 +13,12 @@ MonoBehaviour:
   m_Name: TestEnemyData
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.EnemyData
   characterData: {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  dropTable:
+  - item: {fileID: 11400000, guid: 4c46c0899381b4c1abffa37537dcd181, type: 2}
+    dropRate: 1
+    minQuantity: 1
+    maxQuantity: 2
+  - item: {fileID: 11400000, guid: d6a3701a1bbe34bccbfaa428614606c2, type: 2}
+    dropRate: 0.1
+    minQuantity: 1
+    maxQuantity: 1

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using _01_Scripts.Runtime.Worlds.UI;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Worlds
@@ -17,8 +19,15 @@ namespace _01_Scripts.Runtime.Worlds
         [Header("Player")]
         [SerializeField] private Transform _player;
 
+        [Header("UI")]
+        [SerializeField] private LootUI _lootUI;
+
+        public event Action<RoomData> OnRoomActivated;
+
         public RoomData CurrentRoomData => _currentRoom?.data;
         public Vector3 PlayerPosition => _player != null ? _player.position : Vector3.zero;
+
+        public IEnumerable<RoomData> GetAllRoomDatas() => _rooms.Keys;
 
         private readonly Dictionary<RoomData, RoomInstance> _rooms = new();
         private RoomInstance _currentRoom;
@@ -77,6 +86,12 @@ namespace _01_Scripts.Runtime.Worlds
 
                 if (_player != null)
                     _player.position = returnPosition;
+
+                // 전리품이 있으면 UI 표시 후 이동 허용, 없으면 즉시 허용
+                if (_lootUI != null && result.Loot != null && result.Loot.HasLoot)
+                    _lootUI.Show(result.Loot, () => SetPlayerMovement(true));
+                else
+                    SetPlayerMovement(true);
             }
             else
             {
@@ -84,9 +99,9 @@ namespace _01_Scripts.Runtime.Worlds
 
                 if (_rooms.TryGetValue(_startRoom, out var startRoom))
                     ActivateRoom(startRoom, null);
-            }
 
-            SetPlayerMovement(true);
+                SetPlayerMovement(true);
+            }
         }
 
         private void InitializeRooms(RoomData root)
@@ -152,6 +167,7 @@ namespace _01_Scripts.Runtime.Worlds
         private void ActivateRoom(RoomInstance room, string exitDoorId)
         {
             room.Show();
+            room.MarkVisited();
             _currentRoom = room;
 
             if (_player != null && exitDoorId != null)
@@ -162,6 +178,8 @@ namespace _01_Scripts.Runtime.Worlds
                 else
                     Debug.LogWarning($"[RoomManager] 출구 문 '{exitDoorId}'을 찾을 수 없습니다.");
             }
+
+            OnRoomActivated?.Invoke(room.data);
         }
     }
 }

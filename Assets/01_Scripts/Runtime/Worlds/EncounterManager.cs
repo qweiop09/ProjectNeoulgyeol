@@ -15,18 +15,17 @@ namespace _01_Scripts.Runtime.Worlds
             if (roomData.encounterEntries == null || roomData.encounterEntries.Length == 0) return;
             if (Random.value > roomData.encounterRate) return;
 
-            var enemies = RollEnemies(roomData);
-            if (enemies.Count == 0) return;
+            RollEnemies(roomData, out var battleDatas, out var sourceDatas);
+            if (battleDatas.Count == 0) return;
 
-            Debug.Log($"[Encounter] 발생! 적 종류: {enemies.Count}");
-            foreach (var data in enemies)
-                Debug.Log($"[Encounter] {data.CharacterData.name}");
+            Debug.Log($"[Encounter] 발생! 적 수: {battleDatas.Count}");
 
             RoomManager.Instance.SetPlayerMovement(false);
 
             BattleContext.SetEncounter(
                 playerParty: WorldPartyManager.Instance.GetBattleParty(),
-                enemyParty: enemies.ToArray(),
+                enemyParty: battleDatas.ToArray(),
+                enemyDatas: sourceDatas.ToArray(),
                 worldSceneName: SceneManager.GetActiveScene().name,
                 playerWorldPosition: RoomManager.Instance.PlayerPosition,
                 currentRoomData: RoomManager.Instance.CurrentRoomData
@@ -35,9 +34,12 @@ namespace _01_Scripts.Runtime.Worlds
             SceneLoader.Instance.LoadScene(_battleSceneName);
         }
 
-        private List<CharacterBattleData> RollEnemies(RoomData roomData)
+        private void RollEnemies(RoomData roomData,
+            out List<CharacterBattleData> battleDatas,
+            out List<EnemyData> sourceDatas)
         {
-            var result = new List<CharacterBattleData>();
+            battleDatas = new List<CharacterBattleData>();
+            sourceDatas = new List<EnemyData>();
 
             foreach (var entry in roomData.encounterEntries)
             {
@@ -46,10 +48,11 @@ namespace _01_Scripts.Runtime.Worlds
 
                 int count = Random.Range(entry.minCount, entry.maxCount + 1);
                 for (int i = 0; i < count; i++)
-                    result.Add(new CharacterBattleData(entry.enemyData.characterData));
+                {
+                    battleDatas.Add(new CharacterBattleData(entry.enemyData.characterData));
+                    sourceDatas.Add(entry.enemyData);
+                }
             }
-
-            return result;
         }
     }
 }

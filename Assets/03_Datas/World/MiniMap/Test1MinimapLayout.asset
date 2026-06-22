@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02379c36cff584e3eafa0bc425f0f432, type: 3}
+  m_Name: Test1MinimapLayout
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.Minimap.MinimapLayoutData
+  entries:
+  - room: {fileID: 11400000, guid: 00aab6a3216844a58a6096269b922c21, type: 2}
+    anchor: {x: 0, y: 0}
+    cells: []
+  - room: {fileID: 11400000, guid: 669e2d445fcee497b8c35c46c896fb35, type: 2}
+    anchor: {x: 1, y: 0}
+    cells: []

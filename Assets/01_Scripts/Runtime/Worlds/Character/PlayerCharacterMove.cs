@@ -13,6 +13,9 @@ public class PlayerCharacterMove : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    public Vector2 MoveDirection => moveDirection;
+    public bool IsRunning => isRunning;
+
     private Vector2 moveDirection;
     private bool isRunning;
 

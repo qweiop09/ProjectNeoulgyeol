@@ -17,6 +17,7 @@ public class Item : ScriptableObject
 {
     [SerializeField] public string itemName;
     [SerializeField][TextArea] public string itemDescription;
+    [SerializeField] public Sprite icon;
 
     [SerializeField] public ItemTargetType targetType;
 
