@@ -29,6 +29,13 @@ namespace _01_Scripts.Runtime.Worlds.Character
             _animator.SetBool(IsRunning, isMoving && _move.IsRunning);
             _animator.SetFloat(MoveX,    dir.x);
             _animator.SetFloat(MoveY,    dir.y);
+
+            if (dir.x != 0)
+            {
+                var scale = transform.localScale;
+                scale.x = Mathf.Abs(scale.x) * (dir.x > 0 ? 1f : -1f);
+                transform.localScale = scale;
+            }
         }
     }
 }
