@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6611fc7211c5740a4981361cc0d4286f, type: 3}
-  m_Name: Test Skill Data1 1
+  m_Name: BlackCloudBossAttak3
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.CharacterSkill
-  skillName: "\uB54C\uB9AC\uAE30"
+  skillName: "\uC2ED\uC790\uBCA0\uAE30"
   skillMpCost: 0
-  skillStaminaCost: 10
+  skillStaminaCost: 30
   skillStartDistance: 1
   timelineBinder: {fileID: 11400000, guid: 095e822eea6064748847b1a723b76a65, type: 2}
-  skillTimelineAsset: {fileID: 11400000, guid: aafdb16e3380744dfbdaef41afa612bc, type: 2}
+  skillTimelineAsset: {fileID: 11400000, guid: 213f4f936a3044d7392cfab9f4eb314a, type: 2}

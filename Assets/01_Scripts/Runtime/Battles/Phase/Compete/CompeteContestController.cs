@@ -106,7 +106,7 @@ public class CompeteContestController : MonoBehaviour
             }
             else if (actData is ItemActData itemActData)
             {
-                itemActData.UseItem.Use(actData.TargetPlayerCharacter);
+                // itemActData.UseItem.Use(actData.TargetPlayerCharacter);
 
                 if (itemActData.UseItem.isConsumable)
                     actData.CastPlayerCharacter.GetCharacterBattleData().inventory

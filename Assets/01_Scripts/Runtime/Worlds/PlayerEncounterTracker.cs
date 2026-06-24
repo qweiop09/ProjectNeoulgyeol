@@ -6,6 +6,7 @@ namespace _01_Scripts.Runtime.Worlds
     {
         [SerializeField] private EncounterManager _encounterManager;
         [SerializeField] private float _stepDistance = 3f;
+        [SerializeField] private PlayerCharacterMove _playerMove;
 
         private Vector3 _lastPosition;
         private float _accumulatedDistance;
@@ -17,6 +18,13 @@ namespace _01_Scripts.Runtime.Worlds
 
         private void Update()
         {
+            // 이동이 막혀 있는 동안(방 전환 등)은 위치 추적을 건너뜀
+            if (_playerMove != null && !_playerMove.enabled)
+            {
+                _lastPosition = transform.position;
+                return;
+            }
+
             float moved = Vector3.Distance(transform.position, _lastPosition);
             if (moved == 0f) return;
 

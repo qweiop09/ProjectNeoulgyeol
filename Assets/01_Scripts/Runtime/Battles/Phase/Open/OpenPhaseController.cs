@@ -236,6 +236,11 @@ public class OpenPhaseController : MonoBehaviour
             _characterBattleDatas.transform.rotation = new Quaternion(0, 0, 0, 0);
         else
             _characterBattleDatas.transform.rotation = new Quaternion(0, 180, 0, 0);
+        
+        if (_characterBattleDatas.characterType == CharacterHandler.CharacterType.Enemy)
+            _characterBattleDatas.GetComponent<SpriteRenderer>().flipX = true; 
+
+        
     }
    
 }

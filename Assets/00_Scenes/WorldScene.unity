@@ -549,7 +549,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &370151606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1034,10 +1034,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\uD655\uC778"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28d529581f2b34c4bb37f97c2fad8944, type: 2}
+  m_sharedMaterial: {fileID: -2313846854722961922, guid: 28d529581f2b34c4bb37f97c2fad8944, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1662,6 +1662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.PlayerEncounterTracker
   _encounterManager: {fileID: 739140281}
   _stepDistance: 3
+  _playerMove: {fileID: 0}
 --- !u!114 &1875287727
 MonoBehaviour:
   m_ObjectHideFlags: 0

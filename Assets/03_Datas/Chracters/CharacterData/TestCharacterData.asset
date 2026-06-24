@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c34f73ac0a14859b3913d7bb83e876, type: 3}
   m_Name: TestCharacterData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStatus
-  name: "\uC911\uC9C0 \uC81C\uC790 \uC774\uC2A4\uB9C8\uC5D8"
+  characterName: "\uC774\uC2A4\uB9C8\uC5D8"
+  portrait: {fileID: 0}
   maxHp: 100
   maxMp: 50
   maxStamina: 100
-  attack: 30
+  attack: 15
   defense: 20
   slotCount: 1
   characterSpeedLowLimit: 1
@@ -28,8 +29,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7215831baef7b49d39ec39ed7f32496e, type: 2}
   characterSkills:
   - {fileID: 11400000, guid: 1a651b55cbb1843acacc641b34441937, type: 2}
-  - {fileID: 11400000, guid: 1b8c73dd0a898434f9f5cc73ef89429f, type: 2}
-  - {fileID: 11400000, guid: 2788edeb938e84e3ca73fff33f7d617b, type: 2}
-  - {fileID: 11400000, guid: 8f913980e2970411590133546f28fa34, type: 2}
-  - {fileID: 11400000, guid: f3b6a41d5eb5f4416a672eb93955ec23, type: 2}
-  - {fileID: 11400000, guid: 6e836568c2397472b982952a664f45e3, type: 2}
+  rightHand: {fileID: 0}
+  leftHand: {fileID: 0}
+  head: {fileID: 0}
+  body: {fileID: 0}
+  legs: {fileID: 0}
+  accessory1: {fileID: 0}
+  accessory2: {fileID: 0}
+  battleItemSlotCount: 15

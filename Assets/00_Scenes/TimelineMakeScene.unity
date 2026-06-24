@@ -130,11 +130,11 @@ GameObject:
   - component: {fileID: 155707326}
   - component: {fileID: 155707325}
   - component: {fileID: 155707324}
+  - component: {fileID: 155707319}
   - component: {fileID: 155707323}
   - component: {fileID: 155707322}
   - component: {fileID: 155707321}
   - component: {fileID: 155707320}
-  - component: {fileID: 155707319}
   - component: {fileID: 155707318}
   - component: {fileID: 155707317}
   - component: {fileID: 155707316}
@@ -425,8 +425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccb07ec44181a44118cd2add8bc58f0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
-  animator: {fileID: 155707319}
-  markerReceiver: {fileID: 155707321}
 --- !u!320 &155707323
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -436,7 +434,7 @@ PlayableDirector:
   m_GameObject: {fileID: 155707314}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 8d2583d5e26a34a8589f93fae183d393, type: 2}
+  m_PlayableAsset: {fileID: 11400000, guid: 213f4f936a3044d7392cfab9f4eb314a, type: 2}
   m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
@@ -450,6 +448,18 @@ PlayableDirector:
     value: {fileID: 155707319}
   - key: {fileID: -8081955282802570967, guid: 8d2583d5e26a34a8589f93fae183d393, type: 2}
     value: {fileID: 155707320}
+  - key: {fileID: 1917750137069751559, guid: 71579f82b5680490bac1f24ac58c8807, type: 2}
+    value: {fileID: 155707319}
+  - key: {fileID: -5939107869667228916, guid: 71579f82b5680490bac1f24ac58c8807, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -190580549731168021, guid: 259cb4b60a371453ea02424128b04053, type: 2}
+    value: {fileID: 155707319}
+  - key: {fileID: 3607720304592970961, guid: 259cb4b60a371453ea02424128b04053, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 3731771124340774737, guid: 213f4f936a3044d7392cfab9f4eb314a, type: 2}
+    value: {fileID: 155707319}
+  - key: {fileID: 6575671307818315958, guid: 213f4f936a3044d7392cfab9f4eb314a, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &155707324
