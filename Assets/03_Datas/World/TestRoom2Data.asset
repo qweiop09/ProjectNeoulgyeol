@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d34bd585cbd741989ed7ac259446a1b, type: 3}
   m_Name: TestRoom2Data
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Runtime.Worlds.RoomData
-  roomPrefab: {fileID: 8007640355245168482, guid: e60286b8da7ef45aab909a2fa7e7d38e, type: 3}
+  roomPrefab: {fileID: 3339618264659066531, guid: e60286b8da7ef45aab909a2fa7e7d38e, type: 3}
   doors:
   - doorId: test2
     targetRoom: {fileID: 11400000, guid: 00aab6a3216844a58a6096269b922c21, type: 2}
