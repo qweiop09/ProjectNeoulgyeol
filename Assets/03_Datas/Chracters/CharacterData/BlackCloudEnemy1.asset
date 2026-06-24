@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c34f73ac0a14859b3913d7bb83e876, type: 3}
+  m_Name: BlackCloudEnemy1
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.CharacterData
+  characterName: "\uD751\uC6B4\uD68C \uCAC4\uB2E4\uAD6C"
+  portrait: {fileID: 0}
+  maxHp: 150
+  maxMp: 30
+  maxStamina: 150
+  attack: 10
+  defense: 5
+  slotCount: 1
+  characterSpeedLowLimit: 2
+  characterSpeedHighLimit: 3
+  idleAnimation: {fileID: 7400000, guid: 8bbfd6ab9db24445e90f88c3e4202b40, type: 2}
+  runAnimation: {fileID: 7400000, guid: 2990fd061750f4a8bb62eb9a76d35241, type: 2}
+  deadAnimation: {fileID: 7400000, guid: 389e323b884e24e1da2395cb31741d3a, type: 2}
+  characterAttacks:
+  - {fileID: 0}
+  characterSkills: []
+  rightHand: {fileID: 0}
+  leftHand: {fileID: 0}
+  head: {fileID: 0}
+  body: {fileID: 0}
+  legs: {fileID: 0}
+  accessory1: {fileID: 0}
+  accessory2: {fileID: 0}
+  battleItemSlotCount: 15

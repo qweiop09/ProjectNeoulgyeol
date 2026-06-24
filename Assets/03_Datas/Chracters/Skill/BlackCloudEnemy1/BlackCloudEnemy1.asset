@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6611fc7211c5740a4981361cc0d4286f, type: 3}
+  m_Name: BlackCloudEnemy1
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.CharacterSkill
+  skillName: "4\uC5F0\uCC38 \u314B"
+  skillMpCost: 0
+  skillStaminaCost: 40
+  skillStartDistance: 1
+  timelineBinder: {fileID: 11400000, guid: 095e822eea6064748847b1a723b76a65, type: 2}
+  skillTimelineAsset: {fileID: 11400000, guid: 21e190e581b7e4c4c89f671d8951abaf, type: 2}
