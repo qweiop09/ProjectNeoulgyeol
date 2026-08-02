@@ -39,8 +39,8 @@ public class ClosePhaseController : MonoBehaviour
         for(int i = 0; i < allCharacterHandlers.Length; i++)
         {
             Debug.Log("Character " + i + ": " + allCharacterHandlers[i].name);
-            allCharacterHandlers[i].GetCharacterBattleData().TargetingData
-                = new ActData[allCharacterHandlers[i].GetCharacterBattleData().TargetingData.Length];
+            allCharacterHandlers[i].TargetingData
+                = new ActData[allCharacterHandlers[i].TargetingData.Length];
         }
     
         // 아군/적군으로 분리
@@ -86,7 +86,7 @@ public class ClosePhaseController : MonoBehaviour
 
         foreach (CharacterHandler character in characters)
         {
-            if (character.GetCharacterBattleData().currentState != CharacterState.Dead)
+            if (character.GetCharacterStatus().currentState != CharacterState.Dead)
                 return false;
         }
 

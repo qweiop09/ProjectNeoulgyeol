@@ -5,6 +5,6 @@ namespace _01_Scripts.DTO.Item
 {
     public abstract class ItemEffectBase : ScriptableObject
     {
-        public abstract void Apply(CharacterBattleData target);
+        public abstract void Apply(CharacterStatus target);
     }
 }

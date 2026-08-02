@@ -27,8 +27,8 @@ public class CameraHandler : Singleton<CameraHandler>
         if (followTargetTransfrom != null && isFollowing)
         {
             camera.transform.position =
-                Vector3.Lerp(camera.transform.position, followTargetTransfrom.position, 0.1f * Time.deltaTime * 60)
-                + new Vector3(0, 0, -10);
+                Vector3.Lerp(camera.transform.position, followTargetTransfrom.position + new Vector3(0, 0, -15), 0.1f * Time.deltaTime * 60)
+              ;
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, followTargetSize, 0.3f);
         }
     }

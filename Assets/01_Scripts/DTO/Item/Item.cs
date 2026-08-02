@@ -33,7 +33,7 @@ namespace _01_Scripts.DTO.Item
 
         [SerializeField] public ItemEffectBase[] effects;
 
-        public void Use(CharacterBattleData target)
+        public void Use(CharacterStatus target)
         {
             if (effects == null) return;
             foreach (var effect in effects)

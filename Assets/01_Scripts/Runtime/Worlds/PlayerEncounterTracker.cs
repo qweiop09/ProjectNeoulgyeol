@@ -18,10 +18,11 @@ namespace _01_Scripts.Runtime.Worlds
 
         private void Update()
         {
-            // 이동이 막혀 있는 동안(방 전환 등)은 위치 추적을 건너뜀
+            // 이동이 막혀 있는 동안(방 전환 등)은 위치 추적과 누적 거리를 초기화
             if (_playerMove != null && !_playerMove.enabled)
             {
                 _lastPosition = transform.position;
+                _accumulatedDistance = 0f;
                 return;
             }
 

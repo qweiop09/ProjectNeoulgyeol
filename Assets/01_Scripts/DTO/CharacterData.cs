@@ -1,4 +1,3 @@
-using _01_Scripts.DTO.Item;
 using UnityEngine;
 
 namespace _01_Scripts.DTO
@@ -33,16 +32,6 @@ public class CharacterData : ScriptableObject
     [Header("Skills")]
     public CharacterSkill[] characterAttacks;
     public CharacterSkill[] characterSkills;
-
-    [Header("Equipment")]
-    // 전투 구현 단계에서 전리품 시스템과 함께 실제 장착 로직 추가 예정
-    public EquipmentItem rightHand;
-    public EquipmentItem leftHand;
-    public EquipmentItem head;
-    public EquipmentItem body;
-    public EquipmentItem legs;
-    public EquipmentItem accessory1;
-    public EquipmentItem accessory2;
 
     [Header("Battle Inventory")]
     [Tooltip("캐릭터 전투 아이템 슬롯 수. 스킬 등으로 변동 가능")]

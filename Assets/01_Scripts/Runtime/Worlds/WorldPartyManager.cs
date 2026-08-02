@@ -9,9 +9,9 @@ namespace _01_Scripts.Runtime.Worlds
     {
         [SerializeField] private List<CharacterData> _partyDefinitions = new();
 
-        private List<CharacterBattleData> _runtimeParty = new();
+        private List<CharacterStatus> _runtimeParty = new();
 
-        public IReadOnlyList<CharacterBattleData> RuntimeParty => _runtimeParty;
+        public IReadOnlyList<CharacterStatus> RuntimeParty => _runtimeParty;
 
         protected override void Awake()
         {
@@ -19,18 +19,10 @@ namespace _01_Scripts.Runtime.Worlds
             BuildRuntimeParty();
         }
 
-        public CharacterBattleData[] GetBattleParty() => _runtimeParty.ToArray();
-
-        // 전투 결과(현재 HP/MP/스태미나)를 월드 파티에 반영
-        public void ApplyBattleResults(CharacterBattleData[] survivedParty)
-        {
-            for (int i = 0; i < survivedParty.Length && i < _runtimeParty.Count; i++)
-            {
-                _runtimeParty[i].currentHp = survivedParty[i].currentHp;
-                _runtimeParty[i].currentMp = survivedParty[i].currentMp;
-                _runtimeParty[i].currentStamina = survivedParty[i].currentStamina;
-            }
-        }
+        // 같은 CharacterStatus 참조를 그대로 반환한다 (복사 아님).
+        // 전투 중 CharacterStatusCalculator가 만든 변경이 곧바로 _runtimeParty에 반영되므로
+        // 별도의 결과 반영(field copy-back) 단계가 필요 없다.
+        public CharacterStatus[] GetBattleParty() => _runtimeParty.ToArray();
 
         // 패배 시 파티 상태를 최대치로 초기화
         public void ResetParty() => BuildRuntimeParty();
@@ -38,7 +30,7 @@ namespace _01_Scripts.Runtime.Worlds
         public void AddMember(CharacterData character)
         {
             _partyDefinitions.Add(character);
-            _runtimeParty.Add(new CharacterBattleData(character));
+            _runtimeParty.Add(new CharacterStatus(character));
         }
 
         public void RemoveMember(CharacterData character)
@@ -53,7 +45,7 @@ namespace _01_Scripts.Runtime.Worlds
         {
             _runtimeParty.Clear();
             foreach (var def in _partyDefinitions)
-                _runtimeParty.Add(new CharacterBattleData(def));
+                _runtimeParty.Add(new CharacterStatus(def));
         }
     }
 }

@@ -46,13 +46,13 @@ public class OpenPhaseController : MonoBehaviour
         enemyCharacters = _enemyCharacters;
         
         for(int i = 0; i < playerCharacters.Length; i++)
-            playerCharacters[i].GetCharacterBattleData().TargetingData = 
-                new ActData[playerCharacters[i].characterBattleData.CharacterData.slotCount];
-            
-        
+            playerCharacters[i].TargetingData =
+                new ActData[playerCharacters[i].GetCharacterStatus().CharacterData.slotCount];
+
+
         for (int i = 0; i < enemyCharacters.Length; i++)
-            enemyCharacters[i].GetCharacterBattleData().TargetingData = 
-                new ActData[enemyCharacters[i].characterBattleData.CharacterData.slotCount];
+            enemyCharacters[i].TargetingData =
+                new ActData[enemyCharacters[i].GetCharacterStatus().CharacterData.slotCount];
         
         StartOpenPhase();
     }
@@ -78,25 +78,25 @@ public class OpenPhaseController : MonoBehaviour
         Debug.Log(" 아군 : ");
         for (int i = 0; i < playerCharacters.Length; i++)
         {
-            playerCharacters[i].GetCharacterBattleData().DebugPrintStatusData();
-            
-            playerCharacters[i].GetCharacterBattleData().PlacementOrder = i;
+            playerCharacters[i].DebugPrintStatusData();
+
+            playerCharacters[i].PlacementOrder = i;
             SetCharactersPosition(playerCharacters[i], playerCharacterPositions[i]);
-            
+
             CharacterAnimationMonitor.Instance.PlayAnimation(playerCharacters[i],
-                playerCharacters[i].GetCharacterBattleData().currentState);
-        } 
-        
+                playerCharacters[i].GetCharacterStatus().currentState);
+        }
+
         Debug.Log("적군 : ");
         for (int i = 0; i < enemyCharacters.Length; i++)
         {
-            enemyCharacters[i].GetCharacterBattleData().DebugPrintStatusData();
-            
-            enemyCharacters[i].GetCharacterBattleData().PlacementOrder = i;
+            enemyCharacters[i].DebugPrintStatusData();
+
+            enemyCharacters[i].PlacementOrder = i;
             SetCharactersPosition(enemyCharacters[i], enemyCharacterPositions[i]);
-            
+
             CharacterAnimationMonitor.Instance.PlayAnimation(enemyCharacters[i],
-                enemyCharacters[i].GetCharacterBattleData().currentState);
+                enemyCharacters[i].GetCharacterStatus().currentState);
         }
         
         turnOrderCharacters = DetermineTurnOrder
@@ -142,22 +142,22 @@ public class OpenPhaseController : MonoBehaviour
             
             if (_enemyCharacterTargetDatas.Count == 0 ||
                 (_playerCharacterBattleDatas.Count > 0 &&
-                 _playerCharacterBattleDatas[0].GetCharacterBattleData().CurrentSpeed >=
-                 _enemyCharacterTargetDatas[0].GetCharacterBattleData().CurrentSpeed))
+                 _playerCharacterBattleDatas[0].CurrentSpeed >=
+                 _enemyCharacterTargetDatas[0].CurrentSpeed))
             {
                 _allCharacterTargetDatas.Add(_playerCharacterBattleDatas[0]);
                 _playerCharacterBattleDatas.RemoveAt(0);
-                
-                _allCharacterTargetDatas[i].GetCharacterBattleData().TurnOrder = i;
-                _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
+
+                _allCharacterTargetDatas[i].TurnOrder = i;
+                _allCharacterTargetDatas[i].PlacementOrder = i;
             }
-            else 
+            else
             {
                 _allCharacterTargetDatas.Add(_enemyCharacterTargetDatas[0]);
                 _enemyCharacterTargetDatas.RemoveAt(0);
-                
-                _allCharacterTargetDatas[i].GetCharacterBattleData().TurnOrder = i;
-                _allCharacterTargetDatas[i].GetCharacterBattleData().PlacementOrder = i;
+
+                _allCharacterTargetDatas[i].TurnOrder = i;
+                _allCharacterTargetDatas[i].PlacementOrder = i;
             }
 
             i++;
@@ -176,10 +176,10 @@ public class OpenPhaseController : MonoBehaviour
     {
         for (int i = 0; i < _characterBattleDatas.Length; i++)
         {
-            _characterBattleDatas[i].GetCharacterBattleData().PlacementOrder = i;
+            _characterBattleDatas[i].PlacementOrder = i;
         }
     }
-    
+
     private CharacterHandler[] SortBySpeedDescending(CharacterHandler[] _characterBattleDatas)
     {
         if (_characterBattleDatas == null || _characterBattleDatas.Length <= 1)
@@ -189,12 +189,12 @@ public class OpenPhaseController : MonoBehaviour
         {
             int i = left;
             int j = right;
-            int pivot = _characterBattleDatas[(left + right) / 2].GetCharacterBattleData().CurrentSpeed;
+            int pivot = _characterBattleDatas[(left + right) / 2].CurrentSpeed;
 
             while (i <= j)
             {
-                while (_characterBattleDatas[i].GetCharacterBattleData().CurrentSpeed > pivot) i++;
-                while (_characterBattleDatas[j].GetCharacterBattleData().CurrentSpeed < pivot) j--;
+                while (_characterBattleDatas[i].CurrentSpeed > pivot) i++;
+                while (_characterBattleDatas[j].CurrentSpeed < pivot) j--;
 
                 if (i <= j)
                 {
@@ -220,8 +220,8 @@ public class OpenPhaseController : MonoBehaviour
 
         for (int i = 0; i < _characterBattleDatas.Length; i++)
         {
-            _characterBattleDatas[i].GetCharacterBattleData().SetRandomSpeed();
-            
+            _characterBattleDatas[i].SetRandomSpeed();
+
             _returnBattleDataArray[i] = _characterBattleDatas[i];
         }
         

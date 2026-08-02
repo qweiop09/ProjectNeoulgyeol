@@ -13,7 +13,7 @@ namespace _01_Scripts.DTO.Item
     }
 
     [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Item/Equipment Item", fileName = "New Equipment Item")]
-    public class EquipmentItem : ScriptableObject
+    public class EquipmentItem : ScriptableObject, IEquipment
     {
         public string itemName;
         [TextArea] public string itemDescription;
@@ -26,5 +26,12 @@ namespace _01_Scripts.DTO.Item
         public int maxHpBonus;
         public int maxMpBonus;
         public int maxStaminaBonus;
+
+        EquipmentSlotType IEquipment.SlotType => slotType;
+        int IEquipment.AttackBonus => attackBonus;
+        int IEquipment.DefenseBonus => defenseBonus;
+        int IEquipment.MaxHpBonus => maxHpBonus;
+        int IEquipment.MaxMpBonus => maxMpBonus;
+        int IEquipment.MaxStaminaBonus => maxStaminaBonus;
     }
 }

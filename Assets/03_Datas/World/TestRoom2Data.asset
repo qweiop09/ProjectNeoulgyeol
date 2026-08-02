@@ -21,7 +21,11 @@ MonoBehaviour:
   - enemyData: {fileID: 11400000, guid: f330f63a52b694941943024c9e8ba385, type: 2}
     spawnProbability: 1
     minCount: 1
-    maxCount: 3
+    maxCount: 1
+  - enemyData: {fileID: 11400000, guid: 0387712598ba34fe0874efa7ccfc16b6, type: 2}
+    spawnProbability: 1
+    minCount: 1
+    maxCount: 2
   encounterRate: 0.2
   roomType: 0
   displayName: 

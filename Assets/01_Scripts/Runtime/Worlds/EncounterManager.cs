@@ -35,10 +35,10 @@ namespace _01_Scripts.Runtime.Worlds
         }
 
         private void RollEnemies(RoomData roomData,
-            out List<CharacterBattleData> battleDatas,
+            out List<CharacterStatus> battleDatas,
             out List<EnemyData> sourceDatas)
         {
-            battleDatas = new List<CharacterBattleData>();
+            battleDatas = new List<CharacterStatus>();
             sourceDatas = new List<EnemyData>();
 
             foreach (var entry in roomData.encounterEntries)
@@ -49,7 +49,7 @@ namespace _01_Scripts.Runtime.Worlds
                 int count = Random.Range(entry.minCount, entry.maxCount + 1);
                 for (int i = 0; i < count; i++)
                 {
-                    battleDatas.Add(new CharacterBattleData(entry.enemyData.characterData));
+                    battleDatas.Add(new CharacterStatus(entry.enemyData.characterData));
                     sourceDatas.Add(entry.enemyData);
                 }
             }

@@ -12,27 +12,27 @@ public class EnemyActionController : MonoBehaviour
         for (int i = 0; i < casters.Length; i++)
         {
             CharacterHandler caster = casters[i];
-            
-            if(caster.GetCharacterBattleData().currentState == CharacterState.Dead
-               || caster.GetCharacterBattleData().currentState == CharacterState.Staggered)
-                continue; // 행동 불가 상태면 스킵
-            
-            int remainingStamina = caster.GetCharacterBattleData().currentStamina; // 참조만, 차감 안 함
-            CharacterSkill[] availableAttacks = caster.characterBattleData.CharacterData.characterAttacks;
 
-            for (int slotIndex = 0; slotIndex < caster.characterBattleData.CharacterData.slotCount; slotIndex++)
+            if(caster.GetCharacterStatus().currentState == CharacterState.Dead
+               || caster.GetCharacterStatus().currentState == CharacterState.Staggered)
+                continue; // 행동 불가 상태면 스킵
+
+            int remainingStamina = caster.GetCharacterStatus().currentStamina; // 참조만, 차감 안 함
+            CharacterSkill[] availableAttacks = caster.GetCharacterStatus().CharacterData.characterAttacks;
+
+            for (int slotIndex = 0; slotIndex < caster.GetCharacterStatus().CharacterData.slotCount; slotIndex++)
             {
                 CharacterSkill selectedSkill = SelectSkillByStamina(availableAttacks, remainingStamina);
                 if (selectedSkill == null) break;
 
                 CharacterHandler[] aliveTargets = targets
-                    .Where(t => t.GetCharacterBattleData().currentState != CharacterState.Dead)
+                    .Where(t => t.GetCharacterStatus().currentState != CharacterState.Dead)
                     .ToArray();
                 if (aliveTargets.Length == 0) break;
 
                 CharacterHandler selectedTarget = aliveTargets[Random.Range(0, aliveTargets.Length)];
 
-                caster.GetCharacterBattleData().TargetingData[slotIndex] = new SkillActData(
+                caster.TargetingData[slotIndex] = new SkillActData(
                     caster,
                     slotIndex,
                     selectedSkill,

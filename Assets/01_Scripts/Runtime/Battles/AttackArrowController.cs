@@ -28,7 +28,7 @@ public class AttackArrowController : MonoBehaviour
         if (caster == null) return;
         if (fixedArrowsByCaster.ContainsKey(caster)) return;
 
-        int slotCount = caster.characterBattleData.CharacterData.slotCount;
+        int slotCount = caster.GetCharacterStatus().CharacterData.slotCount;
         fixedArrowsByCaster[caster] = new AttackArrowView[slotCount];
     }
 
@@ -39,7 +39,7 @@ public class AttackArrowController : MonoBehaviour
 
         foreach (CharacterHandler caster in characters)
         {
-            ActData[] targetingData = caster.GetCharacterBattleData().TargetingData;
+            ActData[] targetingData = caster.TargetingData;
             if (targetingData == null) continue;
 
             for (int slotIndex = 0; slotIndex < targetingData.Length; slotIndex++)

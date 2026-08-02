@@ -31,7 +31,7 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
     {
         if (characterHandler.animator == null || characterHandler == null) return;
 
-        AnimationClip clip = GetClip(characterHandler.GetCharacterBattleData().CharacterData, state);
+        AnimationClip clip = GetClip(characterHandler.GetCharacterStatus().CharacterData, state);
         if (clip == null)
         {
             Debug.Log(characterHandler.name + "의 " + state + " 애니메이션이 설정되지 않음");

@@ -77,7 +77,8 @@ namespace _01_Scripts.Runtime.Worlds
 
             if (result.IsWin)
             {
-                WorldPartyManager.Instance.ApplyBattleResults(result.SurvivedParty);
+                // CharacterStatus가 참조로 공유되므로 전투 중 변경된 hp/mp/stamina는
+                // 이미 WorldPartyManager의 파티에 반영되어 있다 (별도 결과 반영 불필요).
 
                 if (returnRoomData != null && _rooms.TryGetValue(returnRoomData, out var returnRoom))
                     ActivateRoom(returnRoom, null);

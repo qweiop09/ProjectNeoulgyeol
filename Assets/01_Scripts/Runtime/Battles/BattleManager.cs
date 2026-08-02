@@ -69,9 +69,11 @@ public class BattleManager : MonoBehaviour
         endText.text = isWin ? "You Win!" : "You Lose!";
         ClearCharacters();
 
-        var survivedParty = new CharacterBattleData[playerCharacterHandlers.Length];
+        // CharacterStatus는 참조로 공유되므로 여기서 만드는 배열은 상태 동기화용이 아니라
+        // 전리품 계산/결과 리포팅(BattleResult.SurvivedParty)을 위한 목적으로만 쓰인다.
+        var survivedParty = new CharacterStatus[playerCharacterHandlers.Length];
         for (int i = 0; i < playerCharacterHandlers.Length; i++)
-            survivedParty[i] = playerCharacterHandlers[i].GetCharacterBattleData();
+            survivedParty[i] = playerCharacterHandlers[i].GetCharacterStatus();
 
         LootResult loot = isWin ? LootCalculator.Calculate(_enemyDatas) : null;
         BattleContext.SetResult(new BattleResult { IsWin = isWin, SurvivedParty = survivedParty, Loot = loot });
@@ -91,12 +93,12 @@ public class BattleManager : MonoBehaviour
     public void TestStart()
     {
         StartButton.SetActive(false);
-        
-        CharacterBattleData[] a;
-        CharacterBattleData[] b; 
-        
-        a = ChangeCharacterDataToCharacterBattleData(testFlendlyCharacterDatas);
-        b = ChangeCharacterDataToCharacterBattleData(testEnemyCharacterDatas);
+
+        CharacterStatus[] a;
+        CharacterStatus[] b;
+
+        a = ChangeCharacterDataToCharacterStatus(testFlendlyCharacterDatas);
+        b = ChangeCharacterDataToCharacterStatus(testEnemyCharacterDatas);
         
         for(int i = 0; i < a.Length; i++)
             for(int ii = 0; ii < 6; ii++)
@@ -106,7 +108,7 @@ public class BattleManager : MonoBehaviour
     }
 
     // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
-    public void BattleStart(CharacterBattleData[] _playerBattleDatas, CharacterBattleData[] _enemyBattleDatas)
+    public void BattleStart(CharacterStatus[] _playerBattleDatas, CharacterStatus[] _enemyBattleDatas)
     {
         if(_playerBattleDatas.Length > maxPartyMembers
            || _enemyBattleDatas.Length > maxPartyMembers)
@@ -121,20 +123,20 @@ public class BattleManager : MonoBehaviour
 
         playerCharacters = new CharacterHandler[_playerBattleDatas.Length];
         enemyCharacters = new CharacterHandler[_enemyBattleDatas.Length];
-        
+
         // 플레이어 캐릭터 핸들러 생성 및 배틀 데이터 초기화
         for(int i = 0; i < playerCharacters.Length; i++)
         {
             playerCharacters[i] = Instantiate(originCharacter, transform);
-            playerCharacters[i].SetCharacterBattleData(_playerBattleDatas[i]);
+            playerCharacters[i].SetCharacterStatus(_playerBattleDatas[i]);
             SetRefCharacterBattleData(playerCharacters[i]);
             playerCharacters[i].characterType = CharacterHandler.CharacterType.Friendly;
         }
-        
+
         for(int i = 0; i < enemyCharacters.Length; i++)
         {
             enemyCharacters[i] = Instantiate(originCharacter, transform);
-            enemyCharacters[i].SetCharacterBattleData(_enemyBattleDatas[i]);
+            enemyCharacters[i].SetCharacterStatus(_enemyBattleDatas[i]);
             SetRefCharacterBattleData(enemyCharacters[i]);
             enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
         }
@@ -167,27 +169,22 @@ public class BattleManager : MonoBehaviour
     }
 
     // private Methods
-    private CharacterBattleData[] ChangeCharacterDataToCharacterBattleData(CharacterData[] _characterStatuses)
+    private CharacterStatus[] ChangeCharacterDataToCharacterStatus(CharacterData[] _characterStatuses)
     {
-        CharacterBattleData[] _returnBattleDataArray = new CharacterBattleData[_characterStatuses.Length];
-        
+        CharacterStatus[] _returnBattleDataArray = new CharacterStatus[_characterStatuses.Length];
+
         for (int i = 0; i < _characterStatuses.Length; i++)
         {
-            _returnBattleDataArray[i] = new CharacterBattleData(_characterStatuses[i]);
+            _returnBattleDataArray[i] = new CharacterStatus(_characterStatuses[i]);
         }
-    
+
         return _returnBattleDataArray;
     }
-    
-    // 배틀 데이터 기반의 참조 데이터 설정 (ex. 타겟의 트랜스폼)
+
+    // 전투 1회용 데이터 초기화 (ex. 슬롯 수에 맞춘 타겟팅 배열)
     private CharacterHandler SetRefCharacterBattleData(CharacterHandler characterHandlers)
     {
-        CharacterBattleData _characterBattleData;
-        
-        _characterBattleData = characterHandlers.GetCharacterBattleData();
-        
-        _characterBattleData.CharacterTransform = characterHandlers.transform;
-        _characterBattleData.TargetingData = new ActData[_characterBattleData.CharacterData.slotCount];
+        characterHandlers.TargetingData = new ActData[characterHandlers.GetCharacterStatus().CharacterData.slotCount];
 
         return characterHandlers;
     }

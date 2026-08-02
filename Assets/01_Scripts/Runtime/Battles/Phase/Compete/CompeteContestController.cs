@@ -27,11 +27,17 @@ public class CompeteContestController : MonoBehaviour
         CharacterStatusCalculator.Instance.isCharacterDead -= OnCharacterDead;
     }
 
-    private void OnCharacterDead(CharacterHandler ch)
+    private void OnCharacterDead(CharacterStatus status)
     {
-        CharacterAnimationMonitor.Instance.PlayAnimation(ch, CharacterAnimationMonitor.CharacterAnimationState.Dead);
+        // 새 레지스트리 없이, HP 피격이 이 컨트롤러 안에서만 발생하므로
+        // 지금 실행 중인 행동의 타겟 핸들러를 그대로 사용한다.
+        if (currentActData.TargetPlayerCharacter.GetCharacterStatus() != status) return;
+
+        CharacterAnimationMonitor.Instance.PlayAnimation(
+            currentActData.TargetPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Dead);
     }
-    
+
+
     // qte 피드백
     private void ApplyQteResult(QTEResult result)
     {
@@ -62,7 +68,7 @@ public class CompeteContestController : MonoBehaviour
             };
         }
 
-        int finalDamage = (int)(currentActData.CastPlayerCharacter.characterBattleData.CharacterData.attack
+        int finalDamage = (int)(currentActData.CastPlayerCharacter.GetCharacterStatus().GetAttack()
                                 * damageMultiplier);
 
         DamageTextSpawner.Instance.SpawnDamageText(
@@ -71,7 +77,7 @@ public class CompeteContestController : MonoBehaviour
             result);
 
         CharacterStatusCalculator.Instance.ApplyHpModify(
-            currentActData.TargetPlayerCharacter,
+            currentActData.TargetPlayerCharacter.GetCharacterStatus(),
             -finalDamage);
     }
 
@@ -84,13 +90,13 @@ public class CompeteContestController : MonoBehaviour
         {
             ActData actData = actDatas[i];
             if (actData == null) continue;
-            if (actData.CastPlayerCharacter.characterBattleData.currentState == CharacterState.Dead
-                || actData.CastPlayerCharacter.characterBattleData.currentState == CharacterState.Staggered) continue;
+            if (actData.CastPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead
+                || actData.CastPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Staggered) continue;
 
             // Stay는 카메라/행동 모두 스킵 — 턴 종료 후 스테미나 회복은 루프 외부에서 처리
             if (actData is StayActData) continue;
 
-            if (actData.TargetPlayerCharacter.characterBattleData.currentState == CharacterState.Dead) continue;
+            if (actData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead) continue;
 
             CameraHandler.Instance.SetFollowTransform(actData.CastPlayerCharacter.transform, 1.5f);
             currentActData = actData;
@@ -101,15 +107,15 @@ public class CompeteContestController : MonoBehaviour
                 await PlayMoveToTarget(actData);
                 Debug.Log("PlayCompete Start");
                 CharacterAnimationMonitor.Instance.PlayAnimation(actData.CastPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Idle);
-                CharacterStatusCalculator.Instance.UseSkill(actData.CastPlayerCharacter, skillActData.UseSkill);
+                CharacterStatusCalculator.Instance.UseSkill(actData.CastPlayerCharacter.GetCharacterStatus(), skillActData.UseSkill);
                 await PlayCompete(skillActData);
             }
             else if (actData is ItemActData itemActData)
             {
-                // itemActData.UseItem.Use(actData.TargetPlayerCharacter);
+                // itemActData.UseItem.Use(actData.TargetPlayerCharacter.GetCharacterStatus());
 
                 if (itemActData.UseItem.isConsumable)
-                    actData.CastPlayerCharacter.GetCharacterBattleData().inventory
+                    actData.CastPlayerCharacter.GetCharacterStatus().inventory
                         .Remove(itemActData.UseItem);
             }
 
@@ -120,10 +126,10 @@ public class CompeteContestController : MonoBehaviour
         foreach (ActData actData in actDatas)
         {
             if (actData is StayActData &&
-                actData.CastPlayerCharacter.characterBattleData.currentState != CharacterState.Dead)
+                actData.CastPlayerCharacter.GetCharacterStatus().currentState != CharacterState.Dead)
             {
                 CharacterStatusCalculator.Instance.ApplyStaminaModify(
-                    actData.CastPlayerCharacter, stayStaminaRecovery);
+                    actData.CastPlayerCharacter.GetCharacterStatus(), stayStaminaRecovery);
             }
         }
 

@@ -35,8 +35,8 @@ public class DecisionPhaseController : MonoBehaviour
         
         // 타겟팅 데이터 반영
         _turnOrderCharacters
-            [actData.CastPlayerCharacter.GetCharacterBattleData().TurnOrder]
-            .GetCharacterBattleData().TargetingData[actData.UseSlot] = actData;
+            [actData.CastPlayerCharacter.TurnOrder]
+            .TargetingData[actData.UseSlot] = actData;
     }
     
     

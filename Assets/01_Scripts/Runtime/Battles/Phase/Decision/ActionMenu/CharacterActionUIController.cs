@@ -33,7 +33,7 @@ public class CharacterActionUIController : MonoBehaviour
     public void HandleCharacterSelected(CharacterHandler caster)
     {
         Debug.Log("setting action for character: "
-                  + caster.characterBattleData.CharacterData.characterName);
+                  + caster.GetCharacterStatus().CharacterData.characterName);
 
         if (actionSettingPanel != null)
             actionSettingPanel.position =

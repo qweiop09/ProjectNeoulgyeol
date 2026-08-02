@@ -93,13 +93,13 @@ public class CharacterActionMenuHandler : MonoBehaviour
     public void SetPageMoveButtons()
     {
         if (currentActionType == ActionType.Attack)
-            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().CharacterData.characterAttacks.Length);
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().CharacterData.characterAttacks.Length);
 
         if (currentActionType == ActionType.Skill)
-            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length);
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length);
 
         if (currentActionType == ActionType.Item)
-            SetPageMoveButtonsRefInt(currentHandler.GetCharacterBattleData().inventory.Count);
+            SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().inventory.Count);
         
     }
 
@@ -114,9 +114,9 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     public void UpdateActionMenuCharacterStatus()
     {
-        actCharacterNameText.text = currentHandler.GetCharacterBattleData().CharacterData.characterName;
+        actCharacterNameText.text = currentHandler.GetCharacterStatus().CharacterData.characterName;
         
-        CharacterBattleData battleData = currentHandler.GetCharacterBattleData();
+        CharacterStatus battleData = currentHandler.GetCharacterStatus();
         
         hpSlider.value = battleData.currentHp / (float) battleData.CharacterData.maxHp * 100f;
         staminaSlider.value = battleData.currentStamina / (float) battleData.CharacterData.maxStamina * 100f;
@@ -131,13 +131,13 @@ public class CharacterActionMenuHandler : MonoBehaviour
             SetTexts(actionNames);
 
         if (currentActionType == ActionType.Attack)
-            SetTexts(currentHandler.characterBattleData.CharacterData.characterAttacks);
+            SetTexts(currentHandler.GetCharacterStatus().CharacterData.characterAttacks);
 
         if (currentActionType == ActionType.Skill)
-            SetTexts(currentHandler.characterBattleData.CharacterData.characterSkills);
+            SetTexts(currentHandler.GetCharacterStatus().CharacterData.characterSkills);
 
         if (currentActionType == ActionType.Item)
-            SetTexts(currentHandler.GetCharacterBattleData().inventory);
+            SetTexts(currentHandler.GetCharacterStatus().inventory);
 
     }
     
@@ -248,10 +248,10 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void AttackStatePressed(int pressedButtonNumber)
     {
-        if (pressedButtonNumber >= currentHandler.GetCharacterBattleData().CharacterData.characterAttacks.Length)
+        if (pressedButtonNumber >= currentHandler.GetCharacterStatus().CharacterData.characterAttacks.Length)
             return;
         
-        CompletedActionSetting?.Invoke(currentHandler.GetCharacterBattleData().CharacterData
+        CompletedActionSetting?.Invoke(currentHandler.GetCharacterStatus().CharacterData
             .characterAttacks[pressedButtonNumber]);
         
         UpdateMenu(); 
@@ -259,10 +259,10 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void SkillStatePressed(int pressedButtonNumber)
     {
-        if (pressedButtonNumber >= currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length)
+        if (pressedButtonNumber >= currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length)
             return;
         
-        CompletedActionSetting?.Invoke(currentHandler.GetCharacterBattleData().CharacterData
+        CompletedActionSetting?.Invoke(currentHandler.GetCharacterStatus().CharacterData
             .characterSkills[pressedButtonNumber]);
         
         UpdateMenu(); 
@@ -270,7 +270,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void ItemStatePressed(int pressedButtonNumber)
     {
-        List<Item> inventory = currentHandler.GetCharacterBattleData().inventory;
+        List<Item> inventory = currentHandler.GetCharacterStatus().inventory;
         int index = pressedButtonNumber + actMenuPage * 5;
         if (index >= inventory.Count) return;
 
@@ -290,11 +290,11 @@ public class CharacterActionMenuHandler : MonoBehaviour
         return currentActionType switch
         {
             ActionType.Attack => Mathf.CeilToInt(
-                currentHandler.GetCharacterBattleData().CharacterData.characterAttacks.Length / 5f),
+                currentHandler.GetCharacterStatus().CharacterData.characterAttacks.Length / 5f),
             ActionType.Skill  => Mathf.CeilToInt(
-                currentHandler.GetCharacterBattleData().CharacterData.characterSkills.Length / 5f),
+                currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length / 5f),
             ActionType.Item   => Mathf.Max(1, Mathf.CeilToInt(
-                currentHandler.GetCharacterBattleData().inventory.Count / 5f)),
+                currentHandler.GetCharacterStatus().inventory.Count / 5f)),
             _                 => 1
         };
     }
