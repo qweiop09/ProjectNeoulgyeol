@@ -26,7 +26,8 @@ public class QTEMixerBehaviour : PlayableBehaviour
             float localTime = (float)input.GetTime();
             float duration = (float)input.GetDuration();
 
-            listner.UpdateQteState(localTime, duration, behaviour.perfectTime, behaviour.goodTime, behaviour.badTime);
+            listner.UpdateQteState(localTime, duration, behaviour.perfectTime, behaviour.goodTime, behaviour.badTime,
+                behaviour.hpDamageCoefficient, behaviour.staminaDamageCoefficient, behaviour.multipliers);
             anyActive = true;
         }
 

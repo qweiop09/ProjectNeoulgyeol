@@ -39,46 +39,34 @@ public class CompeteContestController : MonoBehaviour
 
 
     // qte 피드백
-    private void ApplyQteResult(QTEResult result)
+    private void ApplyQteResult(QTEHitInfo hitInfo)
     {
-        Debug.Log("QTE Result: " + result);
+        Debug.Log("QTE Result: " + hitInfo.Result);
 
-        bool isCasterFriendly = currentActData.CastPlayerCharacter.characterType
-                                == CharacterHandler.CharacterType.Friendly;
+        var skillActData = currentActData as SkillActData;
 
-        float damageMultiplier;
-        if (isCasterFriendly)
+        var hitContext = new HitContext
         {
-            // 아군 공격 QTE: 성공할수록 데미지 증가
-            damageMultiplier = result switch
-            {
-                QTEResult.Perfect => 1.5f,
-                QTEResult.Good    => 1.15f,
-                _                 => 1.0f
-            };
-        }
-        else
-        {
-            // 적군 공격 QTE: 성공할수록 데미지 경감
-            damageMultiplier = result switch
-            {
-                QTEResult.Perfect => 0.5f,
-                QTEResult.Good    => 0.75f,
-                _                 => 1.0f
-            };
-        }
+            Attacker = currentActData.CastPlayerCharacter.GetCharacterStatus(),
+            Target = currentActData.TargetPlayerCharacter.GetCharacterStatus(),
+            Result = hitInfo.Result,
+            HpDamageCoefficient = hitInfo.HpDamageCoefficient,
+            StaminaDamageCoefficient = hitInfo.StaminaDamageCoefficient,
+            Multipliers = hitInfo.Multipliers,
+            HitEffects = skillActData?.UseSkill.hitEffects ?? System.Array.Empty<IHitEffect>()
+        };
 
-        int finalDamage = (int)(currentActData.CastPlayerCharacter.GetCharacterStatus().GetAttack()
-                                * damageMultiplier);
+        DamageResult damage = DamageCalculation.Calculate(hitContext);
 
         DamageTextSpawner.Instance.SpawnDamageText(
             currentActData.TargetPlayerCharacter.transform.position,
-            finalDamage,
-            result);
+            damage.HpDamage,
+            hitInfo.Result);
 
-        CharacterStatusCalculator.Instance.ApplyHpModify(
+        CharacterStatusCalculator.Instance.SkillHit(
             currentActData.TargetPlayerCharacter.GetCharacterStatus(),
-            -finalDamage);
+            damage.HpDamage,
+            damage.StaminaDamage);
     }
 
     // 한 캐릭터의 모든 행동을 실행

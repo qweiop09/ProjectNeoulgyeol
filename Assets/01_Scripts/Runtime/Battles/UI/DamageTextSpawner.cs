@@ -32,7 +32,7 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
     {
         public Color perfectColor = new Color(1f, 0.84f, 0f);   // 금색
         public Color goodColor    = new Color(0.4f, 1f, 0.4f);  // 초록
-        public Color badColor     = new Color(1f, 0.3f, 0.3f);  // 빨강
+        public Color hitColor     = new Color(1f, 0.3f, 0.3f);  // 빨강
     }
 
     // ──────────────────────────────────────────
@@ -92,8 +92,8 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
         {
             QTEResult.Perfect => _colorConfig.perfectColor,
             QTEResult.Good    => _colorConfig.goodColor,
-            QTEResult.Bad     => _colorConfig.badColor,
-            _                 => _colorConfig.badColor,
+            QTEResult.Hit     => _colorConfig.hitColor,
+            _                 => _colorConfig.hitColor,
         };
     }
 }

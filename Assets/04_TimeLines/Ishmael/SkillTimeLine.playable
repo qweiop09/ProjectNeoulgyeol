@@ -1,71 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7896239708655458568
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 3.033333333333333
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
-  hpDamageCoefficient: 1.3
-  staminaDamageCoefficient: 1.3
---- !u!114 &-5421912087600366142
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 4.816666666666666
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
-  hpDamageCoefficient: 3
-  staminaDamageCoefficient: 3
---- !u!114 &-4707052619641459236
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a16748d9461eae46a725db9776d5390, type: 3}
-  m_Name: Markers
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.MarkerTrack
-  m_Version: 3
-  m_AnimClip: {fileID: 0}
-  m_Locked: 0
-  m_Muted: 0
-  m_CustomPlayableFullTypename: 
-  m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
-  m_Children: []
-  m_Clips: []
-  m_Markers:
-    m_Objects:
-    - {fileID: 7813104022432932710}
-    - {fileID: 670362640118615634}
-    - {fileID: 7799250490922667182}
-    - {fileID: -7896239708655458568}
-    - {fileID: -3551380548765173928}
-    - {fileID: 6398364119960373935}
-    - {fileID: -5421912087600366142}
 --- !u!114 &-4244153478335789621
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -81,6 +15,8 @@ MonoBehaviour:
   perfectTime: 0.05
   goodTime: 0.09
   badTime: 0.09
+  hpDamageCoefficient: 1.3
+  staminaDamageCoefficient: 1.3
 --- !u!114 &-3900542310195675886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -96,22 +32,6 @@ MonoBehaviour:
   perfectTime: 0.03
   goodTime: 0.07
   badTime: 0.07
---- !u!114 &-3551380548765173928
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 3.533333333333333
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
 --- !u!114 &-1861837949569208720
@@ -129,6 +49,8 @@ MonoBehaviour:
   perfectTime: 0.05
   goodTime: 0.09
   badTime: 0.09
+  hpDamageCoefficient: 1
+  staminaDamageCoefficient: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +72,6 @@ MonoBehaviour:
     m_Framerate: 60
     m_ScenePreview: 1
   m_DurationMode: 1
-  m_MarkerTrack: {fileID: -4707052619641459236}
 --- !u!114 &519384031556981915
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -166,22 +87,6 @@ MonoBehaviour:
   perfectTime: 0.03
   goodTime: 0.07
   badTime: 0.07
---- !u!114 &670362640118615634
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 0.43333333333333335
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
 --- !u!114 &1585827866638350277
@@ -199,6 +104,8 @@ MonoBehaviour:
   perfectTime: 0.05
   goodTime: 0.09
   badTime: 0.09
+  hpDamageCoefficient: 1
+  staminaDamageCoefficient: 1
 --- !u!114 &1902277801752172085
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -236,6 +143,8 @@ MonoBehaviour:
   perfectTime: 0.05
   goodTime: 0.09
   badTime: 0.09
+  hpDamageCoefficient: 3
+  staminaDamageCoefficient: 3
 --- !u!114 &6091614318856208523
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -346,24 +255,6 @@ MonoBehaviour:
   m_OpenClipOffsetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_Rotation: {x: 0, y: 0, z: 0, w: 1}
   m_ApplyOffsets: 0
---- !u!114 &6398364119960373935
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 3.783333333333333
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
-  hpDamageCoefficient: 1
-  staminaDamageCoefficient: 1
 --- !u!114 &6853395889487136823
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -379,40 +270,6 @@ MonoBehaviour:
   perfectTime: 0.05
   goodTime: 0.09
   badTime: 0.09
---- !u!114 &7799250490922667182
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 0.6
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
-  hpDamageCoefficient: 1
-  staminaDamageCoefficient: 1
---- !u!114 &7813104022432932710
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3a7d96b7a45a88d8e1fea0d7be8cb, type: 3}
-  m_Name: QTE Data Marker
-  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.Timeline.Battle.Marker.QTEDataMarker
-  m_Time: 0.2666666666666667
-  qtePerfectTime: 0.05
-  qteGoodTime: 0.15
-  qteBadTime: 0.2
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
 --- !u!114 &8404666023515913057

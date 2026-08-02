@@ -80,7 +80,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         var result = StatusCalculation.Modify(target.currentStamina, amount, target.GetMaxStamina());
         target.currentStamina = result.NewValue;
 
-        if (result.HitFloor)
+        // 이미 사망 판정이면 흐트러짐으로 덮어쓰지 않는다 (한 히트에 HP/스테미나가 동시에 0이 되는 경우 대비)
+        if (result.HitFloor && target.currentState != CharacterState.Dead)
         {
             target.SetCurrentState(CharacterState.Staggered);
             isCharacterStagger?.Invoke(target);
