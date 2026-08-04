@@ -36,9 +36,6 @@ public class CharacterActionMenuHandler : MonoBehaviour
     [SerializeField] private Button previousPageButton; // 이전 페이지 버튼
     [SerializeField] private Button nextPageButton; // 다음 페이지 버튼
     [SerializeField] private Button backButton; // 뒤로가기 버튼
-    
-    [SerializeField] private Slider hpSlider; // 체력 슬라이더
-    [SerializeField] private Slider staminaSlider; // 스테미너 슬라이더
 
     [Header("internal")] private int actMenuPage = 0; // 현재 아이템을 어디서 부터 보여야 할지
     [SerializeField] private ActionType currentActionType = ActionType.None; // 현재 선택된 행동 유형
@@ -54,19 +51,23 @@ public class CharacterActionMenuHandler : MonoBehaviour
     {
         currentHandler = characterHandler;
         isActive = true;
-        
+
         UpdateMenu();
 
         // 행동 메뉴 패널 활성화
         actionMenuPanel.SetActive(true);
+
+        CharacterStatBarManager.Instance.DockBarFor(characterHandler);
     }
 
     public void HideMenu()
     {
+        CharacterStatBarManager.Instance.UndockBarFor(currentHandler);
+
         currentHandler = null;
         currentActionType = ActionType.None;
         actMenuPage = 0;
-        
+
         isActive = false;
 
         // 행동 메뉴 패널 비활성화
@@ -115,11 +116,6 @@ public class CharacterActionMenuHandler : MonoBehaviour
     public void UpdateActionMenuCharacterStatus()
     {
         actCharacterNameText.text = currentHandler.GetCharacterStatus().CharacterData.characterName;
-        
-        CharacterStatus battleData = currentHandler.GetCharacterStatus();
-        
-        hpSlider.value = battleData.currentHp / (float) battleData.CharacterData.maxHp * 100f;
-        staminaSlider.value = battleData.currentStamina / (float) battleData.CharacterData.maxStamina * 100f;
     }
 
     public void UpdateActionMenuTexts()

@@ -140,7 +140,9 @@ public class BattleManager : MonoBehaviour
             SetRefCharacterBattleData(enemyCharacters[i]);
             enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
         }
-        
+
+        CharacterStatBarManager.Instance.SpawnBars(playerCharacters, enemyCharacters);
+
         // 전투 시작 신호 보내기
         battlePhaseCoordinator.BattleStart(playerCharacters, enemyCharacters);
     }
@@ -153,6 +155,8 @@ public class BattleManager : MonoBehaviour
 
     private void ClearCharacters()
     {
+        CharacterStatBarManager.Instance.ClearBars();
+
         if (playerCharacters != null)
         {
             foreach (var c in playerCharacters)

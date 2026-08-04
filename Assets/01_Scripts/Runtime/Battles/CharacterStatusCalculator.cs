@@ -36,6 +36,7 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
 
     public Action<CharacterStatus> isCharacterDead;
     public Action<CharacterStatus> isCharacterStagger;
+    public Action<CharacterStatus> onStatusChanged; // hp/mp/stamina 중 하나라도 바뀔 때마다 발행 (체력바 등 UI 갱신용)
 
 
     public void UseSkill(CharacterStatus caster, CharacterSkill skill)
@@ -62,6 +63,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
             isCharacterDead?.Invoke(target);
         }
 
+        onStatusChanged?.Invoke(target);
+
         Debug.Log(target.CharacterData.characterName + " 회복: " + amount + " / 현재 HP: " + target.currentHp);
     }
 
@@ -70,6 +73,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
     {
         var result = StatusCalculation.Modify(target.currentMp, amount, target.GetMaxMp());
         target.currentMp = result.NewValue;
+
+        onStatusChanged?.Invoke(target);
 
         Debug.Log(target.CharacterData.characterName + " MP 회복: " + amount + " / 현재 MP: " + target.currentMp);
     }
@@ -86,6 +91,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
             target.SetCurrentState(CharacterState.Staggered);
             isCharacterStagger?.Invoke(target);
         }
+
+        onStatusChanged?.Invoke(target);
 
         Debug.Log(target.CharacterData.characterName + " 스테미나 회복: " + amount + " / 현재 스테미나: " + target.currentStamina);
     }
