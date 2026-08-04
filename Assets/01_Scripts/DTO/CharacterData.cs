@@ -27,6 +27,9 @@ public class CharacterData : ScriptableObject
     [SerializeField] public AnimationClip runAnimation;
     [SerializeField] public AnimationClip deadAnimation;
 
+    [Tooltip("체력/스테미나 바가 캐릭터 기준 어디에 떠야 하는지 (스프라이트 크기에 맞춰 캐릭터별로 조정)")]
+    public Vector3 statBarOffset = new Vector3(0, 1.5f, 0);
+
     // 피격이랑 회피랑 가드랑 흐트러짐 만들기
 
     [Header("Skills")]

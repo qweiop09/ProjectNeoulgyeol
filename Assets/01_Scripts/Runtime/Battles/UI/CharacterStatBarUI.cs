@@ -16,12 +16,12 @@ public class CharacterStatBarUI : MonoBehaviour
     [SerializeField] private float trailDelay = 0.4f;         // 감소 시작 전 대기 시간
     [SerializeField] private float trailCatchUpDuration = 0.3f; // 따라잡는 데 걸리는 시간
 
-    [SerializeField] private Vector3 worldOffset = new Vector3(0, 1.5f, 0);
     [SerializeField] private float dockMoveDuration = 0.25f;
 
     private CharacterHandler target;
     private Transform worldParent;      // 평상시(추적 상태) 부모 — BattleUI 밑
     private Vector3 originalLocalScale; // Undock 시 복귀할 스케일
+    private Vector3 worldOffset;        // CharacterData.statBarOffset에서 캐싱 (캐릭터별로 다름)
     private bool isDocked;
     private Coroutine moveRoutine;
     private Coroutine hpTrailRoutine;
@@ -32,6 +32,7 @@ public class CharacterStatBarUI : MonoBehaviour
     {
         target = handler;
         worldParent = defaultParent;
+        worldOffset = target.GetCharacterStatus().CharacterData.statBarOffset;
         transform.SetParent(worldParent, false);
         originalLocalScale = transform.localScale;
 
