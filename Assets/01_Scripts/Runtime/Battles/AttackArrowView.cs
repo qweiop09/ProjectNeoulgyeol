@@ -2,6 +2,13 @@ using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles
 {
+public enum ArrowLineStyle
+{
+    Solid,  // 메인 타겟
+    Dashed, // 메인 외 추가 타겟
+    Dotted  // 랜덤 타겟 후보 미리보기 (다음 라운드에서 사용)
+}
+
 public class AttackArrowView : MonoBehaviour
 {
     [SerializeField] private LineRenderer outlineLineRenderer;
@@ -26,10 +33,11 @@ public class AttackArrowView : MonoBehaviour
         Color outlineColor,
         float lineWidth,
         float outlineWidth,
-        float arrowHeadSize)
+        float arrowHeadSize,
+        ArrowLineStyle style = ArrowLineStyle.Solid)
     {
-        EnsureLineRenderer(ref outlineLineRenderer, "OutlineLine", material, outlineColor, outlineWidth, 49);
-        EnsureLineRenderer(ref lineRenderer, "Line", material, arrowColor, lineWidth, 50);
+        EnsureLineRenderer(ref outlineLineRenderer, "OutlineLine", material, outlineColor, outlineWidth, 49, style);
+        EnsureLineRenderer(ref lineRenderer, "Line", material, arrowColor, lineWidth, 50, style);
         EnsureArrowHead(ref outlineArrowHead, "OutlineArrowHead", material, outlineColor, arrowHeadSize * 1.35f, 49);
         EnsureArrowHead(ref arrowHead, "ArrowHead", material, arrowColor, arrowHeadSize, 50);
     }
@@ -131,7 +139,8 @@ public class AttackArrowView : MonoBehaviour
         Material material,
         Color color,
         float width,
-        int sortingOrder)
+        int sortingOrder,
+        ArrowLineStyle style)
     {
         if (targetLineRenderer == null)
         {
@@ -159,6 +168,7 @@ public class AttackArrowView : MonoBehaviour
         targetLineRenderer.numCapVertices = 4;
         targetLineRenderer.numCornerVertices = 4;
         targetLineRenderer.sortingOrder = sortingOrder;
+        targetLineRenderer.textureMode = style == ArrowLineStyle.Solid ? LineTextureMode.Stretch : LineTextureMode.Tile;
 
         if (material != null)
             targetLineRenderer.material = material;

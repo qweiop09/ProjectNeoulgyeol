@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using _01_Scripts.DTO.Item;
+using _01_Scripts.DTO.Item.Effects;
 using UnityEngine;
 
 namespace _01_Scripts.DTO
@@ -40,6 +42,10 @@ public class CharacterStatus
     public IEquipment accessory1;
     public IEquipment accessory2;
 
+    // 현재 걸려있는 지속 효과(버프/디버프). 라운드 종료마다 ClosePhaseController가 감소·소멸시키고,
+    // 전투 종료 시 BattleManager가 비운다(안 그러면 다음 전투/월드맵까지 새어나감).
+    public List<ActiveBuff> activeBuffs = new();
+
     public CharacterStatus(CharacterData characterData)
     {
         CharacterData = characterData;
@@ -49,12 +55,12 @@ public class CharacterStatus
         currentStamina = CharacterData.maxStamina;
     }
 
-    // 장비 보너스를 반영한 실질 최대치/전투 스탯
-    public int GetMaxHp() => CharacterData.maxHp + SumEquipment(e => e.MaxHpBonus);
-    public int GetMaxMp() => CharacterData.maxMp + SumEquipment(e => e.MaxMpBonus);
-    public int GetMaxStamina() => CharacterData.maxStamina + SumEquipment(e => e.MaxStaminaBonus);
-    public int GetAttack() => CharacterData.attack + SumEquipment(e => e.AttackBonus);
-    public int GetDefense() => CharacterData.defense + SumEquipment(e => e.DefenseBonus);
+    // 장비 보너스 + 활성 버프를 반영한 실질 최대치/전투 스탯
+    public int GetMaxHp() => CharacterData.maxHp + SumEquipment(e => e.MaxHpBonus) + SumBuffs(BuffStatType.MaxHp);
+    public int GetMaxMp() => CharacterData.maxMp + SumEquipment(e => e.MaxMpBonus) + SumBuffs(BuffStatType.MaxMp);
+    public int GetMaxStamina() => CharacterData.maxStamina + SumEquipment(e => e.MaxStaminaBonus) + SumBuffs(BuffStatType.MaxStamina);
+    public int GetAttack() => CharacterData.attack + SumEquipment(e => e.AttackBonus) + SumBuffs(BuffStatType.Attack);
+    public int GetDefense() => CharacterData.defense + SumEquipment(e => e.DefenseBonus) + SumBuffs(BuffStatType.Defense);
 
     private int SumEquipment(Func<IEquipment, int> selector)
     {
@@ -66,6 +72,54 @@ public class CharacterStatus
         }
 
         return sum;
+    }
+
+    private int SumBuffs(BuffStatType statType)
+    {
+        int sum = 0;
+        foreach (ActiveBuff buff in activeBuffs)
+        {
+            if (buff.Source is StatBuffEffect statBuff && statBuff.statType == statType)
+                sum += buff.ResolvedAmount;
+        }
+
+        return sum;
+    }
+
+    // 최대치가 바뀔 때(버프 부여/만료) 현재치를 처리한다.
+    // scaleProportionally && 늘어난 경우: 이전 비율을 유지하며 현재치도 같이 늘림.
+    // 그 외(줄어들 때는 항상): 새 최대치를 넘지 않도록 클램프만 한다.
+    public void OnMaxHpChanged(int previousMax, bool scaleProportionally)
+    {
+        int newMax = GetMaxHp();
+        if (newMax == previousMax) return;
+
+        if (scaleProportionally && newMax > previousMax && previousMax > 0)
+            currentHp = Mathf.RoundToInt(currentHp * (newMax / (float)previousMax));
+
+        currentHp = Mathf.Clamp(currentHp, 0, newMax);
+    }
+
+    public void OnMaxMpChanged(int previousMax, bool scaleProportionally)
+    {
+        int newMax = GetMaxMp();
+        if (newMax == previousMax) return;
+
+        if (scaleProportionally && newMax > previousMax && previousMax > 0)
+            currentMp = Mathf.RoundToInt(currentMp * (newMax / (float)previousMax));
+
+        currentMp = Mathf.Clamp(currentMp, 0, newMax);
+    }
+
+    public void OnMaxStaminaChanged(int previousMax, bool scaleProportionally)
+    {
+        int newMax = GetMaxStamina();
+        if (newMax == previousMax) return;
+
+        if (scaleProportionally && newMax > previousMax && previousMax > 0)
+            currentStamina = Mathf.RoundToInt(currentStamina * (newMax / (float)previousMax));
+
+        currentStamina = Mathf.Clamp(currentStamina, 0, newMax);
     }
 
     // EquipmentSlotType 기준으로 장착 필드를 매핑한다 (InventoryManager 등 외부에서 필드명을 직접 다루지 않도록).

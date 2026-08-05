@@ -16,5 +16,4 @@ MonoBehaviour:
   itemDescription: "\uB9DB\uC788\uB2E4."
   targetType: 1
   isConsumable: 1
-  effects:
-  - {fileID: 11400000, guid: 8776aa17e03bc43e88b8d65dc796eae4, type: 2}
+  effects: []

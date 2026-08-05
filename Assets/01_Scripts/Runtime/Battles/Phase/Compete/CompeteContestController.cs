@@ -5,6 +5,7 @@ using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Battles.Characters;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace _01_Scripts.Runtime.Battles.Compete
 {
@@ -16,6 +17,10 @@ public class CompeteContestController : MonoBehaviour
 
     [SerializeField] private int MoveToTargetWaitTime = 500; // milliseconds
     [SerializeField] private int stayStaminaRecovery = 20; // Stay 시 턴 종료 후 회복되는 스테미나 양
+
+    [Header("아이템 공용 QTE (아이템에 전용 타임라인/바인더가 없을 때 사용)")]
+    [SerializeField] private TimelineAsset defaultItemTimelineAsset;
+    [SerializeField] private ITimelineBinder defaultItemTimelineBinder;
 
     private void OnEnable()
     {
@@ -110,10 +115,11 @@ public class CompeteContestController : MonoBehaviour
             }
             else if (actData is ItemActData itemActData)
             {
-                // itemActData.UseItem.Use(actData.TargetPlayerCharacter.GetCharacterStatus());
-
+                // 아이템은 이동 없이 그 자리에서 사용 — 스킬의 MP/스태미나 차감처럼 소모부터 처리하고 타임라인 재생
                 if (itemActData.UseItem.category == ItemCategory.Consumable)
                     InventoryManager.Instance.ConfirmReservedUse(itemActData.UseItem, 1); // 선택 시점의 예약을 해제하며 실제 소모
+
+                await PlayItemCompete(itemActData);
             }
 
             CameraHandler.Instance.UnsetFollowTransform();
@@ -160,6 +166,26 @@ public class CompeteContestController : MonoBehaviour
             .PlayAsync(caster, skill.skillTimelineAsset, skill.timelineBinder, actData);
     }
         
+    // 아이템은 항상 QTE를 진행한다 — 전용 타임라인(item.itemTimelineAsset)이 있으면 그걸, 없으면 공용 타임라인을 사용
+    private async Task PlayItemCompete(ItemActData actData)
+    {
+        Item item = actData.UseItem;
+        Debug.Log("PlayItemCompete: " + item?.itemName);
+
+        CharacterHandler caster = actData.CastPlayerCharacter;
+
+        TimelineAsset timeline = item.itemTimelineAsset != null ? item.itemTimelineAsset : defaultItemTimelineAsset;
+        ITimelineBinder binder = item.timelineBinder != null ? item.timelineBinder : defaultItemTimelineBinder;
+
+        if (timeline == null)
+        {
+            Debug.LogWarning($"[CompeteContestController] '{item.itemName}' 전용 타임라인도, 공용 아이템 타임라인도 설정되어 있지 않습니다. 재생을 건너뜁니다.");
+            return;
+        }
+
+        await caster.timelineDirector.PlayAsync(caster, timeline, binder, actData);
+    }
+
     private Task Wait(float seconds)
     {
         return Task.Delay((int)(seconds * 1000));

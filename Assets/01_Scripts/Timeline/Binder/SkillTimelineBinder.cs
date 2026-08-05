@@ -7,6 +7,7 @@ using UnityEngine.Timeline;
 
 namespace _01_Scripts.Timeline.Binder
 {
+// 스킬 전용으로 만들어졌지만 CastPlayerCharacter(애니메이터/QTE리스너)만 참조하므로 아이템 타임라인에도 그대로 재사용된다.
 [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Binder/Skill", fileName = "SkillTimelineBinder")]
 public class SkillTimelineBinder : ITimelineBinder
 {
@@ -14,7 +15,7 @@ public class SkillTimelineBinder : ITimelineBinder
     [SerializeField] private string animationTrackName = "AnimationTrack";
     [SerializeField] private string particleTrackName = "ParticleTrack";
 
-    public override void Bind(PlayableDirector director, SkillActData data)
+    public override void Bind(PlayableDirector director, ActData data)
     {
         Debug.Log("SkillTimelineBinder: 바인딩 시작");
     

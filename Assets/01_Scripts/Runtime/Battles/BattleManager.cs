@@ -68,6 +68,12 @@ public class BattleManager : MonoBehaviour
     private void BattleEnd(CharacterHandler[] playerCharacterHandlers, bool isWin)
     {
         endText.text = isWin ? "You Win!" : "You Lose!";
+
+        // CharacterStatus는 전투를 넘어 계속 유지되는 인스턴스라, 전투 한정 버프를 여기서 안 지우면
+        // 다음 전투나 월드맵까지 그대로 새어나간다.
+        foreach (CharacterHandler handler in playerCharacterHandlers)
+            handler.GetCharacterStatus().activeBuffs.Clear();
+
         ClearCharacters();
 
         // CharacterStatus는 참조로 공유되므로 여기서 만드는 배열은 상태 동기화용이 아니라

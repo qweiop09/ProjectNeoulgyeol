@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.CameraControlle;
@@ -37,6 +39,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
     private ActData _currentActData;
 
+    // 이번 전투 라운드의 전체 로스터(아군+적군 병합) — 아이템 타겟 후보 조회용. StartActionSelectionPhase에서 채워지고 라운드 내내 유지됨.
+    private CharacterHandler[] allBattleCharacters;
+
     private Action<CharacterSkill> _onActionSettingCompleted;
     private Action<Item>           _onItemActionSettingCompleted;
     private Action                 _onStayActionSettingCompleted;
@@ -74,12 +79,37 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 return;
             }
 
-            _currentActData = new ItemActData
+            var itemActData = new ItemActData
             {
                 CastPlayerCharacter = selectedActCaster,
                 UseSlot             = _currentActData?.UseSlot ?? 0,
                 UseItem             = item
             };
+
+            if (item.targetScope == ItemTargetScope.Self)
+            {
+                // 자신 대상 아이템은 타겟 선택 단계 없이 즉시 확정 (Stay와 같은 패턴)
+                itemActData.TargetPlayerCharacter = selectedActCaster;
+                itemActData.TargetSlot = 0;
+                _currentActData = itemActData;
+
+                // mainTarget==caster라 SetFixedArrow 내부에서 자동으로 화살표를 그리지 않음
+                attackArrowController?.SetFixedArrow(selectedActCaster, itemActData.UseSlot, selectedActCaster, Array.Empty<CharacterHandler>());
+                attackArrowController?.HideTrackingArrow();
+
+                CompleteActSelected?.Invoke(_currentActData);
+
+                // selectedActCaster는 여기서 null 처리하지 않는다 — ChangeSelectionState의 취소 분기가
+                // (currentState가 아직 SelectingAction이라 그 경로를 타므로) selectedActCaster.name을 로그에
+                // 쓴 뒤 자체적으로 null 처리한다 (Stay 확정 경로와 동일한 패턴).
+                selectedActTarget = null;
+                _currentActData = null;
+
+                ChangeSelectionState(SelectionState.SelectingActCaster);
+                return;
+            }
+
+            _currentActData = itemActData;
             ChangeSelectionState(SelectionState.SelectingActTarget);
         };
 
@@ -130,9 +160,10 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         attackArrowController?.ShowTrackingArrow(selectedActCaster, GetPointerWorldPosition());
     }
 
-    public void StartActionSelectionPhase()
+    public void StartActionSelectionPhase(CharacterHandler[] allCharacters)
     {
         Debug.Log("Starting Action Selection Phase");
+        allBattleCharacters = allCharacters;
         ClearManager();
         SelectActCaster();
     }
@@ -161,6 +192,84 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     {
         if (_currentActData is ItemActData itemActData)
             InventoryManager.Instance.ReleaseReservation(itemActData.UseItem, 1);
+    }
+
+    // scope에 맞는 타겟 후보(생존자만) 조회. Ally scope엔 caster 자신도 포함된다.
+    private IEnumerable<CharacterHandler> GetCandidates(ItemTargetScope scope, CharacterHandler caster)
+    {
+        if (allBattleCharacters == null) return Enumerable.Empty<CharacterHandler>();
+
+        IEnumerable<CharacterHandler> alive = allBattleCharacters
+            .Where(c => c != null && c.GetCharacterStatus().currentState != CharacterState.Dead);
+
+        return scope switch
+        {
+            ItemTargetScope.Ally  => alive.Where(c => c.characterType == caster.characterType),
+            ItemTargetScope.Enemy => alive.Where(c => c.characterType != caster.characterType),
+            _                     => alive // Any
+        };
+    }
+
+    // candidate가 이번 라운드에 이미 다른 미확정 행동의 타겟(메인 또는 추가)으로 걸려있는지
+    private bool IsTargeted(CharacterHandler candidate)
+    {
+        if (allBattleCharacters == null) return false;
+
+        foreach (CharacterHandler c in allBattleCharacters)
+        {
+            if (c == null || c.TargetingData == null) continue;
+
+            foreach (ActData act in c.TargetingData)
+            {
+                if (act == null) continue;
+                if (act.TargetPlayerCharacter == candidate) return true;
+                if (act.AdditionalTargets != null && Array.IndexOf(act.AdditionalTargets, candidate) >= 0) return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 메인 타겟 제외 후보를 빈슬롯 > 진영(메인과 동일) > 속도(느린 순)로 정렬해 totalCount-1명 선택
+    private CharacterHandler[] SelectPriorityTargets(CharacterHandler mainTarget, IEnumerable<CharacterHandler> candidates, int totalCount)
+    {
+        return candidates
+            .Where(c => c != mainTarget)
+            .OrderByDescending(c => !IsTargeted(c))
+            .ThenByDescending(c => c.characterType == mainTarget.characterType)
+            .ThenBy(c => c.CurrentSpeed)
+            .Take(Mathf.Max(0, totalCount - 1))
+            .ToArray();
+    }
+
+    // 메인 타겟 제외 후보에서 비복원 랜덤으로 totalCount-1명 선택
+    private CharacterHandler[] SelectRandomTargets(CharacterHandler mainTarget, IEnumerable<CharacterHandler> candidates, int totalCount)
+    {
+        List<CharacterHandler> pool = candidates.Where(c => c != mainTarget).ToList();
+        List<CharacterHandler> picked = new List<CharacterHandler>();
+        int need = Mathf.Max(0, totalCount - 1);
+
+        for (int i = 0; i < need && pool.Count > 0; i++)
+        {
+            int index = UnityEngine.Random.Range(0, pool.Count);
+            picked.Add(pool[index]);
+            pool.RemoveAt(index);
+        }
+
+        return picked.ToArray();
+    }
+
+    // 아이템의 targetScope(Ally/Enemy) 제한을 클릭된 candidate가 만족하는지
+    private bool IsValidTarget(Item item, CharacterHandler candidate)
+    {
+        if (candidate == null || selectedActCaster == null) return false;
+
+        return item.targetScope switch
+        {
+            ItemTargetScope.Ally  => candidate.characterType == selectedActCaster.characterType,
+            ItemTargetScope.Enemy => candidate.characterType != selectedActCaster.characterType,
+            _                     => true // Any, Self(Self는 클릭 단계 자체가 없음)
+        };
     }
 
     private void SelectActCaster()
@@ -208,13 +317,30 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
         else if (currentState == SelectionState.SelectingActTarget)
         {
+            if (_currentActData is ItemActData pendingItemActData && !IsValidTarget(pendingItemActData.UseItem, characterHandler))
+                return; // 진영 제한 위반 클릭은 무시
+
             selectedActTarget = characterHandler;
 
             _currentActData.TargetPlayerCharacter = characterHandler;
             _currentActData.TargetSlot = 0; // TODO: 슬롯 선택 기능 추가되면 변경
 
-            // ShowFixedArrow — 슬롯 인덱스 기반으로 저장, 기존과 동일
-            attackArrowController?.ShowFixedArrow(selectedActCaster, selectedActTarget, _currentActData.UseSlot);
+            if (_currentActData is ItemActData itemActData)
+            {
+                Item item = itemActData.UseItem;
+                IEnumerable<CharacterHandler> candidates = GetCandidates(item.targetScope, selectedActCaster);
+
+                itemActData.AdditionalTargets = item.targetCount switch
+                {
+                    ItemTargetCount.Fixed  => SelectPriorityTargets(characterHandler, candidates, item.targetCountValue),
+                    ItemTargetCount.All    => candidates.Where(c => c != characterHandler).ToArray(),
+                    ItemTargetCount.Random => SelectRandomTargets(characterHandler, candidates, item.targetCountValue),
+                    _                      => Array.Empty<CharacterHandler>() // Single
+                };
+            }
+
+            // SetFixedArrow — 슬롯 인덱스 기반으로 저장, 기존과 동일
+            attackArrowController?.SetFixedArrow(selectedActCaster, _currentActData.UseSlot, selectedActTarget, _currentActData.AdditionalTargets);
             attackArrowController?.HideTrackingArrow();
 
             CompleteActSelected?.Invoke(_currentActData);

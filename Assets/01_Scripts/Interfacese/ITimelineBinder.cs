@@ -5,5 +5,5 @@ using UnityEngine.Playables;
 
 public abstract class ITimelineBinder : ScriptableObject
 {
-    public abstract void Bind(PlayableDirector director, SkillActData data);
+    public abstract void Bind(PlayableDirector director, ActData data);
 }

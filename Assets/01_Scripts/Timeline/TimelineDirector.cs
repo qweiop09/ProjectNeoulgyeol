@@ -24,7 +24,7 @@ public class TimelineDirector : MonoBehaviour
         director = _director;
     }
 
-    public void Play(CharacterHandler castCharacterHandler, TimelineAsset timelineAsset, ITimelineBinder binder, SkillActData data)
+    public void Play(CharacterHandler castCharacterHandler, TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
     {
         if (timelineAsset == null)
         {
@@ -46,7 +46,7 @@ public class TimelineDirector : MonoBehaviour
     }
 
     // 기다려야 할 때 이걸 사용
-    public Task PlayAsync(CharacterHandler castCharacterHandler , TimelineAsset timelineAsset, ITimelineBinder binder, SkillActData data)
+    public Task PlayAsync(CharacterHandler castCharacterHandler , TimelineAsset timelineAsset, ITimelineBinder binder, ActData data)
     {
         var tcs = new TaskCompletionSource<bool>();
         

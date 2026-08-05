@@ -1,3 +1,4 @@
+using System;
 using _01_Scripts.Runtime.Battles;
 
 /// <summary>
@@ -11,4 +12,7 @@ public abstract class ActData
 
     public CharacterHandler TargetPlayerCharacter;
     public int TargetSlot;
+
+    // 메인 타겟(TargetPlayerCharacter) 외에 같은 행동이 추가로 적용하는 대상들 (다중 타겟용, 기본은 없음)
+    public CharacterHandler[] AdditionalTargets = Array.Empty<CharacterHandler>();
 }

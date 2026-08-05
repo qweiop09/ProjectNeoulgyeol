@@ -58,7 +58,7 @@ public class DecisionPhaseController : MonoBehaviour
     // Middle Phase Actions
     private void StartDecisionPhaseMiddleProcess()
     {
-        actionSelectionPhaseManager.StartActionSelectionPhase();
+        actionSelectionPhaseManager.StartActionSelectionPhase(_turnOrderCharacters);
     }
 
     public void PressedCompetePhaseStartButton()

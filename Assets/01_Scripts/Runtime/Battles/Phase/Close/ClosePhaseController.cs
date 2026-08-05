@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _01_Scripts.DTO;
+using _01_Scripts.DTO.Item;
+using _01_Scripts.DTO.Item.Effects;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using UnityEngine;
 
@@ -41,6 +43,8 @@ public class ClosePhaseController : MonoBehaviour
             Debug.Log("Character " + i + ": " + allCharacterHandlers[i].name);
             allCharacterHandlers[i].TargetingData
                 = new ActData[allCharacterHandlers[i].TargetingData.Length];
+
+            DecrementBuffs(allCharacterHandlers[i].GetCharacterStatus());
         }
     
         // 아군/적군으로 분리
@@ -77,6 +81,45 @@ public class ClosePhaseController : MonoBehaviour
         allCharacterHandlers = null;
 
         battlePhaseCoordinator.CompleteClosePhaseEnd(friendly, enemy);
+    }
+
+    // 라운드 종료 시 활성 버프의 남은 라운드를 감소시키고, 0이 되면 제거한다.
+    // 최대치(MaxHp 등) 버프가 제거되는 경우 그 순간의 최대치를 기억해뒀다가 현재치를 클램프한다.
+    private void DecrementBuffs(CharacterStatus status)
+    {
+        for (int i = status.activeBuffs.Count - 1; i >= 0; i--)
+        {
+            ActiveBuff buff = status.activeBuffs[i];
+            buff.RemainingRounds--;
+
+            if (buff.RemainingRounds > 0) continue;
+
+            Debug.Log($"[ClosePhaseController] '{buff.Source.buffName}' 만료 ({status.CharacterData.characterName})");
+
+            if (buff.Source is StatBuffEffect statBuff)
+            {
+                int previousMax = statBuff.statType switch
+                {
+                    BuffStatType.MaxHp      => status.GetMaxHp(),
+                    BuffStatType.MaxMp      => status.GetMaxMp(),
+                    BuffStatType.MaxStamina => status.GetMaxStamina(),
+                    _ => -1
+                };
+
+                status.activeBuffs.RemoveAt(i);
+
+                switch (statBuff.statType)
+                {
+                    case BuffStatType.MaxHp:      status.OnMaxHpChanged(previousMax, false); break;
+                    case BuffStatType.MaxMp:      status.OnMaxMpChanged(previousMax, false); break;
+                    case BuffStatType.MaxStamina: status.OnMaxStaminaChanged(previousMax, false); break;
+                }
+            }
+            else
+            {
+                status.activeBuffs.RemoveAt(i);
+            }
+        }
     }
 
     // 해당 진영 전원 사망 여부 체크
