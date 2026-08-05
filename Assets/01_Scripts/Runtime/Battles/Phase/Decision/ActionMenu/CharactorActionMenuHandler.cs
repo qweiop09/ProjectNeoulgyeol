@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
+using _01_Scripts.Runtime.Worlds.Inventory;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -100,7 +102,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length);
 
         if (currentActionType == ActionType.Item)
-            SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().inventory.Count);
+            SetPageMoveButtonsRefInt(InventoryManager.Instance.GetSlots(ItemCategory.Consumable).Count());
         
     }
 
@@ -133,7 +135,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             SetTexts(currentHandler.GetCharacterStatus().CharacterData.characterSkills);
 
         if (currentActionType == ActionType.Item)
-            SetTexts(currentHandler.GetCharacterStatus().inventory);
+            SetTexts(InventoryManager.Instance.GetSlots(ItemCategory.Consumable).ToList());
 
     }
     
@@ -154,14 +156,15 @@ public class CharacterActionMenuHandler : MonoBehaviour
         }
     }
 
-    private void SetTexts(List<Item> items)
+    private void SetTexts(List<InventorySlot> slots)
     {
         for (int i = 0; i < 5; i++)
         {
             int index = i + actMenuPage * 5;
-            if (index < items.Count &&  items[index] != null)
+            if (index < slots.Count && slots[index]?.item != null)
             {
-                texts[i].text = items[index].itemName;
+                InventorySlot slot = slots[index];
+                texts[i].text = slot.item.IsStackable ? $"{slot.item.itemName} x{slot.quantity}" : slot.item.itemName;
                 texts[i].gameObject.SetActive(true);
             }
             else
@@ -266,11 +269,11 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void ItemStatePressed(int pressedButtonNumber)
     {
-        List<Item> inventory = currentHandler.GetCharacterStatus().inventory;
+        List<InventorySlot> consumables = InventoryManager.Instance.GetSlots(ItemCategory.Consumable).ToList();
         int index = pressedButtonNumber + actMenuPage * 5;
-        if (index >= inventory.Count) return;
+        if (index >= consumables.Count) return;
 
-        CompletedItemActionSetting?.Invoke(inventory[index]);
+        CompletedItemActionSetting?.Invoke(consumables[index].item);
     }
 
 
@@ -290,7 +293,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             ActionType.Skill  => Mathf.CeilToInt(
                 currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length / 5f),
             ActionType.Item   => Mathf.Max(1, Mathf.CeilToInt(
-                currentHandler.GetCharacterStatus().inventory.Count / 5f)),
+                InventoryManager.Instance.GetSlots(ItemCategory.Consumable).Count() / 5f)),
             _                 => 1
         };
     }

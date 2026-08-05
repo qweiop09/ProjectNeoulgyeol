@@ -7,6 +7,7 @@ using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
 using _01_Scripts.Runtime.Worlds;
+using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Worlds.Loot;
 using TMPro;
 
@@ -99,11 +100,9 @@ public class BattleManager : MonoBehaviour
 
         a = ChangeCharacterDataToCharacterStatus(testFlendlyCharacterDatas);
         b = ChangeCharacterDataToCharacterStatus(testEnemyCharacterDatas);
-        
-        for(int i = 0; i < a.Length; i++)
-            for(int ii = 0; ii < 6; ii++)
-                a[i].inventory.Add(testItem1);
-                        
+
+        InventoryManager.Instance.AddItem(testItem1, 6); // 공유 인벤토리라 캐릭터마다 나눠줄 필요 없음
+
         BattleStart(a, b);
     }
 

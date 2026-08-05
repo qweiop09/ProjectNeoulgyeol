@@ -13,11 +13,8 @@ namespace _01_Scripts.DTO.Item
     }
 
     [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Item/Equipment Item", fileName = "New Equipment Item")]
-    public class EquipmentItem : ScriptableObject, IEquipment
+    public class EquipmentItem : Item, IEquipment
     {
-        public string itemName;
-        [TextArea] public string itemDescription;
-        public Sprite icon;
         public EquipmentSlotType slotType;
 
         // 전투 스탯 보정값 (CharacterStatusCalculator에서 장착 시 적용)
@@ -33,5 +30,15 @@ namespace _01_Scripts.DTO.Item
         int IEquipment.MaxHpBonus => maxHpBonus;
         int IEquipment.MaxMpBonus => maxMpBonus;
         int IEquipment.MaxStaminaBonus => maxStaminaBonus;
+
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            category = ItemCategory.Equipment;
+            maxStack = 0; // 장비는 겹치지 않음
+
+            base.OnValidate(); // ID 중복 검사 등 공통 검증 유지
+        }
+#endif
     }
 }

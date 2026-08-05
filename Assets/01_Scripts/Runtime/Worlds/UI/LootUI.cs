@@ -1,4 +1,5 @@
 using System;
+using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Worlds.Loot;
 using TMPro;
 using UnityEngine;
@@ -52,10 +53,15 @@ namespace _01_Scripts.Runtime.Worlds.UI
 
         private void OnConfirm()
         {
-            // PartyInventory에 아이템 추가
-            if (_currentLoot != null && PartyInventory.Instance != null)
+            if (_currentLoot != null && InventoryManager.Instance != null)
+            {
                 foreach (var drop in _currentLoot.Drops)
-                    PartyInventory.Instance.Add(drop.Item, drop.Quantity);
+                {
+                    InventoryResult result = InventoryManager.Instance.AddItem(drop.Item, drop.Quantity);
+                    if (result != InventoryResult.Success)
+                        Debug.LogWarning($"[LootUI] '{drop.Item.itemName}' x{drop.Quantity} 획득 실패: {result}");
+                }
+            }
 
             _panel.SetActive(false);
             _onConfirmed?.Invoke();

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using _01_Scripts.DTO.Item;
 using UnityEngine;
 
@@ -41,10 +40,6 @@ public class CharacterStatus
     public IEquipment accessory1;
     public IEquipment accessory2;
 
-    // 캐릭터가 소지한 아이템 목록
-    public List<Item.Item> inventory = new List<Item.Item>(15);
-
-
     public CharacterStatus(CharacterData characterData)
     {
         CharacterData = characterData;
@@ -71,6 +66,35 @@ public class CharacterStatus
         }
 
         return sum;
+    }
+
+    // EquipmentSlotType 기준으로 장착 필드를 매핑한다 (InventoryManager 등 외부에서 필드명을 직접 다루지 않도록).
+    // 참고: EquipmentSlotType.Accessory는 하나뿐이라 accessory1에만 매핑됨 — accessory2는 기존부터 이 API로는 못 건드림 (기존 설계 한계, 이번 작업 범위 밖).
+    public void SetEquipment(EquipmentSlotType slot, IEquipment equipment)
+    {
+        switch (slot)
+        {
+            case EquipmentSlotType.RightHand:  rightHand = equipment; break;
+            case EquipmentSlotType.LeftHand:   leftHand = equipment; break;
+            case EquipmentSlotType.Head:       head = equipment; break;
+            case EquipmentSlotType.Body:       body = equipment; break;
+            case EquipmentSlotType.Legs:       legs = equipment; break;
+            case EquipmentSlotType.Accessory:  accessory1 = equipment; break;
+        }
+    }
+
+    public IEquipment GetEquipment(EquipmentSlotType slot)
+    {
+        return slot switch
+        {
+            EquipmentSlotType.RightHand => rightHand,
+            EquipmentSlotType.LeftHand  => leftHand,
+            EquipmentSlotType.Head      => head,
+            EquipmentSlotType.Body      => body,
+            EquipmentSlotType.Legs      => legs,
+            EquipmentSlotType.Accessory => accessory1,
+            _ => null
+        };
     }
 
 }

@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using _01_Scripts.DTO;
+using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.CameraControlle;
+using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Battles.Characters;
 using UnityEngine;
 
@@ -102,9 +104,8 @@ public class CompeteContestController : MonoBehaviour
             {
                 // itemActData.UseItem.Use(actData.TargetPlayerCharacter.GetCharacterStatus());
 
-                if (itemActData.UseItem.isConsumable)
-                    actData.CastPlayerCharacter.GetCharacterStatus().inventory
-                        .Remove(itemActData.UseItem);
+                if (itemActData.UseItem.category == ItemCategory.Consumable)
+                    InventoryManager.Instance.RemoveItem(itemActData.UseItem, 1);
             }
 
             CameraHandler.Instance.UnsetFollowTransform();
