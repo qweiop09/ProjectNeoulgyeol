@@ -9,7 +9,8 @@ namespace _01_Scripts.DTO.Item
         Head,
         Body,
         Legs,
-        Accessory
+        AccessoryRight,
+        AccessoryLeft
     }
 
     [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Item/Equipment Item", fileName = "New Equipment Item")]

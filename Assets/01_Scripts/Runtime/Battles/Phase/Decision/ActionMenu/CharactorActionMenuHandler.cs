@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Worlds.Inventory;
@@ -102,7 +101,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             SetPageMoveButtonsRefInt(currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length);
 
         if (currentActionType == ActionType.Item)
-            SetPageMoveButtonsRefInt(InventoryManager.Instance.GetSlots(ItemCategory.Consumable).Count());
+            SetPageMoveButtonsRefInt(InventoryManager.Instance.GetAvailableItems(ItemCategory.Consumable).Count);
         
     }
 
@@ -135,7 +134,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             SetTexts(currentHandler.GetCharacterStatus().CharacterData.characterSkills);
 
         if (currentActionType == ActionType.Item)
-            SetTexts(InventoryManager.Instance.GetSlots(ItemCategory.Consumable).ToList());
+            SetTexts(InventoryManager.Instance.GetAvailableItems(ItemCategory.Consumable));
 
     }
     
@@ -156,15 +155,17 @@ public class CharacterActionMenuHandler : MonoBehaviour
         }
     }
 
-    private void SetTexts(List<InventorySlot> slots)
+    private void SetTexts(List<ItemAvailability> items)
     {
         for (int i = 0; i < 5; i++)
         {
             int index = i + actMenuPage * 5;
-            if (index < slots.Count && slots[index]?.item != null)
+            if (index < items.Count && items[index].Item != null)
             {
-                InventorySlot slot = slots[index];
-                texts[i].text = slot.item.IsStackable ? $"{slot.item.itemName} x{slot.quantity}" : slot.item.itemName;
+                ItemAvailability entry = items[index];
+                texts[i].text = entry.Item.IsStackable
+                    ? $"{entry.Item.itemName} x{entry.AvailableQuantity}"
+                    : entry.Item.itemName;
                 texts[i].gameObject.SetActive(true);
             }
             else
@@ -269,11 +270,11 @@ public class CharacterActionMenuHandler : MonoBehaviour
 
     private void ItemStatePressed(int pressedButtonNumber)
     {
-        List<InventorySlot> consumables = InventoryManager.Instance.GetSlots(ItemCategory.Consumable).ToList();
+        List<ItemAvailability> consumables = InventoryManager.Instance.GetAvailableItems(ItemCategory.Consumable);
         int index = pressedButtonNumber + actMenuPage * 5;
         if (index >= consumables.Count) return;
 
-        CompletedItemActionSetting?.Invoke(consumables[index].item);
+        CompletedItemActionSetting?.Invoke(consumables[index].Item);
     }
 
 
@@ -293,7 +294,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
             ActionType.Skill  => Mathf.CeilToInt(
                 currentHandler.GetCharacterStatus().CharacterData.characterSkills.Length / 5f),
             ActionType.Item   => Mathf.Max(1, Mathf.CeilToInt(
-                InventoryManager.Instance.GetSlots(ItemCategory.Consumable).Count() / 5f)),
+                InventoryManager.Instance.GetAvailableItems(ItemCategory.Consumable).Count / 5f)),
             _                 => 1
         };
     }

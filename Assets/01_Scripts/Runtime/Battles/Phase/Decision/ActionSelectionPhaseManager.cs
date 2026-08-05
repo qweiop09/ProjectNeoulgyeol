@@ -4,6 +4,7 @@ using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.CameraControlle;
 using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision.ActionMenu;
+using _01_Scripts.Runtime.Worlds.Inventory;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -49,6 +50,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         _onActionSettingCompleted = (data) =>
         {
+            // 이전에 아이템을 골랐다가 스킬/공격으로 바꾸는 경우, 남아있던 예약을 먼저 풀어준다
+            ReleaseIfReservedItem();
+
             _currentActData = new SkillActData
             {
                 CastPlayerCharacter = selectedActCaster,
@@ -60,6 +64,16 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         _onItemActionSettingCompleted = (item) =>
         {
+            // 같은 방식으로 이전 선택(다른 아이템 포함)의 예약부터 해제
+            ReleaseIfReservedItem();
+
+            // 장비 장착의 equippedBy와 같은 방식: 선택 시점에 바로 예약해서 같은 라운드 내 중복 사용을 막는다
+            if (!InventoryManager.Instance.ReserveItem(item, 1))
+            {
+                Debug.LogWarning($"[ActionSelectionPhaseManager] '{item.itemName}' 예약 실패 — 이미 다른 캐릭터가 사용하기로 했습니다.");
+                return;
+            }
+
             _currentActData = new ItemActData
             {
                 CastPlayerCharacter = selectedActCaster,
@@ -72,11 +86,14 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         _onStayActionSettingCompleted = () =>
         {
             int slot = _currentActData?.UseSlot ?? 0;
+            ReleaseIfReservedItem();
+
             StayActData stayData = new StayActData(selectedActCaster, slot);
 
             attackArrowController?.HideTrackingArrow();
             CompleteActSelected?.Invoke(stayData);
             selectedActTarget = null;
+            _currentActData = null;
 
             ChangeSelectionState(SelectionState.SelectingActCaster);
         };
@@ -131,10 +148,19 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     {
         DeactivateCharacterSelectionPhase();
 
+        ReleaseIfReservedItem();
+
         currentState = SelectionState.Stay;
         selectedActTarget = null;
         selectedActCaster = null;
         _currentActData = null;
+    }
+
+    // 확정(CompleteActSelected 호출)되지 않은 채로 아이템 선택이 버려질 때 예약을 되돌린다
+    private void ReleaseIfReservedItem()
+    {
+        if (_currentActData is ItemActData itemActData)
+            InventoryManager.Instance.ReleaseReservation(itemActData.UseItem, 1);
     }
 
     private void SelectActCaster()
@@ -217,6 +243,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
                 attackArrowController?.HideTrackingArrow();
 
+                ReleaseIfReservedItem();
                 _currentActData = null;
                 selectedActCaster = null;
             }
@@ -240,6 +267,11 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         if (currentState == SelectionState.SelectingAction)
         {
+            // 타겟 선택을 취소하고 돌아온 경우 포함 — 스킬/공격과 마찬가지로 아이템도 다시 골라야 하므로
+            // 매달려 있던 예약이 있다면 여기서 같이 풀어준다 (안 그러면 본인이 예약한 아이템이 본인 메뉴에서 사라져 보임).
+            ReleaseIfReservedItem();
+            _currentActData = null;
+
             characterActionUIController.HandleCharacterSelected(selectedActCaster);
             await CameraHandler.Instance.MoveToLerp(
                 selectedActCaster.transform.position + new Vector3(1.2f, 0.2f, -10), 1.2f);

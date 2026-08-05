@@ -81,12 +81,20 @@ public class CompeteContestController : MonoBehaviour
             ActData actData = actDatas[i];
             if (actData == null) continue;
             if (actData.CastPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead
-                || actData.CastPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Staggered) continue;
+                || actData.CastPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Staggered)
+            {
+                ReleaseReservationIfItem(actData); // 실행되지 못하고 버려지는 행동이므로 예약해둔 아이템이 있다면 풀어준다
+                continue;
+            }
 
             // Stay는 카메라/행동 모두 스킵 — 턴 종료 후 스테미나 회복은 루프 외부에서 처리
             if (actData is StayActData) continue;
 
-            if (actData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead) continue;
+            if (actData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead)
+            {
+                ReleaseReservationIfItem(actData);
+                continue;
+            }
 
             CameraHandler.Instance.SetFollowTransform(actData.CastPlayerCharacter.transform, 1.5f);
             currentActData = actData;
@@ -105,7 +113,7 @@ public class CompeteContestController : MonoBehaviour
                 // itemActData.UseItem.Use(actData.TargetPlayerCharacter.GetCharacterStatus());
 
                 if (itemActData.UseItem.category == ItemCategory.Consumable)
-                    InventoryManager.Instance.RemoveItem(itemActData.UseItem, 1);
+                    InventoryManager.Instance.ConfirmReservedUse(itemActData.UseItem, 1); // 선택 시점의 예약을 해제하며 실제 소모
             }
 
             CameraHandler.Instance.UnsetFollowTransform();
@@ -155,6 +163,12 @@ public class CompeteContestController : MonoBehaviour
     private Task Wait(float seconds)
     {
         return Task.Delay((int)(seconds * 1000));
+    }
+
+    private void ReleaseReservationIfItem(ActData actData)
+    {
+        if (actData is ItemActData itemActData)
+            InventoryManager.Instance.ReleaseReservation(itemActData.UseItem, 1);
     }
 }
 }
