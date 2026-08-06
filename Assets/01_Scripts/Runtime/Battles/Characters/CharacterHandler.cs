@@ -30,6 +30,9 @@ public class CharacterHandler : MonoBehaviour
     // 아이템 사용 시 손에 든 아이템을 보여주는 상시 슬롯 (평소엔 비활성, ItemTimelineBinder가 재생 시점에 스프라이트를 채우고 타임라인의 ItemHoldTrack이 켜고 끔)
     [SerializeField] public SpriteRenderer heldItemRenderer;
 
+    // 캐릭터 본체 스프라이트 — 버프 오라 파티클(CharacterBuffAuraController)의 Shape가 이 캐릭터의 실루엣을 따라가도록 런타임에 연결해준다.
+    [SerializeField] public SpriteRenderer bodyRenderer;
+
     // 타임라인의 CasterAudioTrack/TargetAudioTrack이 바인딩할 스피커 (프리팹에 고정 배치)
     [SerializeField] public AudioSource sfxSource;
 

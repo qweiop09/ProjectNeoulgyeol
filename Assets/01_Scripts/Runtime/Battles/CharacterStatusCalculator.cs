@@ -1,5 +1,6 @@
 using System;
 using _01_Scripts.DTO;
+using _01_Scripts.DTO.Item;
 using _01_Scripts.Interfacese;
 using UnityEngine;
 
@@ -37,6 +38,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
     public Action<CharacterStatus> isCharacterDead;
     public Action<CharacterStatus> isCharacterStagger;
     public Action<CharacterStatus> onStatusChanged; // hp/mp/stamina 중 하나라도 바뀔 때마다 발행 (체력바 등 UI 갱신용)
+    public Action<CharacterStatus, ActiveBuff, bool> onBuffApplied; // bool: 신규 부여(true) / 갱신(false) — 버프 아이콘 UI 갱신용
+    public Action<CharacterStatus, ActiveBuff> onBuffExpired;       // 버프 아이콘 UI 제거용
 
 
     public void UseSkill(CharacterStatus caster, CharacterSkill skill)
@@ -95,6 +98,38 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         onStatusChanged?.Invoke(target);
 
         Debug.Log(target.CharacterData.characterName + " 스테미나 회복: " + amount + " / 현재 스테미나: " + target.currentStamina);
+    }
+
+    // 버프 부여 — 같은 Source가 이미 걸려있으면 갱신(재적용), 없으면 새로 추가한다.
+    public ActiveBuff ApplyBuff(CharacterStatus target, BuffEffectBase source, int resolvedAmount, int durationRounds)
+    {
+        ActiveBuff existing = target.activeBuffs.Find(b => b.Source == source);
+        bool isNew = existing == null;
+
+        ActiveBuff buff;
+        if (existing != null)
+        {
+            existing.ResolvedAmount = resolvedAmount;
+            existing.RemainingRounds = durationRounds;
+            buff = existing;
+            Debug.Log($"[CharacterStatusCalculator] '{source.buffName}' 갱신 (값 {resolvedAmount}, {durationRounds}라운드)");
+        }
+        else
+        {
+            buff = new ActiveBuff { Source = source, ResolvedAmount = resolvedAmount, RemainingRounds = durationRounds };
+            target.activeBuffs.Add(buff);
+            Debug.Log($"[CharacterStatusCalculator] '{source.buffName}' 신규 부여 (값 {resolvedAmount}, {durationRounds}라운드)");
+        }
+
+        onBuffApplied?.Invoke(target, buff, isNew);
+        return buff;
+    }
+
+    // 버프 만료/해제
+    public void ExpireBuff(CharacterStatus target, ActiveBuff buff)
+    {
+        target.activeBuffs.Remove(buff);
+        onBuffExpired?.Invoke(target, buff);
     }
 }
 }

@@ -9,6 +9,7 @@ public class CharacterStatBarUI : MonoBehaviour
     [SerializeField] private Canvas barCanvas; // overrideSorting=true, sortingOrder 개별 제어용
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Slider staminaSlider;
+    [SerializeField] private CharacterBuffIconRowUI buffIconRow; // hpSlider 위에 배치되는 버프 아이콘 줄
 
     [Header("잔상(딜레이) 바 — 데미지 입었을 때 한 박자 늦게 따라 내려옴")]
     [SerializeField] private Slider hpTrailSlider;
@@ -38,6 +39,7 @@ public class CharacterStatBarUI : MonoBehaviour
 
         gameObject.SetActive(true);
         SnapValues(target.GetCharacterStatus()); // 최초 스폰 시엔 잔상 연출 없이 바로 맞춤
+        buffIconRow?.Initialize(target);
     }
 
     private void OnEnable()

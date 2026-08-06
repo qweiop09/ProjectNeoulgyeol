@@ -106,7 +106,7 @@ public class ClosePhaseController : MonoBehaviour
                     _ => -1
                 };
 
-                status.activeBuffs.RemoveAt(i);
+                CharacterStatusCalculator.Instance.ExpireBuff(status, buff);
 
                 switch (statBuff.statType)
                 {
@@ -114,10 +114,14 @@ public class ClosePhaseController : MonoBehaviour
                     case BuffStatType.MaxMp:      status.OnMaxMpChanged(previousMax, false); break;
                     case BuffStatType.MaxStamina: status.OnMaxStaminaChanged(previousMax, false); break;
                 }
+
+                // OnMaxXChanged가 currentHp/Mp/Stamina를 새 최대치로 클램프할 수 있는데, 이 변화는 onStatusChanged를
+                // 거치지 않아서 체력바가 갱신 안 되고 있었다 — 여기서 직접 발행해 UI를 맞춰준다.
+                CharacterStatusCalculator.Instance.onStatusChanged?.Invoke(status);
             }
             else
             {
-                status.activeBuffs.RemoveAt(i);
+                CharacterStatusCalculator.Instance.ExpireBuff(status, buff);
             }
         }
     }
