@@ -58,12 +58,20 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             // 이전에 아이템을 골랐다가 스킬/공격으로 바꾸는 경우, 남아있던 예약을 먼저 풀어준다
             ReleaseIfReservedItem();
 
-            _currentActData = new SkillActData
+            var skillActData = new SkillActData
             {
                 CastPlayerCharacter = selectedActCaster,
                 UseSlot             = _currentActData?.UseSlot ?? 0,
                 UseSkill            = data
             };
+
+            if (data != null && data.targetScope == TargetScope.Self)
+            {
+                ConfirmSelfTargetedAction(skillActData);
+                return;
+            }
+
+            _currentActData = skillActData;
             ChangeSelectionState(SelectionState.SelectingActTarget);
         };
 
@@ -86,26 +94,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 UseItem             = item
             };
 
-            if (item.targetScope == ItemTargetScope.Self)
+            if (item.targetScope == TargetScope.Self)
             {
-                // 자신 대상 아이템은 타겟 선택 단계 없이 즉시 확정 (Stay와 같은 패턴)
-                itemActData.TargetPlayerCharacter = selectedActCaster;
-                itemActData.TargetSlot = 0;
-                _currentActData = itemActData;
-
-                // mainTarget==caster라 SetFixedArrow 내부에서 자동으로 화살표를 그리지 않음
-                attackArrowController?.SetFixedArrow(selectedActCaster, itemActData.UseSlot, itemActData);
-                attackArrowController?.HideTrackingArrow();
-
-                CompleteActSelected?.Invoke(_currentActData);
-
-                // selectedActCaster는 여기서 null 처리하지 않는다 — ChangeSelectionState의 취소 분기가
-                // (currentState가 아직 SelectingAction이라 그 경로를 타므로) selectedActCaster.name을 로그에
-                // 쓴 뒤 자체적으로 null 처리한다 (Stay 확정 경로와 동일한 패턴).
-                selectedActTarget = null;
-                _currentActData = null;
-
-                ChangeSelectionState(SelectionState.SelectingActCaster);
+                ConfirmSelfTargetedAction(itemActData);
                 return;
             }
 
@@ -160,11 +151,34 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         attackArrowController?.HideFixedArrow(selectedActCaster, _currentActData?.UseSlot ?? 0);
         attackArrowController?.ShowTrackingArrow(selectedActCaster, GetPointerWorldPosition());
 
-        // 랜덤 타겟 아이템은 확정 전까지 "누가 뽑힐 수 있는지" 후보 전원을 점선으로 미리 보여준다
-        if (_currentActData is ItemActData itemActData && itemActData.UseItem.targetCount == ItemTargetCount.Random)
-            attackArrowController?.ShowCandidatePreview(selectedActCaster, GetCandidates(itemActData.UseItem.targetScope, selectedActCaster));
+        // 랜덤 타겟 행동은 확정 전까지 "누가 뽑힐 수 있는지" 후보 전원을 점선으로 미리 보여준다
+        ITargetSpec previewSpec = _currentActData?.GetTargetSpec();
+        if (previewSpec != null && previewSpec.TargetCount == TargetCount.Random)
+            attackArrowController?.ShowCandidatePreview(selectedActCaster, GetCandidates(previewSpec.TargetScope, selectedActCaster));
         else
             attackArrowController?.HideCandidatePreview();
+    }
+
+    // 자신 대상 행동(TargetScope.Self)은 타겟 선택 단계 없이 즉시 확정한다 (Stay와 같은 패턴)
+    private void ConfirmSelfTargetedAction(ActData actData)
+    {
+        actData.TargetPlayerCharacter = selectedActCaster;
+        actData.TargetSlot = 0;
+        _currentActData = actData;
+
+        // mainTarget==caster라 SetFixedArrow 내부에서 자동으로 화살표를 그리지 않음
+        attackArrowController?.SetFixedArrow(selectedActCaster, actData.UseSlot, actData);
+        attackArrowController?.HideTrackingArrow();
+
+        CompleteActSelected?.Invoke(_currentActData);
+
+        // selectedActCaster는 여기서 null 처리하지 않는다 — ChangeSelectionState의 취소 분기가
+        // (currentState가 아직 SelectingAction이라 그 경로를 타므로) selectedActCaster.name을 로그에
+        // 쓴 뒤 자체적으로 null 처리한다 (Stay 확정 경로와 동일한 패턴).
+        selectedActTarget = null;
+        _currentActData = null;
+
+        ChangeSelectionState(SelectionState.SelectingActCaster);
     }
 
     public void StartActionSelectionPhase(CharacterHandler[] allCharacters)
@@ -202,7 +216,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     }
 
     // scope에 맞는 타겟 후보(생존자만) 조회. Ally scope엔 caster 자신도 포함된다.
-    private IEnumerable<CharacterHandler> GetCandidates(ItemTargetScope scope, CharacterHandler caster)
+    private IEnumerable<CharacterHandler> GetCandidates(TargetScope scope, CharacterHandler caster)
     {
         if (allBattleCharacters == null) return Enumerable.Empty<CharacterHandler>();
 
@@ -211,9 +225,9 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
         return scope switch
         {
-            ItemTargetScope.Ally  => alive.Where(c => c.characterType == caster.characterType),
-            ItemTargetScope.Enemy => alive.Where(c => c.characterType != caster.characterType),
-            _                     => alive // Any
+            TargetScope.Ally  => alive.Where(c => c.characterType == caster.characterType),
+            TargetScope.Enemy => alive.Where(c => c.characterType != caster.characterType),
+            _                 => alive // Any
         };
     }
 
@@ -266,16 +280,16 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         return picked.ToArray();
     }
 
-    // 아이템의 targetScope(Ally/Enemy) 제한을 클릭된 candidate가 만족하는지
-    private bool IsValidTarget(Item item, CharacterHandler candidate)
+    // 행동의 targetScope(Ally/Enemy) 제한을 클릭된 candidate가 만족하는지
+    private bool IsValidTarget(TargetScope scope, CharacterHandler candidate)
     {
         if (candidate == null || selectedActCaster == null) return false;
 
-        return item.targetScope switch
+        return scope switch
         {
-            ItemTargetScope.Ally  => candidate.characterType == selectedActCaster.characterType,
-            ItemTargetScope.Enemy => candidate.characterType != selectedActCaster.characterType,
-            _                     => true // Any, Self(Self는 클릭 단계 자체가 없음)
+            TargetScope.Ally  => candidate.characterType == selectedActCaster.characterType,
+            TargetScope.Enemy => candidate.characterType != selectedActCaster.characterType,
+            _                 => true // Any, Self(Self는 클릭 단계 자체가 없음)
         };
     }
 
@@ -324,7 +338,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
         else if (currentState == SelectionState.SelectingActTarget)
         {
-            if (_currentActData is ItemActData pendingItemActData && !IsValidTarget(pendingItemActData.UseItem, characterHandler))
+            ITargetSpec targetSpec = _currentActData?.GetTargetSpec();
+            if (targetSpec != null && !IsValidTarget(targetSpec.TargetScope, characterHandler))
                 return; // 진영 제한 위반 클릭은 무시
 
             selectedActTarget = characterHandler;
@@ -332,17 +347,16 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             _currentActData.TargetPlayerCharacter = characterHandler;
             _currentActData.TargetSlot = 0; // TODO: 슬롯 선택 기능 추가되면 변경
 
-            if (_currentActData is ItemActData itemActData)
+            if (targetSpec != null)
             {
-                Item item = itemActData.UseItem;
-                IEnumerable<CharacterHandler> candidates = GetCandidates(item.targetScope, selectedActCaster);
+                IEnumerable<CharacterHandler> candidates = GetCandidates(targetSpec.TargetScope, selectedActCaster);
 
-                itemActData.AdditionalTargets = item.targetCount switch
+                _currentActData.AdditionalTargets = targetSpec.TargetCount switch
                 {
-                    ItemTargetCount.Fixed  => SelectPriorityTargets(characterHandler, candidates, item.targetCountValue),
-                    ItemTargetCount.All    => candidates.Where(c => c != characterHandler).ToArray(),
-                    ItemTargetCount.Random => SelectRandomTargets(characterHandler, candidates, item.targetCountValue),
-                    _                      => Array.Empty<CharacterHandler>() // Single
+                    TargetCount.Fixed  => SelectPriorityTargets(characterHandler, candidates, targetSpec.TargetCountValue),
+                    TargetCount.All    => candidates.Where(c => c != characterHandler).ToArray(),
+                    TargetCount.Random => SelectRandomTargets(characterHandler, candidates, targetSpec.TargetCountValue),
+                    _                  => Array.Empty<CharacterHandler>() // Single
                 };
             }
 

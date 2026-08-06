@@ -4,24 +4,6 @@ using UnityEngine.Timeline;
 
 namespace _01_Scripts.DTO.Item
 {
-    // 누구를 고를 수 있는지
-    public enum ItemTargetScope
-    {
-        Self,
-        Any,
-        Ally,
-        Enemy,
-    }
-
-    // 몇 명에게 적용되는지 (Self는 이 값을 무시하고 항상 캐스터 자신 1명)
-    public enum ItemTargetCount
-    {
-        Single,
-        Fixed,
-        All,
-        Random,
-    }
-
     // 장비/소모품/재료/재화/이벤트(중요) 아이템 5종. 필요하면 얼마든지 추가/삭제 가능.
     public enum ItemCategory
     {
@@ -33,7 +15,7 @@ namespace _01_Scripts.DTO.Item
     }
 
     [CreateAssetMenu(menuName = "ProjectNeoulgyeol/Item/Item", fileName = "New Item")]
-    public class Item : ScriptableObject
+    public class Item : ScriptableObject, ITargetSpec
     {
         [Tooltip("세이브 등에 쓰일 고유 문자열 ID. 예: consumable_hp_potion_small")]
         [SerializeField] private string itemId;
@@ -43,10 +25,14 @@ namespace _01_Scripts.DTO.Item
         [SerializeField][TextArea] public string itemDescription;
         [SerializeField] public Sprite icon;
 
-        [SerializeField] public ItemTargetScope targetScope = ItemTargetScope.Any;
-        [SerializeField] public ItemTargetCount targetCount = ItemTargetCount.Single;
+        [SerializeField] public TargetScope targetScope = TargetScope.Any;
+        [SerializeField] public TargetCount targetCount = TargetCount.Single;
         [Tooltip("targetCount가 Fixed/Random일 때만 사용하는 인원 수")]
         [SerializeField] public int targetCountValue = 1;
+
+        TargetScope ITargetSpec.TargetScope => targetScope;
+        TargetCount ITargetSpec.TargetCount => targetCount;
+        int ITargetSpec.TargetCountValue => targetCountValue;
 
         [SerializeField] public ItemCategory category = ItemCategory.Consumable;
 
@@ -77,8 +63,8 @@ namespace _01_Scripts.DTO.Item
         {
             // 자신(Self)은 항상 정확히 1명이라 모두/랜덤과 조합될 수 없음 — Self인 동안은 매 검증마다 Single로 되돌려서
             // "자신 선택 시 모두/랜덤 선택 불가"와 "모두/랜덤이면 자신 선택 불가"를 동시에 만족시킨다.
-            if (targetScope == ItemTargetScope.Self)
-                targetCount = ItemTargetCount.Single;
+            if (targetScope == TargetScope.Self)
+                targetCount = TargetCount.Single;
 
             if (string.IsNullOrEmpty(itemId))
                 return;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using _01_Scripts.DTO.Item;
+using _01_Scripts.DTO;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles
@@ -99,8 +99,7 @@ public class AttackArrowController : MonoBehaviour
     // 랜덤으로 뽑힌 추가 타겟은 점선, 그 외(일정수/모두 등 확정적으로 정해진 타겟)는 파선
     private static ArrowLineStyle GetAdditionalTargetStyle(ActData actData)
     {
-        if (actData is ItemActData itemActData && itemActData.UseItem != null
-            && itemActData.UseItem.targetCount == ItemTargetCount.Random)
+        if (actData?.GetTargetSpec()?.TargetCount == TargetCount.Random)
             return ArrowLineStyle.Dotted;
 
         return ArrowLineStyle.Dashed;

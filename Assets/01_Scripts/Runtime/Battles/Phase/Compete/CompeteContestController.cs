@@ -178,7 +178,7 @@ public class CompeteContestController : MonoBehaviour
         Debug.Log("actData is null? " + (actData == null));
 
         var skillAct = actData as SkillActData;
-        float arrivalDistance = skillAct?.UseSkill.skillStartDistance ?? 0f;
+        float arrivalDistance = skillAct?.UseSkill?.skillStartDistance ?? 0f;
 
         return moveToTargetExecutor.ExecuteAsync(
             actData.CastPlayerCharacter.transform,
