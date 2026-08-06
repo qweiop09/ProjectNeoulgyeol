@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _01_Scripts.Runtime.Battles;
-using _01_Scripts.Runtime.Worlds.UI;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Worlds
@@ -19,9 +18,6 @@ namespace _01_Scripts.Runtime.Worlds
 
         [Header("Player")]
         [SerializeField] private Transform _player;
-
-        [Header("UI")]
-        [SerializeField] private LootUI _lootUI;
 
         public event Action<RoomData> OnRoomActivated;
 
@@ -80,7 +76,7 @@ namespace _01_Scripts.Runtime.Worlds
             {
                 // CharacterStatus가 참조로 공유되므로 전투 중 변경된 hp/mp/stamina는
                 // 이미 WorldPartyManager의 파티에 반영되어 있다 (별도 결과 반영 불필요).
-                // 승리든 퇴각이든 원래 있던 방으로 복귀 — 전리품은 승리일 때만 있으므로(Loot==null이면 자동으로 안 뜸) 분기 불필요.
+                // 승리든 퇴각이든 원래 있던 방으로 복귀.
 
                 if (returnRoomData != null && _rooms.TryGetValue(returnRoomData, out var returnRoom))
                     ActivateRoom(returnRoom, null);
@@ -90,11 +86,8 @@ namespace _01_Scripts.Runtime.Worlds
                 if (_player != null)
                     _player.position = returnPosition;
 
-                // 전리품이 있으면 UI 표시 후 이동 허용, 없으면 즉시 허용
-                if (_lootUI != null && result.Loot != null && result.Loot.HasLoot)
-                    _lootUI.Show(result.Loot, () => SetPlayerMovement(true));
-                else
-                    SetPlayerMovement(true);
+                // 전리품은 전투 종료 연출(BattleManager) 쪽에서 이미 확인받고 넘어오므로 여기선 바로 이동 허용
+                SetPlayerMovement(true);
             }
             else // Defeat
             {

@@ -52,6 +52,9 @@ public class CharacterData : ScriptableObject
              "MotionClip의 로컬 좌표계와 동일한 규칙 — 타임라인의 MotionClip 경로가 (0,0)에서 -이 값으로 끝나야 정확히 제자리에 도착함.")]
     public Vector2 entrySpawnOffset;
 
+    [Tooltip("2라운드부터 매 라운드 전환 시 재생. 비어있으면 아무 연출 없이 넘어감(연출 없어도 라운드 배너는 뜸).")]
+    public TimelineAsset roundTransitionTimelineAsset;
+
     public int GetRandomSpeed()
     {
         return Random.Range(characterSpeedLowLimit, characterSpeedHighLimit + 1);

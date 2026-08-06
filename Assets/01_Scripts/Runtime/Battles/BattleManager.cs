@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
@@ -9,6 +10,7 @@ using _01_Scripts.Runtime.Battles.Phase.Open;
 using _01_Scripts.Runtime.Worlds;
 using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Worlds.Loot;
+using _01_Scripts.Runtime.Worlds.UI;
 using TMPro;
 
 namespace _01_Scripts.Runtime.Battles
@@ -39,6 +41,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Item testItem1;
 
     [SerializeField] private TextMeshProUGUI endText;
+    [SerializeField] private LootUI lootUI;
 
     private EnemyData[] _enemyDatas;
 
@@ -65,7 +68,7 @@ public class BattleManager : MonoBehaviour
         battlePhaseCoordinator.OnBattleEnd -= BattleEnd;
     }
     
-    private void BattleEnd(CharacterHandler[] playerCharacterHandlers, BattleOutcome outcome)
+    private async void BattleEnd(CharacterHandler[] playerCharacterHandlers, BattleOutcome outcome)
     {
         endText.text = outcome switch
         {
@@ -89,6 +92,11 @@ public class BattleManager : MonoBehaviour
             survivedParty[i] = playerCharacterHandlers[i].GetCharacterStatus();
 
         LootResult loot = outcome == BattleOutcome.Victory ? LootCalculator.Calculate(_enemyDatas) : null;
+
+        // 전리품이 있으면 월드로 넘어가기 전에 여기(전투 씬)에서 확인받는다 — 확인해야 전투에서 나감.
+        if (loot != null && loot.HasLoot && lootUI != null)
+            await ShowLootAndWaitAsync(loot);
+
         BattleContext.SetResult(new BattleResult { Outcome = outcome, SurvivedParty = survivedParty, Loot = loot });
 
         string worldScene = BattleContext.WorldSceneName;
@@ -99,6 +107,15 @@ public class BattleManager : MonoBehaviour
         }
 
         SceneLoader.Instance.LoadScene(worldScene);
+    }
+
+    // LootUI.Show는 확인 콜백(Action) 방식이라 Task로 감싸서 await 가능하게 해준다.
+    // 아이템 인벤토리 반영(InventoryManager.AddItem)은 LootUI.OnConfirm 내부에서 이미 처리됨.
+    private Task ShowLootAndWaitAsync(LootResult loot)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        lootUI.Show(loot, () => tcs.SetResult(true));
+        return tcs.Task;
     }
 
 

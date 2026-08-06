@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using _01_Scripts.DTO;
 using _01_Scripts.Runtime.Battles.Characters;
 using _01_Scripts.Runtime.Battles.Phase.Open.EnemyTargeting;
+using _01_Scripts.Runtime.Battles.UI;
 using UnityEngine;
 using UnityEngine.Timeline;
 
@@ -19,6 +20,9 @@ public class OpenPhaseController : MonoBehaviour
 
     [Header("전투 진입 연출")]
     [SerializeField] private ITimelineBinder entryTimelineBinder;
+    [SerializeField] private RoundTransitionUI roundTransitionUI;
+
+    private int currentRound;
 
     private CharacterHandler[] playerCharacters;
     private CharacterHandler[] enemyCharacters;
@@ -50,7 +54,8 @@ public class OpenPhaseController : MonoBehaviour
         
         playerCharacters = _playerCharacters;
         enemyCharacters = _enemyCharacters;
-        
+        currentRound = 0;
+
         for(int i = 0; i < playerCharacters.Length; i++)
             playerCharacters[i].TargetingData =
                 new ActData[playerCharacters[i].GetCharacterStatus().CharacterData.slotCount];
@@ -76,6 +81,9 @@ public class OpenPhaseController : MonoBehaviour
     {
         Debug.Log("Start Open Phase");
 
+        currentRound++;
+        bool isFirstRound = currentRound == 1;
+
         playerCharacters = SortBySpeedDescending(SetCharactersSpeed(playerCharacters));
         enemyCharacters = SortBySpeedDescending(SetCharactersSpeed(enemyCharacters));
 
@@ -87,7 +95,7 @@ public class OpenPhaseController : MonoBehaviour
             playerCharacters[i].DebugPrintStatusData();
 
             playerCharacters[i].PlacementOrder = i;
-            SetCharactersPosition(playerCharacters[i], playerCharacterPositions[i]);
+            SetCharactersPosition(playerCharacters[i], playerCharacterPositions[i], isFirstRound);
 
             CharacterAnimationMonitor.Instance.PlayAnimation(playerCharacters[i],
                 playerCharacters[i].GetCharacterStatus().currentState);
@@ -99,13 +107,13 @@ public class OpenPhaseController : MonoBehaviour
             enemyCharacters[i].DebugPrintStatusData();
 
             enemyCharacters[i].PlacementOrder = i;
-            SetCharactersPosition(enemyCharacters[i], enemyCharacterPositions[i]);
+            SetCharactersPosition(enemyCharacters[i], enemyCharacterPositions[i], isFirstRound);
 
             CharacterAnimationMonitor.Instance.PlayAnimation(enemyCharacters[i],
                 enemyCharacters[i].GetCharacterStatus().currentState);
         }
 
-        await PlayEntryPresentation();
+        await PlayRoundPresentation(isFirstRound);
 
         turnOrderCharacters = DetermineTurnOrder
         (
@@ -119,33 +127,59 @@ public class OpenPhaseController : MonoBehaviour
         CompleteOpenPhaseProcess();
     }
 
-    // 캐릭터별 등장 연출을 전원 동시에 재생한다. CharacterHandler마다 자기 전용 timelineDirector가 있어서
-    // 그냥 전부 PlayAsync를 호출해 Task로 모으기만 하면 실제로 병렬 재생된다.
-    // 컷신(EnemyData.entryCutscene)은 아직 재생 엔진이 없어서 감지 후 로그만 남기고 기본 진입으로 대체한다.
-    private async Task PlayEntryPresentation()
+    // 라운드 배너 + 캐릭터별 연출을 전원 동시에 재생한다. CharacterHandler마다 자기 전용 timelineDirector가 있어서
+    // 그냥 전부 PlayAsync를 호출해 Task로 모으기만 하면 실제로 병렬 재생된다. 배너도 화면을 멈추지 않고
+    // 같이 진행되도록 같은 Task 목록에 합쳐서 기다린다.
+    // 1라운드는 entryTimelineAsset(등장), 2라운드부터는 roundTransitionTimelineAsset(라운드 전환)을 재생한다.
+    // 컷신(EnemyData.entryCutscene)은 아직 재생 엔진이 없어서 1라운드에 한해 감지 후 로그만 남기고 기본 진입으로 대체한다.
+    private async Task PlayRoundPresentation(bool isFirstRound)
     {
-        bool hasCutsceneTarget = enemyCharacters.Any(c => c.GetCharacterStatus().SourceEnemyData?.entryCutscene != null);
-        if (hasCutsceneTarget)
-            Debug.Log("[OpenPhaseController] 컷신 대상 발견(미구현) — 기본 진입 연출로 대체 재생");
+        List<Task> tasks = new List<Task>();
+        bool hasCharacterTimelineTask = false;
 
-        List<Task> entryTasks = new List<Task>();
+        if (roundTransitionUI != null)
+            tasks.Add(roundTransitionUI.ShowAsync(currentRound));
 
-        foreach (CharacterHandler character in playerCharacters.Concat(enemyCharacters))
+        if (isFirstRound)
         {
-            TimelineAsset entryTimeline = character.GetCharacterStatus().CharacterData.entryTimelineAsset;
-            if (entryTimeline == null) continue;
+            bool hasCutsceneTarget = enemyCharacters.Any(c => c.GetCharacterStatus().SourceEnemyData?.entryCutscene != null);
+            if (hasCutsceneTarget)
+                Debug.Log("[OpenPhaseController] 컷신 대상 발견(미구현) — 기본 진입 연출로 대체 재생");
 
-            entryTasks.Add(character.timelineDirector.PlayAsync(character, entryTimeline, entryTimelineBinder, new EntryActData(character, 0)));
+            foreach (CharacterHandler character in playerCharacters.Concat(enemyCharacters))
+            {
+                if (character.GetCharacterStatus().currentState == CharacterState.Dead) continue;
+
+                TimelineAsset entryTimeline = character.GetCharacterStatus().CharacterData.entryTimelineAsset;
+                if (entryTimeline == null) continue;
+
+                hasCharacterTimelineTask = true;
+                tasks.Add(character.timelineDirector.PlayAsync(character, entryTimeline, entryTimelineBinder, new EntryActData(character, 0)));
+            }
+        }
+        else
+        {
+            // 죽은 캐릭터는 시체 상태 그대로 자기 자리에 남아있을 뿐, 포효/모션 같은 라운드 전환 연출은 재생하지 않는다.
+            foreach (CharacterHandler character in playerCharacters.Concat(enemyCharacters))
+            {
+                if (character.GetCharacterStatus().currentState == CharacterState.Dead) continue;
+
+                TimelineAsset roundTimeline = character.GetCharacterStatus().CharacterData.roundTransitionTimelineAsset;
+                if (roundTimeline == null) continue;
+
+                hasCharacterTimelineTask = true;
+                tasks.Add(character.timelineDirector.PlayAsync(character, roundTimeline, entryTimelineBinder, new RoundTransitionActData(character, 0)));
+            }
         }
 
-        if (entryTasks.Count == 0) return;
-
         // entryTimelineBinder가 안 붙어있으면 타임라인은 재생되지만 트랙이 하나도 안 묶여서 눈에 보이는 게 없다 —
-        // 조용히 "안 되는" 상태를 피하려고 여기서 한 번 경고해준다.
-        if (entryTimelineBinder == null)
-            Debug.LogWarning("[OpenPhaseController] entryTimelineBinder가 비어있습니다. 진입 연출 타임라인이 바인딩 없이 재생됩니다.");
+        // 조용히 "안 되는" 상태를 피하려고 여기서 한 번 경고해준다(캐릭터 클립이 하나라도 있을 때만).
+        if (hasCharacterTimelineTask && entryTimelineBinder == null)
+            Debug.LogWarning("[OpenPhaseController] entryTimelineBinder가 비어있습니다. 진입/라운드전환 연출 타임라인이 바인딩 없이 재생됩니다.");
 
-        await Task.WhenAll(entryTasks);
+        if (tasks.Count == 0) return;
+
+        await Task.WhenAll(tasks);
     }
     
     // 개막 페이즈 로직 동작 완료
@@ -265,7 +299,7 @@ public class OpenPhaseController : MonoBehaviour
         return _returnBattleDataArray;
     }
     
-    private void SetCharactersPosition(CharacterHandler _characterBattleDatas, Transform _characterPositions)
+    private void SetCharactersPosition(CharacterHandler _characterBattleDatas, Transform _characterPositions, bool _isFirstRound)
     {
         // 회전을 먼저 정해야 아래 스폰 오프셋의 facing 기준(transform.right/up)이 정확함.
         // (0,0,0,0)은 크기가 0인 무효 쿼터니언이라 정규화 결과가 불명확해서 identity로 명시.
@@ -277,9 +311,11 @@ public class OpenPhaseController : MonoBehaviour
         if (_characterBattleDatas.characterType == CharacterHandler.CharacterType.Enemy)
             _characterBattleDatas.GetComponent<SpriteRenderer>().flipX = true;
 
-        // 최종 위치 + 진입 연출 스폰 오프셋(캐릭터 자신의 facing 기준)에 배치.
-        // 오프셋이 (0,0)이고 entryTimelineAsset도 없으면 스폰 지점 = 최종 위치라 기존 동작과 동일.
-        Vector2 spawnOffset = _characterBattleDatas.GetCharacterStatus().CharacterData.entrySpawnOffset;
+        // 진입 연출 스폰 오프셋(캐릭터 자신의 facing 기준)은 1라운드 등장 때만 의미가 있다.
+        // 2라운드부터는 대열 위치(정해진 자리)로 곧장 리셋 — 전투 중 이동했더라도 매 라운드 제자리로 돌아와야 함.
+        Vector2 spawnOffset = _isFirstRound
+            ? _characterBattleDatas.GetCharacterStatus().CharacterData.entrySpawnOffset
+            : Vector2.zero;
         Vector3 worldOffset = _characterBattleDatas.transform.right * spawnOffset.x
                                + _characterBattleDatas.transform.up * spawnOffset.y;
         _characterBattleDatas.transform.position = _characterPositions.position + worldOffset;
