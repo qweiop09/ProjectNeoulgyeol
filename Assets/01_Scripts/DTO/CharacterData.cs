@@ -55,6 +55,16 @@ public class CharacterData : ScriptableObject
     [Tooltip("2라운드부터 매 라운드 전환 시 재생. 비어있으면 아무 연출 없이 넘어감(연출 없어도 라운드 배너는 뜸).")]
     public TimelineAsset roundTransitionTimelineAsset;
 
+    [Header("전투 종료 연출")]
+    [Tooltip("BattleOutcome.Victory일 때 재생. 아군 승리 포즈용 — 이 outcome에서 적은 이미 전멸 상태라 적 쪽엔 의미 없음.")]
+    public TimelineAsset victoryTimelineAsset;
+
+    [Tooltip("BattleOutcome.Defeat일 때 재생. 적의 승리 조롱 등 — 이 outcome에서 아군은 이미 전멸 상태라 아군 쪽엔 의미 없음.")]
+    public TimelineAsset defeatTimelineAsset;
+
+    [Tooltip("BattleOutcome.Retreat일 때 재생. 양쪽 다 생존 상태라 아군/적군 모두 의미 있음(아군: 도주 동작, 적: 반응).")]
+    public TimelineAsset retreatTimelineAsset;
+
     public int GetRandomSpeed()
     {
         return Random.Range(characterSpeedLowLimit, characterSpeedHighLimit + 1);

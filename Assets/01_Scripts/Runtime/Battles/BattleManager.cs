@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Timeline;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.Runtime.Battles.Close;
@@ -7,11 +10,11 @@ using _01_Scripts.Runtime.Battles.Compete;
 using _01_Scripts.Runtime.Battles.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Decision;
 using _01_Scripts.Runtime.Battles.Phase.Open;
+using _01_Scripts.Runtime.Battles.UI;
 using _01_Scripts.Runtime.Worlds;
 using _01_Scripts.Runtime.Worlds.Inventory;
 using _01_Scripts.Runtime.Worlds.Loot;
 using _01_Scripts.Runtime.Worlds.UI;
-using TMPro;
 
 namespace _01_Scripts.Runtime.Battles
 {
@@ -40,8 +43,11 @@ public class BattleManager : MonoBehaviour
     
     [SerializeField] private Item testItem1;
 
-    [SerializeField] private TextMeshProUGUI endText;
     [SerializeField] private LootUI lootUI;
+
+    [Header("전투 종료 연출")]
+    [SerializeField] private BattleEndUI battleEndUI;
+    [SerializeField] private ITimelineBinder battleEndTimelineBinder;
 
     private EnemyData[] _enemyDatas;
 
@@ -70,26 +76,21 @@ public class BattleManager : MonoBehaviour
     
     private async void BattleEnd(CharacterHandler[] playerCharacterHandlers, BattleOutcome outcome)
     {
-        endText.text = outcome switch
-        {
-            BattleOutcome.Victory => "You Win!",
-            BattleOutcome.Defeat  => "You Lose!",
-            BattleOutcome.Retreat => "You Escaped!",
-            _ => ""
-        };
+        // 캐릭터가 파괴되기 전에 배너 + 캐릭터별 종료 연출을 먼저 재생한다.
+        await PlayBattleEndPresentation(playerCharacterHandlers, outcome);
 
         // CharacterStatus는 전투를 넘어 계속 유지되는 인스턴스라, 전투 한정 버프를 여기서 안 지우면
         // 다음 전투나 월드맵까지 그대로 새어나간다.
         foreach (CharacterHandler handler in playerCharacterHandlers)
             handler.GetCharacterStatus().activeBuffs.Clear();
 
-        ClearCharacters();
-
         // CharacterStatus는 참조로 공유되므로 여기서 만드는 배열은 상태 동기화용이 아니라
         // 전리품 계산/결과 리포팅(BattleResult.SurvivedParty)을 위한 목적으로만 쓰인다.
         var survivedParty = new CharacterStatus[playerCharacterHandlers.Length];
         for (int i = 0; i < playerCharacterHandlers.Length; i++)
             survivedParty[i] = playerCharacterHandlers[i].GetCharacterStatus();
+
+        ClearCharacters();
 
         LootResult loot = outcome == BattleOutcome.Victory ? LootCalculator.Calculate(_enemyDatas) : null;
 
@@ -107,6 +108,47 @@ public class BattleManager : MonoBehaviour
         }
 
         SceneLoader.Instance.LoadScene(worldScene);
+    }
+
+    // 종료 배너 + 캐릭터별 승리/패배/도주 연출을 전원 동시에 재생한다. OpenPhaseController.PlayRoundPresentation과
+    // 동일한 구조(배너 Task와 캐릭터 Task를 한 리스트에 모아 Task.WhenAll) — 죽은 캐릭터는 재생하지 않는다.
+    private async Task PlayBattleEndPresentation(CharacterHandler[] playerCharacterHandlers, BattleOutcome outcome)
+    {
+        List<Task> tasks = new List<Task>();
+        bool hasCharacterTimelineTask = false;
+
+        if (battleEndUI != null)
+            tasks.Add(battleEndUI.ShowAsync(outcome));
+
+        IEnumerable<CharacterHandler> allCharacters = enemyCharacters != null
+            ? playerCharacterHandlers.Concat(enemyCharacters)
+            : playerCharacterHandlers;
+
+        foreach (CharacterHandler character in allCharacters)
+        {
+            if (character == null) continue;
+            if (character.GetCharacterStatus().currentState == CharacterState.Dead) continue;
+
+            TimelineAsset clip = outcome switch
+            {
+                BattleOutcome.Victory => character.GetCharacterStatus().CharacterData.victoryTimelineAsset,
+                BattleOutcome.Defeat  => character.GetCharacterStatus().CharacterData.defeatTimelineAsset,
+                BattleOutcome.Retreat => character.GetCharacterStatus().CharacterData.retreatTimelineAsset,
+                _ => null
+            };
+            if (clip == null) continue;
+
+            hasCharacterTimelineTask = true;
+            tasks.Add(character.timelineDirector.PlayAsync(character, clip, battleEndTimelineBinder, new BattleEndActData(character, 0)));
+        }
+
+        // entryTimelineBinder 경고와 동일한 관용구 — 캐릭터 클립이 하나라도 있을 때만 경고한다.
+        if (hasCharacterTimelineTask && battleEndTimelineBinder == null)
+            Debug.LogWarning("[BattleManager] battleEndTimelineBinder가 비어있습니다. 전투 종료 연출 타임라인이 바인딩 없이 재생됩니다.");
+
+        if (tasks.Count == 0) return;
+
+        await Task.WhenAll(tasks);
     }
 
     // LootUI.Show는 확인 콜백(Action) 방식이라 Task로 감싸서 await 가능하게 해준다.
