@@ -141,6 +141,9 @@ public class CompeteContestController : MonoBehaviour
             // Stay는 카메라/행동 모두 스킵 — 턴 종료 후 스테미나 회복은 루프 외부에서 처리
             if (actData is StayActData) continue;
 
+            // 도망은 판정이 이미 경합 페이즈 시작 시 끝났다(실패했으니 여기 도달함) — 아무 효과 없이 그냥 턴 소모
+            if (actData is RunActData) continue;
+
             if (actData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead)
             {
                 ReleaseReservationIfItem(actData);

@@ -66,8 +66,9 @@ public class ClosePhaseController : MonoBehaviour
         if (isFriendlyAllDead || isEnemyAllDead)
         {
             Debug.Log("전투 종료 — 아군 전멸: " + isFriendlyAllDead + " / 적군 전멸: " + isEnemyAllDead);
-        
-            battlePhaseCoordinator.CompleteBattleEnd(friendlyCharacters.ToArray(), isEnemyAllDead);
+
+            BattleOutcome outcome = isEnemyAllDead ? BattleOutcome.Victory : BattleOutcome.Defeat;
+            battlePhaseCoordinator.CompleteBattleEnd(friendlyCharacters.ToArray(), outcome);
         }
     
         Debug.Log("Close Phase Ended");

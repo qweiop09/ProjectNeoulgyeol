@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
+using _01_Scripts.Runtime.Worlds;
 using _01_Scripts.Runtime.Worlds.Inventory;
 using TMPro;
 using UnityEngine;
@@ -18,8 +19,6 @@ public class CharacterActionMenuHandler : MonoBehaviour
         Attack,
         Skill,
         Item,
-        Defend,
-        Run
     }
 
     static String[] actionNames = new string[]
@@ -45,6 +44,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
     public Action<CharacterSkill> CompletedActionSetting; // 스킬/공격 선택 완료 시 외부에 알리는 Action
     public Action<Item> CompletedItemActionSetting; // 아이템 선택 완료 시 외부에 알리는 Action
     public Action CompletedStayActionSetting; // Stay(대기) 선택 완료 시 외부에 알리는 Action
+    public Action CompletedRunActionSetting; // 도망 선택 완료 시 외부에 알리는 Action
 
     private bool isActive = false; // 메뉴가 활성화되어 있는지 여부
     
@@ -211,13 +211,7 @@ public class CharacterActionMenuHandler : MonoBehaviour
         
         else if (currentActionType == ActionType.Item)
             ItemStatePressed(pressedButtonNumber);
-        
-        else if(currentActionType == ActionType.Defend)
-            CompletedActionSetting?.Invoke(null); // TODO: 방어 행동 설정 필요
-        
-        else if(currentActionType == ActionType.Run)
-            CompletedActionSetting?.Invoke(null); // TODO: 도망 행동 설정 필요
-        
+
         currentActionType = ActionType.None;
 
     }
@@ -238,13 +232,22 @@ public class CharacterActionMenuHandler : MonoBehaviour
             case 3: // Stay — 하위 메뉴 없이 즉시 완료
                 CompletedStayActionSetting?.Invoke();
                 return; // UpdateMenu 호출 없이 바로 종료
-            case 4: // Run
-                currentActionType = ActionType.Run;
-                break;
+            case 4: // Run — Stay와 마찬가지로 하위 메뉴 없이 즉시 완료. 단, 이 방에서 도망이 막혀있으면 안내만 띄우고 확정하지 않는다.
+                if (!IsEscapeAllowed())
+                {
+                    NotificationManager.Instance.Show(BattleContext.CurrentRoomData?.nonEscapableReason);
+                    return;
+                }
+
+                CompletedRunActionSetting?.Invoke();
+                return;
         }
-        
+
         UpdateMenu();
     }
+
+    // RoomData가 없으면(디버그로 바로 전투 시작한 경우 등) 기본적으로 도망을 허용한다.
+    private bool IsEscapeAllowed() => BattleContext.CurrentRoomData?.canEscape ?? true;
 
     private void AttackStatePressed(int pressedButtonNumber)
     {

@@ -21,6 +21,9 @@ public class CharacterData : ScriptableObject
     public int characterSpeedLowLimit;
     public int characterSpeedHighLimit;
 
+    [Tooltip("도망 방해 계수 — 적 캐릭터에서만 의미 있음. 클수록 아군이 이 캐릭터로부터 도망치기 어려워진다.")]
+    public float escapeResistance = 1f;
+
     [Space(10)]
 
     [SerializeField] public AnimationClip idleAnimation;

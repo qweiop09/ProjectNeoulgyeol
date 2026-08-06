@@ -1,4 +1,5 @@
 using _01_Scripts.DTO;
+using _01_Scripts.Runtime.Battles;
 using _01_Scripts.Runtime.Worlds.Loot;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace _01_Scripts.Runtime.Worlds
 {
     public class BattleResult
     {
-        public bool IsWin;
+        public BattleOutcome Outcome;
         public CharacterStatus[] SurvivedParty;
         public LootResult Loot;
     }

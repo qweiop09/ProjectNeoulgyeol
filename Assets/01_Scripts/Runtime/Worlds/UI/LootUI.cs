@@ -58,7 +58,9 @@ namespace _01_Scripts.Runtime.Worlds.UI
                 foreach (var drop in _currentLoot.Drops)
                 {
                     InventoryResult result = InventoryManager.Instance.AddItem(drop.Item, drop.Quantity);
-                    if (result != InventoryResult.Success)
+                    if (result == InventoryResult.CapacityExceeded)
+                        NotificationManager.Instance.Show($"인벤토리 공간이 부족해 '{drop.Item.itemName}'을(를) 습득하지 못했습니다.");
+                    else if (result != InventoryResult.Success)
                         Debug.LogWarning($"[LootUI] '{drop.Item.itemName}' x{drop.Quantity} 획득 실패: {result}");
                 }
             }

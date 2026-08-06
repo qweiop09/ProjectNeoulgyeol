@@ -34,6 +34,13 @@ namespace _01_Scripts.Runtime.Worlds
         public RoomType roomType = RoomType.Normal;
         public string displayName;
 
+        [Header("도망")]
+        [Tooltip("이 방에서 발생하는 전투에서 도망이 가능한지. 꺼두면 도망 선택 시 아래 설명만 뜨고 실제 도망은 시도되지 않는다.")]
+        public bool canEscape = true;
+
+        [Tooltip("도망이 불가능할 때(canEscape=false) 도망을 선택하면 보여줄 설명")]
+        public string nonEscapableReason = "이 전투에서는 도망칠 수 없습니다.";
+
         public DoorConnectionData GetDoorConnection(string doorId)
         {
             foreach (var door in doors)

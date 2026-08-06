@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _01_Scripts.Runtime.Battles;
 using _01_Scripts.Runtime.Worlds.UI;
 using UnityEngine;
 
@@ -75,10 +76,11 @@ namespace _01_Scripts.Runtime.Worlds
             BattleContext.ClearResult();
             BattleContext.ClearEncounter();
 
-            if (result.IsWin)
+            if (result.Outcome == BattleOutcome.Victory || result.Outcome == BattleOutcome.Retreat)
             {
                 // CharacterStatus가 참조로 공유되므로 전투 중 변경된 hp/mp/stamina는
                 // 이미 WorldPartyManager의 파티에 반영되어 있다 (별도 결과 반영 불필요).
+                // 승리든 퇴각이든 원래 있던 방으로 복귀 — 전리품은 승리일 때만 있으므로(Loot==null이면 자동으로 안 뜸) 분기 불필요.
 
                 if (returnRoomData != null && _rooms.TryGetValue(returnRoomData, out var returnRoom))
                     ActivateRoom(returnRoom, null);
@@ -94,7 +96,7 @@ namespace _01_Scripts.Runtime.Worlds
                 else
                     SetPlayerMovement(true);
             }
-            else
+            else // Defeat
             {
                 WorldPartyManager.Instance.ResetParty();
 

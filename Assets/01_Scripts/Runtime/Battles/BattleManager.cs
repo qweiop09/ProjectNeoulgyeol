@@ -65,9 +65,15 @@ public class BattleManager : MonoBehaviour
         battlePhaseCoordinator.OnBattleEnd -= BattleEnd;
     }
     
-    private void BattleEnd(CharacterHandler[] playerCharacterHandlers, bool isWin)
+    private void BattleEnd(CharacterHandler[] playerCharacterHandlers, BattleOutcome outcome)
     {
-        endText.text = isWin ? "You Win!" : "You Lose!";
+        endText.text = outcome switch
+        {
+            BattleOutcome.Victory => "You Win!",
+            BattleOutcome.Defeat  => "You Lose!",
+            BattleOutcome.Retreat => "You Escaped!",
+            _ => ""
+        };
 
         // CharacterStatus는 전투를 넘어 계속 유지되는 인스턴스라, 전투 한정 버프를 여기서 안 지우면
         // 다음 전투나 월드맵까지 그대로 새어나간다.
@@ -82,8 +88,8 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < playerCharacterHandlers.Length; i++)
             survivedParty[i] = playerCharacterHandlers[i].GetCharacterStatus();
 
-        LootResult loot = isWin ? LootCalculator.Calculate(_enemyDatas) : null;
-        BattleContext.SetResult(new BattleResult { IsWin = isWin, SurvivedParty = survivedParty, Loot = loot });
+        LootResult loot = outcome == BattleOutcome.Victory ? LootCalculator.Calculate(_enemyDatas) : null;
+        BattleContext.SetResult(new BattleResult { Outcome = outcome, SurvivedParty = survivedParty, Loot = loot });
 
         string worldScene = BattleContext.WorldSceneName;
         if (string.IsNullOrEmpty(worldScene))

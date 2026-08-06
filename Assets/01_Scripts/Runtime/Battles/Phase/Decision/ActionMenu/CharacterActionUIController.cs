@@ -16,6 +16,7 @@ public class CharacterActionUIController : MonoBehaviour
     public event Action<CharacterSkill> CompletedActionSetting;
     public event Action<Item> CompletedItemActionSetting;
     public event Action CompletedStayActionSetting;
+    public event Action CompletedRunActionSetting;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class CharacterActionUIController : MonoBehaviour
             actionMenuHandler.CompletedActionSetting     += skill => CompletedActionSetting?.Invoke(skill);
             actionMenuHandler.CompletedItemActionSetting += item  => CompletedItemActionSetting?.Invoke(item);
             actionMenuHandler.CompletedStayActionSetting += ()   => CompletedStayActionSetting?.Invoke();
+            actionMenuHandler.CompletedRunActionSetting  += ()   => CompletedRunActionSetting?.Invoke();
         }
     }
 

@@ -20,11 +20,11 @@ public class BattlePhaseCoordinator : MonoBehaviour
     // 시작 메세지
     // Battle Start Actions
     public event Action<CharacterHandler[], CharacterHandler[]> OnBattleStart;
-    public event Action<CharacterHandler[], bool> OnBattleEnd; // 전투 후 반영이랑 승패 여부(true = 승리)
-   
-    public void CompleteBattleEnd(CharacterHandler[] winningCharacters, bool isWin)
+    public event Action<CharacterHandler[], BattleOutcome> OnBattleEnd; // 전투 후 반영이랑 결과(승리/패배/퇴각)
+
+    public void CompleteBattleEnd(CharacterHandler[] characters, BattleOutcome outcome)
     {
-        OnBattleEnd?.Invoke(winningCharacters, isWin);
+        OnBattleEnd?.Invoke(characters, outcome);
     }
     
     // Open Phase Actions

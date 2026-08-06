@@ -45,6 +45,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
     private Action<CharacterSkill> _onActionSettingCompleted;
     private Action<Item>           _onItemActionSettingCompleted;
     private Action                 _onStayActionSettingCompleted;
+    private Action                 _onRunActionSettingCompleted;
 
     private void OnEnable()
     {
@@ -83,7 +84,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             // 장비 장착의 equippedBy와 같은 방식: 선택 시점에 바로 예약해서 같은 라운드 내 중복 사용을 막는다
             if (!InventoryManager.Instance.ReserveItem(item, 1))
             {
-                Debug.LogWarning($"[ActionSelectionPhaseManager] '{item.itemName}' 예약 실패 — 이미 다른 캐릭터가 사용하기로 했습니다.");
+                NotificationManager.Instance.Show($"'{item.itemName}'은(는) 이미 다른 캐릭터가 사용하기로 했습니다.");
                 return;
             }
 
@@ -119,9 +120,25 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             ChangeSelectionState(SelectionState.SelectingActCaster);
         };
 
+        _onRunActionSettingCompleted = () =>
+        {
+            int slot = _currentActData?.UseSlot ?? 0;
+            ReleaseIfReservedItem();
+
+            RunActData runData = new RunActData(selectedActCaster, slot);
+
+            attackArrowController?.HideTrackingArrow();
+            CompleteActSelected?.Invoke(runData);
+            selectedActTarget = null;
+            _currentActData = null;
+
+            ChangeSelectionState(SelectionState.SelectingActCaster);
+        };
+
         characterActionUIController.CompletedActionSetting     += _onActionSettingCompleted;
         characterActionUIController.CompletedItemActionSetting += _onItemActionSettingCompleted;
         characterActionUIController.CompletedStayActionSetting += _onStayActionSettingCompleted;
+        characterActionUIController.CompletedRunActionSetting  += _onRunActionSettingCompleted;
     }
 
     private void OnDisable()
@@ -133,6 +150,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             characterActionUIController.CompletedActionSetting     -= _onActionSettingCompleted;
             characterActionUIController.CompletedItemActionSetting -= _onItemActionSettingCompleted;
             characterActionUIController.CompletedStayActionSetting -= _onStayActionSettingCompleted;
+            characterActionUIController.CompletedRunActionSetting  -= _onRunActionSettingCompleted;
         }
 
         attackArrowController?.HideTrackingArrow();
