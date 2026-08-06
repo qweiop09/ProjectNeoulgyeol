@@ -18,14 +18,16 @@ namespace _01_Scripts.DTO.Item.Effects
 
         protected override int ResolveAmount(CharacterStatus caster, CharacterStatus target) => amount.Resolve(caster, target);
 
-        public override void Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
+        public override int? Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
         {
             int previousMax = GetRelevantMax(target);
 
-            base.Apply(caster, target, qteMultiplier); // 등록/갱신
+            int? result = base.Apply(caster, target, qteMultiplier); // 등록/갱신 (항상 null)
 
             if (previousMax >= 0)
                 ApplyMaxChange(target, previousMax);
+
+            return result;
         }
 
         // Attack/Defense는 "현재치" 개념이 없어서 -1(해당 없음)

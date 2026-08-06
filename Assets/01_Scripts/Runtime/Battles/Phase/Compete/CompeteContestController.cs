@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
@@ -89,7 +90,7 @@ public class CompeteContestController : MonoBehaviour
         float multiplier = DamageCalculation.GetQteMultiplier(hitInfo.Result, hitInfo.Multipliers);
         CharacterStatus caster = itemActData.CastPlayerCharacter.GetCharacterStatus();
 
-        itemActData.UseItem.Use(caster, itemActData.TargetPlayerCharacter.GetCharacterStatus(), multiplier);
+        ApplyItemToTarget(itemActData.UseItem, caster, itemActData.TargetPlayerCharacter, multiplier);
 
         if (itemActData.AdditionalTargets != null)
         {
@@ -103,11 +104,22 @@ public class CompeteContestController : MonoBehaviour
                 CharacterStatus additionalStatus = additionalTarget.GetCharacterStatus();
                 if (additionalStatus.currentState == CharacterState.Dead) continue;
 
-                itemActData.UseItem.Use(caster, additionalStatus, multiplier);
+                ApplyItemToTarget(itemActData.UseItem, caster, additionalTarget, multiplier);
             }
         }
 
         Debug.Log($"[CompeteContestController] '{itemActData.UseItem.itemName}' 효과 적용 (QTE {hitInfo.Result}, 배율 {multiplier})");
+    }
+
+    // 아이템 효과를 대상 한 명에게 적용하고, 수치로 표시할 결과(회복/피해량)가 있으면 그 자리에 텍스트로 띄운다.
+    // 이펙트(파티클/사운드) 자체는 이미 아이템 타임라인(QTE)이 재생하므로 여기선 텍스트만 담당한다.
+    // 색은 QTE 판정이 아니라 부호로 정해진다(회복=초록/피해=빨강) — SpawnItemEffectText 참고.
+    private void ApplyItemToTarget(Item item, CharacterStatus caster, CharacterHandler targetHandler, float multiplier)
+    {
+        List<int> numericResults = item.Use(caster, targetHandler.GetCharacterStatus(), multiplier);
+
+        foreach (int amount in numericResults)
+            DamageTextSpawner.Instance.SpawnItemEffectText(targetHandler.transform.position, amount);
     }
 
     // 한 캐릭터의 모든 행동을 실행

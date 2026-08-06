@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using _01_Scripts.DTO;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -50,12 +51,22 @@ namespace _01_Scripts.DTO.Item
         public bool IsStackable => maxStack > 0;
 
         // qteMultiplier: QTE 판정 등급(Perfect/Good/Hit)에 따른 배율. 기본 1(배율 없음).
-        public void Use(CharacterStatus caster, CharacterStatus target, float qteMultiplier = 1f)
+        // 반환값: 각 효과가 내놓은 수치 텍스트용 값들(회복/피해량) — 버프처럼 자체 연출이 있는 효과는 포함되지 않는다.
+        public List<int> Use(CharacterStatus caster, CharacterStatus target, float qteMultiplier = 1f)
         {
-            if (effects == null) return;
+            var numericResults = new List<int>();
+            if (effects == null) return numericResults;
+
             foreach (var effect in effects)
-                if (effect != null)
-                    effect.Apply(caster, target, qteMultiplier);
+            {
+                if (effect == null) continue;
+
+                int? result = effect.Apply(caster, target, qteMultiplier);
+                if (result.HasValue)
+                    numericResults.Add(result.Value);
+            }
+
+            return numericResults;
         }
 
 #if UNITY_EDITOR

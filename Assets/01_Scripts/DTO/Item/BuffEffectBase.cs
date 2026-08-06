@@ -33,10 +33,12 @@ namespace _01_Scripts.DTO.Item
 
         protected abstract int ResolveAmount(CharacterStatus caster, CharacterStatus target);
 
-        public override void Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
+        // 버프는 수치 텍스트 대신 아이콘(CharacterBuffIconRowUI)으로 이미 표시되므로 항상 null을 반환한다.
+        public override int? Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
         {
             int resolved = Mathf.RoundToInt(ResolveAmount(caster, target) * qteMultiplier);
             CharacterStatusCalculator.Instance.ApplyBuff(target, this, resolved, durationRounds);
+            return null;
         }
     }
 }

@@ -35,6 +35,14 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
         public Color hitColor     = new Color(1f, 0.3f, 0.3f);  // 빨강
     }
 
+    // 아이템 효과(회복/피해) 텍스트는 QTE 판정이 아니라 부호로만 색이 갈린다.
+    [System.Serializable]
+    public class ItemEffectColorConfig
+    {
+        public Color healColor   = new Color(0.4f, 1f, 0.4f); // 초록
+        public Color damageColor = new Color(1f, 0.3f, 0.3f); // 빨강
+    }
+
     // ──────────────────────────────────────────
     // 인스펙터 필드
     // ──────────────────────────────────────────
@@ -45,8 +53,11 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
     [Header("부모 캔버스")]
     [SerializeField] private Canvas _parentCanvas;
 
-    [Header("색상 설정")]
+    [Header("색상 설정 — 스킬 데미지(QTE 판정별)")]
     [SerializeField] private JudgmentColorConfig _colorConfig = new JudgmentColorConfig();
+
+    [Header("색상 설정 — 아이템 회복/피해(부호별)")]
+    [SerializeField] private ItemEffectColorConfig _itemEffectColorConfig = new ItemEffectColorConfig();
 
     [Header("애니메이션 설정")]
     [SerializeField] private AnimationConfig _animationConfig = new AnimationConfig();
@@ -71,6 +82,20 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
 
         DamageText instance = Instantiate(_damageTextPrefab, spawnPos, Quaternion.identity, _parentCanvas.transform);
         instance.Initialize(damage, color, _animationConfig);
+    }
+
+    /// <summary>
+    /// 아이템 효과(회복/피해) 텍스트 생성 — QTE 판정이 아니라 부호로 색이 정해진다(회복=초록, 피해=빨강).
+    /// </summary>
+    /// <param name="worldPosition">월드 기준 생성 중심점</param>
+    /// <param name="amount">부호 있는 값 — 양수면 회복, 음수면 피해로 표시(화면엔 절댓값이 뜬다)</param>
+    public void SpawnItemEffectText(Vector3 worldPosition, int amount)
+    {
+        Vector3 spawnPos = worldPosition + GetRandomOffset();
+        Color color = amount >= 0 ? _itemEffectColorConfig.healColor : _itemEffectColorConfig.damageColor;
+
+        DamageText instance = Instantiate(_damageTextPrefab, spawnPos, Quaternion.identity, _parentCanvas.transform);
+        instance.Initialize(Mathf.Abs(amount), color, _animationConfig);
     }
 
     // ──────────────────────────────────────────
