@@ -2,6 +2,7 @@ using System;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace _01_Scripts.Runtime.Worlds
 {
@@ -21,5 +22,9 @@ namespace _01_Scripts.Runtime.Worlds
 
         [Header("Drop Table")]
         public EnemyDropEntry[] dropTable;
+
+        [Header("컷신 (미구현 — 훅만 마련)")]
+        [Tooltip("이 적이 전투에 하나라도 포함되면 컷신 트리거 대상. 컷신 재생 로직 자체는 아직 없음 — 지금은 감지만 하고 로그만 남김.")]
+        public TimelineAsset entryCutscene;
     }
 }

@@ -52,7 +52,7 @@ public class BattleManager : MonoBehaviour
         BattleContext.ClearEncounter();
 
         StartButton.SetActive(false);
-        BattleStart(playerParty, enemyParty);
+        BattleStart(playerParty, enemyParty, _enemyDatas);
     }
 
     public void OnEnable()
@@ -118,8 +118,10 @@ public class BattleManager : MonoBehaviour
         BattleStart(a, b);
     }
 
-    // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음
-    public void BattleStart(CharacterStatus[] _playerBattleDatas, CharacterStatus[] _enemyBattleDatas)
+    // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음.
+    // _enemySourceDatas: 인카운터 롤링 시점의 EnemyData를 같은 인덱스로 병렬 전달(선택) — 컷신 오버라이드 등
+    // 전투 중에도 "이 적이 어떤 EnemyData에서 왔는지" 조회할 수 있게 해준다. 디버그 시작(TestStart)은 없음.
+    public void BattleStart(CharacterStatus[] _playerBattleDatas, CharacterStatus[] _enemyBattleDatas, EnemyData[] _enemySourceDatas = null)
     {
         if(_playerBattleDatas.Length > maxPartyMembers
            || _enemyBattleDatas.Length > maxPartyMembers)
@@ -150,6 +152,9 @@ public class BattleManager : MonoBehaviour
             enemyCharacters[i].SetCharacterStatus(_enemyBattleDatas[i]);
             SetRefCharacterBattleData(enemyCharacters[i]);
             enemyCharacters[i].characterType = CharacterHandler.CharacterType.Enemy;
+
+            if (_enemySourceDatas != null && i < _enemySourceDatas.Length)
+                enemyCharacters[i].GetCharacterStatus().SourceEnemyData = _enemySourceDatas[i];
         }
 
         CharacterStatBarManager.Instance.SpawnBars(playerCharacters, enemyCharacters);

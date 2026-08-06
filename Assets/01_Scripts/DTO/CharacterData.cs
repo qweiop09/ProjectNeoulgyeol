@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace _01_Scripts.DTO
 {
@@ -42,6 +43,14 @@ public class CharacterData : ScriptableObject
     [Header("Battle Inventory")]
     [Tooltip("캐릭터 전투 아이템 슬롯 수. 스킬 등으로 변동 가능")]
     [Min(1)] public int battleItemSlotCount = 15;
+
+    [Header("전투 진입 연출")]
+    [Tooltip("비어있으면 기존처럼 그냥 지정 위치에 즉시 배치(연출 없음).")]
+    public TimelineAsset entryTimelineAsset;
+
+    [Tooltip("entryTimelineAsset이 있을 때, 시작 지점을 최종 배치 위치 기준 오프셋으로 지정. " +
+             "MotionClip의 로컬 좌표계와 동일한 규칙 — 타임라인의 MotionClip 경로가 (0,0)에서 -이 값으로 끝나야 정확히 제자리에 도착함.")]
+    public Vector2 entrySpawnOffset;
 
     public int GetRandomSpeed()
     {

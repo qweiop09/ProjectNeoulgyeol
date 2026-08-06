@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.DTO.Item.Effects;
+using _01_Scripts.Runtime.Worlds;
 using UnityEngine;
 
 namespace _01_Scripts.DTO
@@ -45,6 +46,10 @@ public class CharacterStatus
     // 현재 걸려있는 지속 효과(버프/디버프). 라운드 종료마다 ClosePhaseController가 감소·소멸시키고,
     // 전투 종료 시 BattleManager가 비운다(안 그러면 다음 전투/월드맵까지 새어나감).
     public List<ActiveBuff> activeBuffs = new();
+
+    // 이 캐릭터를 만든 EnemyData 역참조 (적 전용, 플레이어는 항상 null) — 컷신 오버라이드 등 인카운터
+    // 시점에만 아는 정보를 전투 중에도 조회할 수 있게 해준다. BattleManager.BattleStart에서 채워짐.
+    public EnemyData SourceEnemyData;
 
     public CharacterStatus(CharacterData characterData)
     {

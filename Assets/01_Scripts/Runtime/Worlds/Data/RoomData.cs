@@ -1,7 +1,15 @@
+using System;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Worlds
 {
+    [Serializable]
+    public class FixedEncounterOption
+    {
+        public FixedEncounterData encounter;
+        [Range(0f, 1f)] public float triggerProbability = 0.1f;
+    }
+
     public enum RoomType
     {
         Normal,
@@ -30,6 +38,10 @@ namespace _01_Scripts.Runtime.Worlds
         [Range(0f, 1f)]
         [Tooltip("방 진입 시 인카운터가 발생할 확률 (0 = 없음, 1 = 항상)")]
         public float encounterRate = 0.5f;
+
+        [Tooltip("랜덤 인카운터가 발생했을 때, encounterEntries 개별 롤링 대신 여기서 먼저 고정 편성 하나가 뽑힐 수 있다. " +
+                 "위에서부터 각자의 triggerProbability로 시도하고, 하나라도 걸리면 그걸로 확정하고 아래 개별 롤링은 건너뛴다.")]
+        public FixedEncounterOption[] randomFixedEncounters;
 
         public RoomType roomType = RoomType.Normal;
         public string displayName;
