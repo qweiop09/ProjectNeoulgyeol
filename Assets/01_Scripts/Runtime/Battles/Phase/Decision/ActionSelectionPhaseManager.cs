@@ -94,7 +94,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 _currentActData = itemActData;
 
                 // mainTarget==caster라 SetFixedArrow 내부에서 자동으로 화살표를 그리지 않음
-                attackArrowController?.SetFixedArrow(selectedActCaster, itemActData.UseSlot, selectedActCaster, Array.Empty<CharacterHandler>());
+                attackArrowController?.SetFixedArrow(selectedActCaster, itemActData.UseSlot, itemActData);
                 attackArrowController?.HideTrackingArrow();
 
                 CompleteActSelected?.Invoke(_currentActData);
@@ -152,12 +152,19 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         if (currentState != SelectionState.SelectingActTarget || selectedActCaster == null)
         {
             attackArrowController?.HideTrackingArrow();
+            attackArrowController?.HideCandidatePreview();
             return;
         }
 
         // [변경] 트래킹 시작 시 해당 슬롯의 기존 고정 화살표 숨김
         attackArrowController?.HideFixedArrow(selectedActCaster, _currentActData?.UseSlot ?? 0);
         attackArrowController?.ShowTrackingArrow(selectedActCaster, GetPointerWorldPosition());
+
+        // 랜덤 타겟 아이템은 확정 전까지 "누가 뽑힐 수 있는지" 후보 전원을 점선으로 미리 보여준다
+        if (_currentActData is ItemActData itemActData && itemActData.UseItem.targetCount == ItemTargetCount.Random)
+            attackArrowController?.ShowCandidatePreview(selectedActCaster, GetCandidates(itemActData.UseItem.targetScope, selectedActCaster));
+        else
+            attackArrowController?.HideCandidatePreview();
     }
 
     public void StartActionSelectionPhase(CharacterHandler[] allCharacters)
@@ -339,8 +346,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
                 };
             }
 
-            // SetFixedArrow — 슬롯 인덱스 기반으로 저장, 기존과 동일
-            attackArrowController?.SetFixedArrow(selectedActCaster, _currentActData.UseSlot, selectedActTarget, _currentActData.AdditionalTargets);
+            // SetFixedArrow — actData를 그대로 넘겨서 랜덤 타겟이면 점선 스타일이 유지되게 함
+            attackArrowController?.SetFixedArrow(selectedActCaster, _currentActData.UseSlot, _currentActData);
             attackArrowController?.HideTrackingArrow();
 
             CompleteActSelected?.Invoke(_currentActData);

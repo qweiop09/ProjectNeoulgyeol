@@ -51,7 +51,8 @@ public static class DamageCalculation
 
     // 캐스터가 아군/적군인지와 무관하게 QteClip이 들고 있는 배율을 그대로 적용한다.
     // 아군용/적군용 스킬을 애초에 따로 만들 것이므로, 코드에서 캐스터별로 배율을 바꿀 필요가 없다.
-    private static float GetQteMultiplier(QTEResult result, QteMultiplierSet multipliers)
+    // public: 아이템 효과 크기 계산(ApplyQteResult의 아이템 분기)에서도 동일하게 재사용된다.
+    public static float GetQteMultiplier(QTEResult result, QteMultiplierSet multipliers)
     {
         return result switch
         {

@@ -1,5 +1,6 @@
 using System.Linq;
 using _01_Scripts.Runtime.Battles;
+using _01_Scripts.Timeline.Battle;
 using _01_Scripts.Timeline.Battle.QTE;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -13,7 +14,8 @@ public class SkillTimelineBinder : ITimelineBinder
 {
     [Header("바인딩할 Track 이름")]
     [SerializeField] private string animationTrackName = "AnimationTrack";
-    [SerializeField] private string particleTrackName = "ParticleTrack";
+    [SerializeField] private string casterAudioTrackName = "CasterAudioTrack";
+    [SerializeField] private string targetAudioTrackName = "TargetAudioTrack";
 
     public override void Bind(PlayableDirector director, ActData data)
     {
@@ -62,6 +64,34 @@ public class SkillTimelineBinder : ITimelineBinder
         {
             Debug.LogWarning("SkillTimelineBinder: QTETrack을 찾을 수 없습니다.");
         }
+
+        // MotionClip/ParticleClip이 "그때그때의" 캐스터/대상을 찾아 쓸 수 있도록 참조값을 세팅
+        // (타겟은 MoveToTargetClip이 이미 쓰는 고정 ID를 그대로 재사용)
+        director.SetReferenceValue(MotionClip.CasterId, data.CastPlayerCharacter.transform);
+        if (data.TargetPlayerCharacter != null)
+            director.SetReferenceValue(MoveToTargetClip.TargetId, data.TargetPlayerCharacter.transform);
+
+        // 사운드 — 유니티 기본 AudioTrack을 이름으로 찾아서 각자의 스피커에 바인딩만 해준다 (클립은 디자이너가 AudioClip을 직접 올림)
+        BindAudioTrack(director, timeline, casterAudioTrackName, data.CastPlayerCharacter.sfxSource);
+        if (data.TargetPlayerCharacter != null)
+            BindAudioTrack(director, timeline, targetAudioTrackName, data.TargetPlayerCharacter.sfxSource);
+    }
+
+    private void BindAudioTrack(PlayableDirector director, TimelineAsset timeline, string trackName, AudioSource sfxSource)
+    {
+        TrackAsset audioTrack = timeline.GetOutputTracks()
+            .FirstOrDefault(t => t is AudioTrack && t.name == trackName);
+
+        if (audioTrack == null) return; // 사운드 트랙은 선택사항이라 없어도 경고 없이 넘어감
+
+        if (sfxSource == null)
+        {
+            Debug.LogWarning($"SkillTimelineBinder: '{trackName}' 트랙은 있는데 캐릭터에 sfxSource가 없습니다.");
+            return;
+        }
+
+        director.SetGenericBinding(audioTrack, sfxSource);
+        Debug.Log($"SkillTimelineBinder: '{trackName}' 바인딩 완료");
     }
 }
 }

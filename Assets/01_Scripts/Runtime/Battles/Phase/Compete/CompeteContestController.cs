@@ -50,6 +50,12 @@ public class CompeteContestController : MonoBehaviour
     {
         Debug.Log("QTE Result: " + hitInfo.Result);
 
+        if (currentActData is ItemActData itemActData)
+        {
+            ApplyItemQteResult(itemActData, hitInfo);
+            return;
+        }
+
         var skillActData = currentActData as SkillActData;
 
         var hitContext = new HitContext
@@ -74,6 +80,34 @@ public class CompeteContestController : MonoBehaviour
             currentActData.TargetPlayerCharacter.GetCharacterStatus(),
             damage.HpDamage,
             damage.StaminaDamage);
+    }
+
+    // 아이템은 데미지 파이프라인 대신 QTE 판정 등급(Perfect/Good/Hit) 배율을 아이템 효과 크기에 그대로 곱해 적용한다.
+    // 메인 타겟뿐 아니라 다중 타겟(AdditionalTargets)에도 같은 배율로 전부 적용한다.
+    private void ApplyItemQteResult(ItemActData itemActData, QTEHitInfo hitInfo)
+    {
+        float multiplier = DamageCalculation.GetQteMultiplier(hitInfo.Result, hitInfo.Multipliers);
+        CharacterStatus caster = itemActData.CastPlayerCharacter.GetCharacterStatus();
+
+        itemActData.UseItem.Use(caster, itemActData.TargetPlayerCharacter.GetCharacterStatus(), multiplier);
+
+        if (itemActData.AdditionalTargets != null)
+        {
+            foreach (CharacterHandler additionalTarget in itemActData.AdditionalTargets)
+            {
+                if (additionalTarget == null) continue;
+
+                // 메인 타겟은 StartCompeteCycle에서 이미 생존 여부를 걸러주지만, 추가 타겟은 그 체크를 안 받으므로
+                // 여기서 직접 확인한다 — 안 그러면 죽은 캐릭터가 회복돼 currentHp>0인데 currentState는 Dead로 남는
+                // 모순 상태가 생긴다(ApplyHpModify는 0을 찍을 때만 Dead로 바꾸고, 반대로 풀어주진 않음).
+                CharacterStatus additionalStatus = additionalTarget.GetCharacterStatus();
+                if (additionalStatus.currentState == CharacterState.Dead) continue;
+
+                itemActData.UseItem.Use(caster, additionalStatus, multiplier);
+            }
+        }
+
+        Debug.Log($"[CompeteContestController] '{itemActData.UseItem.itemName}' 효과 적용 (QTE {hitInfo.Result}, 배율 {multiplier})");
     }
 
     // 한 캐릭터의 모든 행동을 실행

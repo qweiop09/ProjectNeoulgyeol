@@ -27,6 +27,12 @@ public class CharacterHandler : MonoBehaviour
     // 임시
     [SerializeField] public QTEListner qteListner;
 
+    // 아이템 사용 시 손에 든 아이템을 보여주는 상시 슬롯 (평소엔 비활성, ItemTimelineBinder가 재생 시점에 스프라이트를 채우고 타임라인의 ItemHoldTrack이 켜고 끔)
+    [SerializeField] public SpriteRenderer heldItemRenderer;
+
+    // 타임라인의 CasterAudioTrack/TargetAudioTrack이 바인딩할 스피커 (프리팹에 고정 배치)
+    [SerializeField] public AudioSource sfxSource;
+
     [Space(10)]
     [Header("internal fields")]
 

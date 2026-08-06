@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using _01_Scripts.DTO.Item;
 using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles
@@ -22,6 +24,10 @@ public class AttackArrowController : MonoBehaviour
 
     private AttackArrowView trackingArrow;
     private bool fixedArrowsVisible = true;
+
+    // 랜덤 타겟 후보 미리보기(점선) — 확정 전 "이 중에서 뽑힐 수 있다"를 보여주는 용도
+    private readonly List<AttackArrowView> candidatePreviewArrows = new List<AttackArrowView>();
+    private HashSet<CharacterHandler> lastPreviewCandidates;
 
     public bool FixedArrowsVisible => fixedArrowsVisible;
 
@@ -54,21 +60,27 @@ public class AttackArrowController : MonoBehaviour
                 ActData actData = targetingData[slotIndex];
                 if (actData == null || actData.TargetPlayerCharacter == null) continue;
 
-                SetFixedArrow(caster, slotIndex, actData.TargetPlayerCharacter, actData.AdditionalTargets);
+                SetFixedArrow(caster, slotIndex, actData);
             }
         }
     }
 
-    // slotIndex의 화살표를 (mainTarget=실선, additionalTargets 각각=파선)으로 새로 그림.
+    // slotIndex의 화살표를 (mainTarget=실선, additionalTargets 각각=파선 또는 점선)으로 새로 그림.
     // 캐스터 자신이 타겟(메인이든 추가든)에 포함되면 그 대상에 대한 화살표는 만들지 않는다.
-    public void SetFixedArrow(CharacterHandler caster, int slotIndex, CharacterHandler mainTarget, CharacterHandler[] additionalTargets)
+    // 추가 타겟 스타일은 actData로부터 판단한다 — 랜덤으로 뽑힌 타겟은 확정 이후(실행 순간까지)도
+    // 파선으로 "확정됐다"고 보여주면 안 되고 계속 점선("이 중 하나였다")으로 남아있어야 하기 때문.
+    public void SetFixedArrow(CharacterHandler caster, int slotIndex, ActData actData)
     {
         if (caster == null) return;
 
         ClearSlotArrows(caster, slotIndex);
 
         List<AttackArrowView> slotArrows = GetSlotList(caster, slotIndex);
-        if (slotArrows == null) return;
+        if (slotArrows == null || actData == null) return;
+
+        CharacterHandler mainTarget = actData.TargetPlayerCharacter;
+        CharacterHandler[] additionalTargets = actData.AdditionalTargets;
+        ArrowLineStyle additionalStyle = GetAdditionalTargetStyle(actData);
 
         if (mainTarget != null && mainTarget != caster)
             slotArrows.Add(CreateAndAimArrow(caster, mainTarget, ArrowLineStyle.Solid, slotIndex, 0));
@@ -80,8 +92,18 @@ public class AttackArrowController : MonoBehaviour
             CharacterHandler target = additionalTargets[i];
             if (target == null || target == caster) continue;
 
-            slotArrows.Add(CreateAndAimArrow(caster, target, ArrowLineStyle.Dashed, slotIndex, i + 1));
+            slotArrows.Add(CreateAndAimArrow(caster, target, additionalStyle, slotIndex, i + 1));
         }
+    }
+
+    // 랜덤으로 뽑힌 추가 타겟은 점선, 그 외(일정수/모두 등 확정적으로 정해진 타겟)는 파선
+    private static ArrowLineStyle GetAdditionalTargetStyle(ActData actData)
+    {
+        if (actData is ItemActData itemActData && itemActData.UseItem != null
+            && itemActData.UseItem.targetCount == ItemTargetCount.Random)
+            return ArrowLineStyle.Dotted;
+
+        return ArrowLineStyle.Dashed;
     }
 
     public void HideFixedArrow(CharacterHandler caster, int slotIndex)
@@ -107,6 +129,40 @@ public class AttackArrowController : MonoBehaviour
     {
         if (trackingArrow != null)
             trackingArrow.gameObject.SetActive(false);
+    }
+
+    // 후보 전원에게 점선 화살표를 그림 (캐스터 자신은 제외). 후보 집합이 이전과 같으면 다시 그리지 않는다
+    // (매 프레임 호출돼도 실제로 후보가 바뀔 때만 재생성하도록).
+    public void ShowCandidatePreview(CharacterHandler caster, IEnumerable<CharacterHandler> candidates)
+    {
+        if (caster == null) return;
+
+        var candidateSet = new HashSet<CharacterHandler>(
+            (candidates ?? Enumerable.Empty<CharacterHandler>()).Where(c => c != null && c != caster));
+
+        if (lastPreviewCandidates != null && lastPreviewCandidates.SetEquals(candidateSet))
+            return;
+
+        HideCandidatePreview();
+        lastPreviewCandidates = candidateSet;
+
+        foreach (CharacterHandler candidate in candidateSet)
+        {
+            AttackArrowView arrow = CreateArrowView($"CandidatePreview_{candidate.name}", ArrowLineStyle.Dotted);
+            arrow.SetFixedTarget(caster.transform, candidate.transform);
+            arrow.gameObject.SetActive(fixedArrowsVisible);
+            candidatePreviewArrows.Add(arrow);
+        }
+    }
+
+    public void HideCandidatePreview()
+    {
+        foreach (AttackArrowView arrow in candidatePreviewArrows)
+            if (arrow != null)
+                Destroy(arrow.gameObject);
+
+        candidatePreviewArrows.Clear();
+        lastPreviewCandidates = null;
     }
 
     public void SetFixedArrowsVisible(bool visible)
@@ -151,6 +207,7 @@ public class AttackArrowController : MonoBehaviour
     {
         ClearFixedArrows();
         HideTrackingArrow();
+        HideCandidatePreview();
     }
 
     // slotIndex의 기존 화살표들을 전부 파괴하고 리스트를 비운다 (새로 그리기 전 정리용)

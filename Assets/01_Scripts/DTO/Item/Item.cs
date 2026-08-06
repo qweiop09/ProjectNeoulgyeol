@@ -63,12 +63,13 @@ namespace _01_Scripts.DTO.Item
 
         public bool IsStackable => maxStack > 0;
 
-        public void Use(CharacterStatus caster, CharacterStatus target)
+        // qteMultiplier: QTE 판정 등급(Perfect/Good/Hit)에 따른 배율. 기본 1(배율 없음).
+        public void Use(CharacterStatus caster, CharacterStatus target, float qteMultiplier = 1f)
         {
             if (effects == null) return;
             foreach (var effect in effects)
                 if (effect != null)
-                    effect.Apply(caster, target);
+                    effect.Apply(caster, target, qteMultiplier);
         }
 
 #if UNITY_EDITOR

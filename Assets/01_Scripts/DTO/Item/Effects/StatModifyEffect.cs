@@ -16,9 +16,9 @@ namespace _01_Scripts.DTO.Item.Effects
         [Tooltip("양수 = 회복, 음수 = 감소")]
         public EffectValue amount;
 
-        public override void Apply(CharacterStatus caster, CharacterStatus target)
+        public override void Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
         {
-            int value = amount.Resolve(caster, target);
+            int value = Mathf.RoundToInt(amount.Resolve(caster, target) * qteMultiplier);
 
             switch (statType)
             {

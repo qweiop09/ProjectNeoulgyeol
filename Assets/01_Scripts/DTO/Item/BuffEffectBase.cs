@@ -17,9 +17,9 @@ namespace _01_Scripts.DTO.Item
 
         protected abstract int ResolveAmount(CharacterStatus caster, CharacterStatus target);
 
-        public override void Apply(CharacterStatus caster, CharacterStatus target)
+        public override void Apply(CharacterStatus caster, CharacterStatus target, float qteMultiplier)
         {
-            int resolved = ResolveAmount(caster, target);
+            int resolved = Mathf.RoundToInt(ResolveAmount(caster, target) * qteMultiplier);
             ActiveBuff existing = target.activeBuffs.Find(b => b.Source == this);
 
             if (existing != null)
