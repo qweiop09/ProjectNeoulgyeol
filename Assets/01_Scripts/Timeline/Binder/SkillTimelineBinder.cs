@@ -71,6 +71,16 @@ public class SkillTimelineBinder : ITimelineBinder
         if (data.TargetPlayerCharacter != null)
             director.SetReferenceValue(MoveToTargetClip.TargetId, data.TargetPlayerCharacter.transform);
 
+        // 다중 타겟(AdditionalTargets)도 인덱스별 이름표로 등록 — MotionClip/ParticleClip이 applyToAllTargets일 때 이걸로 훑는다
+        if (data.AdditionalTargets != null)
+        {
+            for (int i = 0; i < data.AdditionalTargets.Length; i++)
+            {
+                if (data.AdditionalTargets[i] != null)
+                    director.SetReferenceValue(MotionClip.GetAdditionalTargetId(i), data.AdditionalTargets[i].transform);
+            }
+        }
+
         // 사운드 — 유니티 기본 AudioTrack을 이름으로 찾아서 각자의 스피커에 바인딩만 해준다 (클립은 디자이너가 AudioClip을 직접 올림)
         BindAudioTrack(director, timeline, casterAudioTrackName, data.CastPlayerCharacter.sfxSource);
         if (data.TargetPlayerCharacter != null)

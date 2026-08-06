@@ -6,22 +6,24 @@ namespace _01_Scripts.Timeline.Battle
 {
 public class MotionBehaviour : PlayableBehaviour
 {
-    public Transform actorTransform; // 이 클립이 움직이는 대상
-    public Transform otherTransform; // TowardTarget 축 계산용 상대방 (Self 모드에서는 안 씀)
+    public List<Transform> actorTransforms; // 이 클립이 움직이는 대상들 (메인 타겟 하나, 또는 메인+추가 타겟 전원)
+    public Transform otherTransform;        // TowardTarget 축 계산용 상대방 (Self 모드에서는 안 씀)
     public MotionSpace space;
     public List<Vector2> pathPoints;
     public AnimationCurve progressCurve;
 
-    private Vector3 startPosition;
+    private readonly Dictionary<Transform, Vector3> startPositions = new Dictionary<Transform, Vector3>();
     private bool isInitialized;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
-        if (actorTransform == null) return;
+        if (actorTransforms == null || actorTransforms.Count == 0) return;
 
         if (!isInitialized)
         {
-            startPosition = actorTransform.position;
+            foreach (Transform actor in actorTransforms)
+                if (actor != null)
+                    startPositions[actor] = actor.position;
             isInitialized = true;
         }
 
@@ -30,16 +32,23 @@ public class MotionBehaviour : PlayableBehaviour
             ? Mathf.Clamp01(progressCurve.Evaluate(normalizedTime))
             : normalizedTime;
 
+        // 모든 액터가 같은 진행도/경로 모양을 공유하되, 각자의 시작 위치·기준축으로 계산한다
+        // (프레임레이트와 무관하게 항상 같은 모양이 나오도록 매 프레임 절대 위치로 직접 계산).
         Vector2 localOffset = EvaluateCatmullRom(pathPoints, progress);
-        Vector3 worldOffset = ToWorldOffset(localOffset);
 
-        // 매 프레임 "그 순간의 진행도"로 위치를 직접 계산한다(누적 이동이 아님) — 프레임레이트와 무관하게 항상 같은 모양이 나온다.
-        actorTransform.position = startPosition + worldOffset;
+        foreach (Transform actor in actorTransforms)
+        {
+            if (actor == null || !startPositions.TryGetValue(actor, out Vector3 start)) continue;
+
+            Vector3 worldOffset = ToWorldOffset(actor, start, localOffset);
+            actor.position = start + worldOffset;
+        }
     }
 
     public override void OnBehaviourPause(Playable playable, FrameData info)
     {
         isInitialized = false;
+        startPositions.Clear();
     }
 
     private static float GetNormalizedTime(Playable playable)
@@ -49,18 +58,19 @@ public class MotionBehaviour : PlayableBehaviour
         return Mathf.Clamp01((float)(playable.GetTime() / duration));
     }
 
-    private Vector3 ToWorldOffset(Vector2 localOffset)
+    private Vector3 ToWorldOffset(Transform actor, Vector3 actorStart, Vector2 localOffset)
     {
         if (space == MotionSpace.Self)
-            return actorTransform.right * localOffset.x + actorTransform.up * localOffset.y;
+            return actor.right * localOffset.x + actor.up * localOffset.y;
 
-        // TowardTarget: +X는 항상 상대방 쪽, +Y는 항상 월드 위쪽
+        // TowardTarget: +X는 항상 상대방 쪽, +Y는 항상 월드 위쪽. 액터마다 자기 시작 위치 기준으로 개별 계산해서
+        // 대형이 흐트러져 있어도(여러 명이 다중 타겟으로 동시에 움직여도) 각자 방향이 자연스럽게 맞는다.
         Vector3 axisX = otherTransform != null
-            ? (otherTransform.position - startPosition)
-            : actorTransform.right;
+            ? (otherTransform.position - actorStart)
+            : actor.right;
 
         if (axisX.sqrMagnitude < 0.0001f)
-            axisX = actorTransform.right;
+            axisX = actor.right;
 
         return axisX.normalized * localOffset.x + Vector3.up * localOffset.y;
     }
