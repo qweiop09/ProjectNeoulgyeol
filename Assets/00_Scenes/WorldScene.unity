@@ -544,12 +544,12 @@ GameObject:
   - component: {fileID: 370151607}
   - component: {fileID: 370151606}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: LootUi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &370151606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -947,7 +947,6 @@ MonoBehaviour:
   _transition: {fileID: 1890793280}
   _startRoom: {fileID: 11400000, guid: 00aab6a3216844a58a6096269b922c21, type: 2}
   _player: {fileID: 1875287724}
-  _lootUI: {fileID: 525055089}
 --- !u!4 &739140280
 Transform:
   m_ObjectHideFlags: 0
