@@ -482,6 +482,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
   - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
   - {fileID: 11400000, guid: 521022acbbd9f44ffa4d5262d5f62e1c, type: 2}
+  testEnemyDatas: []
   testItem1: {fileID: 11400000, guid: 21b3cebd2c7514fd2ab7cd2c6458ce5f, type: 2}
   lootUI: {fileID: 1685163530}
   battleEndUI: {fileID: 0}
@@ -6489,7 +6490,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1685163530
 MonoBehaviour:
   m_ObjectHideFlags: 0

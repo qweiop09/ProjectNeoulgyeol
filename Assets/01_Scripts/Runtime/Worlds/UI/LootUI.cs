@@ -27,6 +27,10 @@ namespace _01_Scripts.Runtime.Worlds.UI
 
         public void Show(LootResult loot, Action onConfirmed)
         {
+            // 루트 오브젝트가 씬에 비활성화 상태로 남아있어도(에디터 설정 실수 등) 여기서 스스로 깨운다 —
+            // 처음 활성화되는 거면 Awake()가 이 시점에 동기적으로 실행되어 _confirmButton 리스너도 같이 붙는다.
+            gameObject.SetActive(true);
+
             _currentLoot = loot;
             _onConfirmed = onConfirmed;
 

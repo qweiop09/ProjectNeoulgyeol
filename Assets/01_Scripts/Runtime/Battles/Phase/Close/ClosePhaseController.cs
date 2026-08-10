@@ -70,12 +70,17 @@ public class ClosePhaseController : MonoBehaviour
             BattleOutcome outcome = isEnemyAllDead ? BattleOutcome.Victory : BattleOutcome.Defeat;
             battlePhaseCoordinator.CompleteBattleEnd(friendlyCharacters.ToArray(), outcome);
         }
-    
+
         Debug.Log("Close Phase Ended");
         await Wait(0.4f);
 
         await CameraHandler.Instance.PositionResetToLerp();
-    
+
+        // 전투가 끝났으면 여기서 멈춰야 한다 — 카메라 리셋 등 화면 정리는 그대로 하되, 다음 라운드(Open Phase)를
+        // 여는 CompleteClosePhaseEnd는 부르면 안 된다. BattleManager.BattleEnd가 비동기로 캐릭터를 파괴하는 중이라
+        // OpenPhaseController가 이미 파괴된 CharacterHandler를 만지다가 MissingReferenceException이 난다.
+        if (isFriendlyAllDead || isEnemyAllDead) return;
+
         // Close Phase End
         var friendly = friendlyCharacters.ToArray();
         var enemy = enemyCharacters.ToArray();

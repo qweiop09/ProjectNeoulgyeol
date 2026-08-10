@@ -40,7 +40,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject StartButton;
     [SerializeField] private CharacterData[] testFlendlyCharacterDatas;
     [SerializeField] private CharacterData[] testEnemyCharacterDatas;
-    
+    [Tooltip("테스트 전투에서 전리품 계산에 쓰일 EnemyData. testEnemyCharacterDatas와 같은 순서로 채워야 함(비워두면 테스트 전투는 전리품 없이 끝남).")]
+    [SerializeField] private EnemyData[] testEnemyDatas;
+
     [SerializeField] private Item testItem1;
 
     [SerializeField] private LootUI lootUI;
@@ -174,7 +176,8 @@ public class BattleManager : MonoBehaviour
 
         InventoryManager.Instance.AddItem(testItem1, 6); // 공유 인벤토리라 캐릭터마다 나눠줄 필요 없음
 
-        BattleStart(a, b);
+        _enemyDatas = testEnemyDatas; // 안 채웠으면 null → LootCalculator가 빈 결과로 처리(전리품 패널 없이 정상 종료)
+        BattleStart(a, b, testEnemyDatas);
     }
 
     // 넘겨 받는 데이터는 편성 순서대로 배열되어 있음.
