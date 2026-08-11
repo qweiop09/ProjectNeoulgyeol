@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3def632ca74694e3a8fb604417a61678, type: 3}
-  m_Name: testItem
+  m_Name: testItem 2
   m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.Item.CharacterItem
   itemId: 01
-  itemName: "\uCE74\uB808"
+  itemName: "\uBC14\uBAAC\uB4DC\uCE74\uB808"
   itemDescription: "\uB9DB\uC788\uB2E4."
   icon: {fileID: 21300000, guid: 0b952ce0541484bc097048f674ab0efd, type: 3}
   targetScope: 0
@@ -22,6 +22,6 @@ MonoBehaviour:
   category: 1
   maxStack: 999
   effects:
-  - {fileID: 11400000, guid: aff5db3a56bd24606abacef449fe8924, type: 2}
+  - {fileID: 11400000, guid: d8c61b4a82546440d95a212042520f00, type: 2}
   itemTimelineAsset: {fileID: 0}
   timelineBinder: {fileID: 0}

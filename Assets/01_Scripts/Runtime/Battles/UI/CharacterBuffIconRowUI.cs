@@ -38,6 +38,7 @@ public class CharacterBuffIconRowUI : MonoBehaviour
     {
         CharacterStatusCalculator.Instance.onBuffApplied += HandleBuffApplied;
         CharacterStatusCalculator.Instance.onBuffExpired += HandleBuffExpired;
+        CharacterStatusCalculator.Instance.onBuffTicked += HandleBuffTicked;
     }
 
     private void OnDisable()
@@ -45,6 +46,15 @@ public class CharacterBuffIconRowUI : MonoBehaviour
         if (CharacterStatusCalculator.Instance == null) return; // 씬 종료 중 순서 이슈 방지
         CharacterStatusCalculator.Instance.onBuffApplied -= HandleBuffApplied;
         CharacterStatusCalculator.Instance.onBuffExpired -= HandleBuffExpired;
+        CharacterStatusCalculator.Instance.onBuffTicked -= HandleBuffTicked;
+    }
+
+    // 라운드 종료로 남은 라운드가 줄었지만 아직 만료는 안 됐을 때 — 펄스 연출 없이 숫자만 조용히 갱신
+    private void HandleBuffTicked(CharacterStatus status, ActiveBuff buff)
+    {
+        if (target == null || status != target) return;
+        if (icons.TryGetValue(buff.Source, out CharacterBuffIconUI icon))
+            icon.SetRemainingRounds(buff.RemainingRounds);
     }
 
     private void HandleBuffApplied(CharacterStatus status, ActiveBuff buff, bool isNew)

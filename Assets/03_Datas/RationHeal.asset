@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 697a5341ceb454b3eb3d0ddebbfc95d1, type: 3}
+  m_Name: RationHeal
+  m_EditorClassIdentifier: Assembly-CSharp::_01_Scripts.DTO.Item.Effects.StatModifyEffect
+  statType: 0
+  amount:
+    mode: 1
+    flatAmount: 0
+    referenceOwner: 0
+    referenceStat: 0
+    referenceRatio: 0.5

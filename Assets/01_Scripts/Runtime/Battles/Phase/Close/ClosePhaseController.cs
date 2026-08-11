@@ -101,7 +101,11 @@ public class ClosePhaseController : MonoBehaviour
             ActiveBuff buff = status.activeBuffs[i];
             buff.RemainingRounds--;
 
-            if (buff.RemainingRounds > 0) continue;
+            if (buff.RemainingRounds > 0)
+            {
+                CharacterStatusCalculator.Instance.onBuffTicked?.Invoke(status, buff);
+                continue;
+            }
 
             Debug.Log($"[ClosePhaseController] '{buff.Source.buffName}' 만료 ({status.CharacterData.characterName})");
 

@@ -18,6 +18,11 @@ public class CharacterBuffIconUI : MonoBehaviour
 
     public void Initialize(Sprite icon, int remainingRounds)
     {
+        // 프리팹 루트가 비활성 상태로 저장되어 있어도(에디터 설정 실수 등) 여기서 스스로 깨운다 —
+        // 안 그러면 아래 StartCoroutine이 "GameObject가 비활성"이라며 조용히 실패해서 팝인 애니메이션도,
+        // 화면 표시도 안 된다.
+        gameObject.SetActive(true);
+
         iconImage.sprite = icon;
         SetRemainingRounds(remainingRounds);
 

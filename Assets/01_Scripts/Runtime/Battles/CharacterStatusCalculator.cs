@@ -40,6 +40,7 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
     public Action<CharacterStatus> onStatusChanged; // hp/mp/stamina 중 하나라도 바뀔 때마다 발행 (체력바 등 UI 갱신용)
     public Action<CharacterStatus, ActiveBuff, bool> onBuffApplied; // bool: 신규 부여(true) / 갱신(false) — 버프 아이콘 UI 갱신용
     public Action<CharacterStatus, ActiveBuff> onBuffExpired;       // 버프 아이콘 UI 제거용
+    public Action<CharacterStatus, ActiveBuff> onBuffTicked;        // 라운드 종료로 남은 라운드만 줄어들 때(아직 안 만료) — 아이콘 숫자만 갱신용
 
 
     public void UseSkill(CharacterStatus caster, CharacterSkill skill)
