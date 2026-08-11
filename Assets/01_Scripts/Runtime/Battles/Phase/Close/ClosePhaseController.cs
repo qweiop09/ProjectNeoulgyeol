@@ -63,23 +63,26 @@ public class ClosePhaseController : MonoBehaviour
         bool isFriendlyAllDead = IsAllDead(friendlyCharacters);
         bool isEnemyAllDead = IsAllDead(enemyCharacters);
     
+        Debug.Log("Close Phase Ended");
+        await Wait(0.4f);
+
+        // 카메라 리셋을 CompleteBattleEnd보다 먼저 끝내야 한다 — CompleteBattleEnd는 OnBattleEnd를 그 자리에서
+        // 동기적으로 쏘고 리턴하는데, BattleManager.BattleEnd가 그걸 받아 곧바로 종료 연출(배너+캐릭터 타임라인)을
+        // 재생하기 시작한다. 카메라 리셋 전에 이 이벤트를 쏘면 카메라가 움직이는 중에 종료 연출이 겹쳐서 시작된다.
+        await CameraHandler.Instance.PositionResetToLerp();
+
         if (isFriendlyAllDead || isEnemyAllDead)
         {
             Debug.Log("전투 종료 — 아군 전멸: " + isFriendlyAllDead + " / 적군 전멸: " + isEnemyAllDead);
 
             BattleOutcome outcome = isEnemyAllDead ? BattleOutcome.Victory : BattleOutcome.Defeat;
             battlePhaseCoordinator.CompleteBattleEnd(friendlyCharacters.ToArray(), outcome);
+
+            // 전투가 끝났으면 여기서 멈춰야 한다 — 다음 라운드(Open Phase)를 여는 CompleteClosePhaseEnd는 부르면
+            // 안 된다. BattleManager.BattleEnd가 비동기로 캐릭터를 파괴하는 중이라 OpenPhaseController가 이미
+            // 파괴된 CharacterHandler를 만지다가 MissingReferenceException이 난다.
+            return;
         }
-
-        Debug.Log("Close Phase Ended");
-        await Wait(0.4f);
-
-        await CameraHandler.Instance.PositionResetToLerp();
-
-        // 전투가 끝났으면 여기서 멈춰야 한다 — 카메라 리셋 등 화면 정리는 그대로 하되, 다음 라운드(Open Phase)를
-        // 여는 CompleteClosePhaseEnd는 부르면 안 된다. BattleManager.BattleEnd가 비동기로 캐릭터를 파괴하는 중이라
-        // OpenPhaseController가 이미 파괴된 CharacterHandler를 만지다가 MissingReferenceException이 난다.
-        if (isFriendlyAllDead || isEnemyAllDead) return;
 
         // Close Phase End
         var friendly = friendlyCharacters.ToArray();

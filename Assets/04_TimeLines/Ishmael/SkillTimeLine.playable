@@ -17,6 +17,10 @@ MonoBehaviour:
   badTime: 0.09
   hpDamageCoefficient: 1.3
   staminaDamageCoefficient: 1.3
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &-3900542310195675886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34,6 +38,10 @@ MonoBehaviour:
   badTime: 0.07
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &-1861837949569208720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51,6 +59,10 @@ MonoBehaviour:
   badTime: 0.09
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +84,7 @@ MonoBehaviour:
     m_Framerate: 60
     m_ScenePreview: 1
   m_DurationMode: 1
+  m_MarkerTrack: {fileID: 0}
 --- !u!114 &519384031556981915
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -89,6 +102,10 @@ MonoBehaviour:
   badTime: 0.07
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &1585827866638350277
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -106,6 +123,10 @@ MonoBehaviour:
   badTime: 0.09
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &1902277801752172085
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -145,6 +166,10 @@ MonoBehaviour:
   badTime: 0.09
   hpDamageCoefficient: 3
   staminaDamageCoefficient: 3
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &6091614318856208523
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -272,6 +297,10 @@ MonoBehaviour:
   badTime: 0.09
   hpDamageCoefficient: 1
   staminaDamageCoefficient: 1
+  multipliers:
+    perfect: 1.5
+    good: 1.15
+    hit: 1
 --- !u!114 &8404666023515913057
 MonoBehaviour:
   m_ObjectHideFlags: 1

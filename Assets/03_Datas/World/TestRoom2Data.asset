@@ -22,10 +22,10 @@ MonoBehaviour:
     spawnProbability: 1
     minCount: 1
     maxCount: 1
-  - enemyData: {fileID: 11400000, guid: 0387712598ba34fe0874efa7ccfc16b6, type: 2}
-    spawnProbability: 1
-    minCount: 1
-    maxCount: 2
   encounterRate: 0.2
+  randomFixedEncounters: []
   roomType: 0
   displayName: 
+  canEscape: 1
+  nonEscapableReason: "\uC774 \uC804\uD22C\uC5D0\uC11C\uB294 \uB3C4\uB9DD\uCE60 \uC218
+    \uC5C6\uC2B5\uB2C8\uB2E4."

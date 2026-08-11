@@ -22,3 +22,4 @@ MonoBehaviour:
     dropRate: 0.1
     minQuantity: 1
     maxQuantity: 1
+  entryCutscene: {fileID: 11400000, guid: 705c67780f08146aaae94a36c2f5dd51, type: 2}
