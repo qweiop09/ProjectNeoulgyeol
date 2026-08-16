@@ -10,6 +10,7 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
     {
         Idle,
         Run,
+        Hit,
         Dead
     }
 
@@ -62,6 +63,7 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
         {
             CharacterAnimationState.Idle => characterData.idleAnimation,
             CharacterAnimationState.Run  => characterData.runAnimation,
+            CharacterAnimationState.Hit  => characterData.hitAnimation,
             CharacterAnimationState.Dead => characterData.deadAnimation,
             _ => null
         };

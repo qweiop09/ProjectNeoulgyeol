@@ -29,6 +29,7 @@ public class CharacterData : ScriptableObject
 
     [SerializeField] public AnimationClip idleAnimation;
     [SerializeField] public AnimationClip runAnimation;
+    [SerializeField] public AnimationClip hitAnimation;
     [SerializeField] public AnimationClip deadAnimation;
 
     [Tooltip("체력/스테미나 바가 캐릭터 기준 어디에 떠야 하는지 (스프라이트 크기에 맞춰 캐릭터별로 조정)")]

@@ -19,7 +19,8 @@ public struct DamageResult
     public int StaminaDamage;
 }
 
-// 순수 계산부: 부작용 없이 데미지 값만 산출한다.
+// 순수 계산부: 부작용 없이 데미지 값만 산출한다. 히트가 실제로 적용될 때 벌어지는 일
+// (공격자 IHitEffect.OnHitResolved, 피격자 IEquipment.OnHitReceived 등)은 HitResolver가 담당한다.
 public static class DamageCalculation
 {
     public static DamageResult Calculate(HitContext ctx)
@@ -30,13 +31,7 @@ public static class DamageCalculation
         int hpDamage = (int)(ctx.Attacker.GetAttack() * qteMultiplier * ctx.HpDamageCoefficient);
         int staminaDamage = (int)(ctx.Attacker.GetAttack() * qteMultiplier * ctx.StaminaDamageCoefficient);
 
-        var result = new DamageResult { HpDamage = hpDamage, StaminaDamage = staminaDamage };
-
-        if (ctx.HitEffects != null)
-            foreach (var effect in ctx.HitEffects)
-                effect.OnHitResolved(ctx, result);
-
-        return result;
+        return new DamageResult { HpDamage = hpDamage, StaminaDamage = staminaDamage };
     }
 
     // 방어력 반영 지점 — 실제 공식 미정, 지금은 항등(no-op)

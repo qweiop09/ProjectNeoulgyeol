@@ -77,10 +77,12 @@ public class CompeteContestController : MonoBehaviour
             damage.HpDamage,
             hitInfo.Result);
 
-        CharacterStatusCalculator.Instance.SkillHit(
-            currentActData.TargetPlayerCharacter.GetCharacterStatus(),
-            damage.HpDamage,
-            damage.StaminaDamage);
+        HitResolver.ApplyHit(hitContext, damage);
+
+        // 이 피격으로 죽었으면 OnCharacterDead가 이미 Dead 애니메이션을 재생했으므로 덮어쓰지 않는다.
+        if (currentActData.TargetPlayerCharacter.GetCharacterStatus().currentState != CharacterState.Dead)
+            CharacterAnimationMonitor.Instance.PlayAnimation(
+                currentActData.TargetPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Hit);
     }
 
     // 아이템은 데미지 파이프라인 대신 QTE 판정 등급(Perfect/Good/Hit) 배율을 아이템 효과 크기에 그대로 곱해 적용한다.

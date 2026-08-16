@@ -107,7 +107,7 @@ public class CharacterStatBarUI : MonoBehaviour
     // 회복 등 값이 늘어나는 경우는 잔상 없이 같이 스냅.
     private Coroutine ApplyValue(Slider front, Slider trail, float newValue, Coroutine currentTrailRoutine)
     {
-        // SkillHit처럼 한 프레임에 HP/스태미나가 따로따로 바뀌어 onStatusChanged가 여러 번 발행되면
+        // HitResolver.ApplyHit처럼 한 프레임에 HP/스태미나가 따로따로 바뀌어 onStatusChanged가 여러 번 발행되면
         // UpdateValues가 안 바뀐 스탯까지 매번 재처리한다 — 그때 front.value가 이미 새 값으로 스냅되어 있어서
         // "변화 없음"으로 오판해 방금 시작한 잔상 코루틴을 취소해버리는 문제가 있었다.
         // 실제로 값이 그대로면 아무것도 건드리지 않고 진행 중이던 코루틴을 그대로 둔다.

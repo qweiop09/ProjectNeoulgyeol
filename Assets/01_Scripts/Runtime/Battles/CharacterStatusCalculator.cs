@@ -49,12 +49,6 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         ApplyStaminaModify(caster, -skill.skillStaminaCost);
     }
 
-    public void SkillHit(CharacterStatus hitTarget, int hpDecisivePower, int staminaDecisivePower)
-    {
-        ApplyHpModify(hitTarget, -hpDecisivePower);
-        ApplyStaminaModify(hitTarget, -staminaDecisivePower);
-    }
-
     // HP 변화
     public void ApplyHpModify(CharacterStatus target, int amount)
     {

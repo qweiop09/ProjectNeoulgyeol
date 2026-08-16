@@ -67,14 +67,23 @@ public class CharacterStatus
     public int GetAttack() => CharacterData.attack + SumEquipment(e => e.AttackBonus) + SumBuffs(BuffStatType.Attack);
     public int GetDefense() => CharacterData.defense + SumEquipment(e => e.DefenseBonus) + SumBuffs(BuffStatType.Defense);
 
+    // 장착된 장비 슬롯 전체를 순회한다(빈 슬롯은 제외) — 스탯 합산/피격 반응(HitResolver) 등에서 공용으로 재사용.
+    public IEnumerable<IEquipment> GetAllEquipment()
+    {
+        if (rightHand != null) yield return rightHand;
+        if (leftHand != null) yield return leftHand;
+        if (head != null) yield return head;
+        if (body != null) yield return body;
+        if (legs != null) yield return legs;
+        if (accessory1 != null) yield return accessory1;
+        if (accessory2 != null) yield return accessory2;
+    }
+
     private int SumEquipment(Func<IEquipment, int> selector)
     {
         int sum = 0;
-        foreach (var equipment in new[] { rightHand, leftHand, head, body, legs, accessory1, accessory2 })
-        {
-            if (equipment != null)
-                sum += selector(equipment);
-        }
+        foreach (var equipment in GetAllEquipment())
+            sum += selector(equipment);
 
         return sum;
     }
