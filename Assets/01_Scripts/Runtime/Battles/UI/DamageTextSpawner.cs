@@ -43,6 +43,22 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
         public Color damageColor = new Color(1f, 0.3f, 0.3f); // 빨강
     }
 
+    // 스킬 데미지/아이템 효과 텍스트 공통 — 표시되는 수치(절댓값)에 비례해서 텍스트 스케일을 키운다.
+    [System.Serializable]
+    public class SizeConfig
+    {
+        [Tooltip("이 값 이하는 minScale로 클램프")]
+        public int minValue = 0;
+        [Tooltip("이 값 이상은 maxScale로 클램프")]
+        public int maxValue = 200;
+
+        public float minScale = 0.8f;
+        public float maxScale = 1.8f;
+
+        [Tooltip("minValue~maxValue 사이를 0~1로 정규화한 뒤 이 커브를 거쳐서 minScale~maxScale로 보간 — 기본은 선형과 동일")]
+        public AnimationCurve curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+    }
+
     // ──────────────────────────────────────────
     // 인스펙터 필드
     // ──────────────────────────────────────────
@@ -61,6 +77,9 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
 
     [Header("애니메이션 설정")]
     [SerializeField] private AnimationConfig _animationConfig = new AnimationConfig();
+
+    [Header("크기 설정 — 수치 비례 스케일")]
+    [SerializeField] private SizeConfig _sizeConfig = new SizeConfig();
 
     [Header("생성 범위 (중심점 기준 랜덤 오프셋)")]
     [SerializeField] private Vector3 _spawnRange = new Vector3(0.5f, 0f, 0f);
@@ -81,7 +100,7 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
         Color color = GetColorByJudgment(judgment);
 
         DamageText instance = Instantiate(_damageTextPrefab, spawnPos, Quaternion.identity, _parentCanvas.transform);
-        instance.Initialize(damage, color, _animationConfig);
+        instance.Initialize(damage, color, _animationConfig, GetScaleForValue(Mathf.Abs(damage)));
     }
 
     /// <summary>
@@ -93,9 +112,10 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
     {
         Vector3 spawnPos = worldPosition + GetRandomOffset();
         Color color = amount >= 0 ? _itemEffectColorConfig.healColor : _itemEffectColorConfig.damageColor;
+        int absAmount = Mathf.Abs(amount);
 
         DamageText instance = Instantiate(_damageTextPrefab, spawnPos, Quaternion.identity, _parentCanvas.transform);
-        instance.Initialize(Mathf.Abs(amount), color, _animationConfig);
+        instance.Initialize(absAmount, color, _animationConfig, GetScaleForValue(absAmount));
     }
 
     // ──────────────────────────────────────────
@@ -109,6 +129,14 @@ public class DamageTextSpawner : Singleton<DamageTextSpawner>
             Random.Range(-_spawnRange.y, _spawnRange.y),
             Random.Range(-_spawnRange.z, _spawnRange.z)
         );
+    }
+
+    // absValue(절댓값)를 minValue~maxValue 사이 0~1로 정규화 후 curve를 거쳐 minScale~maxScale로 보간.
+    private float GetScaleForValue(int absValue)
+    {
+        float t = Mathf.InverseLerp(_sizeConfig.minValue, _sizeConfig.maxValue, absValue);
+        float eased = _sizeConfig.curve.Evaluate(t);
+        return Mathf.Lerp(_sizeConfig.minScale, _sizeConfig.maxScale, eased);
     }
 
     private Color GetColorByJudgment(QTEResult judgment)

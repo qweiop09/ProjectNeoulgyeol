@@ -7,10 +7,11 @@ public class DamageText : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _text;
 
-    public void Initialize(int damage, Color color, DamageTextSpawner.AnimationConfig config)
+    public void Initialize(int damage, Color color, DamageTextSpawner.AnimationConfig config, float scale = 1f)
     {
         _text.text = damage.ToString();
         _text.color = color;
+        transform.localScale *= scale; // 프리팹에 이미 설정된 기본 스케일 위에 곱해서 적용 — 덮어쓰지 않음
         StartCoroutine(PlayAnimation(config));
     }
 
