@@ -57,13 +57,18 @@ public class OpenPhaseController : MonoBehaviour
         currentRound = 0;
 
         for(int i = 0; i < playerCharacters.Length; i++)
+        {
             playerCharacters[i].TargetingData =
                 new ActData[playerCharacters[i].GetCharacterStatus().CharacterData.slotCount];
-
+            playerCharacters[i].FormationIndex = i; // 전투 시작 시 한 번만 — 매 라운드 속도 재정렬과 무관한 안정적 타이브레이크 기준
+        }
 
         for (int i = 0; i < enemyCharacters.Length; i++)
+        {
             enemyCharacters[i].TargetingData =
                 new ActData[enemyCharacters[i].GetCharacterStatus().CharacterData.slotCount];
+            enemyCharacters[i].FormationIndex = i;
+        }
         
         StartOpenPhase();
     }
@@ -251,40 +256,19 @@ public class OpenPhaseController : MonoBehaviour
         }
     }
 
+    // 속도 내림차순, 동속도면 원래 편성 순서(FormationIndex) 유지 — LINQ OrderBy는 안정 정렬이라 동점자 순서가
+    // 라운드마다 흔들리지 않는다. (행동 순서 결정용 — 렌더링 깊이는 CharacterStatBarManager가 매 프레임 Y좌표로 별도 관리)
     private CharacterHandler[] SortBySpeedDescending(CharacterHandler[] _characterBattleDatas)
     {
         if (_characterBattleDatas == null || _characterBattleDatas.Length <= 1)
             return _characterBattleDatas;
 
-        void QuickSort(int left, int right)
-        {
-            int i = left;
-            int j = right;
-            int pivot = _characterBattleDatas[(left + right) / 2].CurrentSpeed;
-
-            while (i <= j)
-            {
-                while (_characterBattleDatas[i].CurrentSpeed > pivot) i++;
-                while (_characterBattleDatas[j].CurrentSpeed < pivot) j--;
-
-                if (i <= j)
-                {
-                    (_characterBattleDatas[i], _characterBattleDatas[j]) 
-                        = (_characterBattleDatas[j], _characterBattleDatas[i]);
-                    i++;
-                    j--;
-                }
-            }
-
-            if (left < j) QuickSort(left, j);
-            if (i < right) QuickSort(i, right);
-        }
-
-        QuickSort(0, _characterBattleDatas.Length - 1);
-
-        return _characterBattleDatas;
+        return _characterBattleDatas
+            .OrderByDescending(c => c.CurrentSpeed)
+            .ThenBy(c => c.FormationIndex)
+            .ToArray();
     }
-     
+
     private CharacterHandler[] SetCharactersSpeed(CharacterHandler[] _characterBattleDatas)
     {
         CharacterHandler[] _returnBattleDataArray = new CharacterHandler[_characterBattleDatas.Length];

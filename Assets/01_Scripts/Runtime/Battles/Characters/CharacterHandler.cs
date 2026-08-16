@@ -45,6 +45,7 @@ public class CharacterHandler : MonoBehaviour
     public int CurrentSpeed;
     public int PlacementOrder;
     public int TurnOrder;
+    public int FormationIndex; // 전투 시작 시 한 번만 설정되는 원래 편성 순서 — 매 라운드 속도 재정렬과 무관한 안정적 타이브레이크 기준
     public ActData[] TargetingData;
 
     public void SetCharacterStatus(CharacterStatus _characterStatus)

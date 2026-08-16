@@ -29,8 +29,18 @@ public class CharacterStatBarUI : MonoBehaviour
     private Coroutine staminaTrailRoutine;
     private WaitForSeconds trailDelayWait; // 매 타격마다 new WaitForSeconds 할당하지 않도록 캐싱
 
+    // 캐릭터 깊이 정렬(CharacterStatBarManager)이 이 바의 렌더 순서를 캐릭터와 맞추기 위해 호출
+    public void SetSortingOrder(int order)
+    {
+        if (barCanvas != null) barCanvas.sortingOrder = order;
+    }
+
     public void Initialize(CharacterHandler handler, Transform defaultParent)
     {
+        // BattleUI가 World Space 캔버스라 barCanvas는 그 밑에 중첩된 캔버스로 취급됨 — overrideSorting을 켜지
+        // 않으면 sortingOrder 값이 전부 무시되고 부모(BattleUI)의 정렬 값(0)만 따라가서 캐릭터 스프라이트에 가려진다.
+        if (barCanvas != null) barCanvas.overrideSorting = true;
+
         target = handler;
         worldParent = defaultParent;
         worldOffset = CharacterStatBarManager.Instance.GlobalStatBarOffset + target.GetCharacterStatus().CharacterData.statBarOffset;
@@ -136,11 +146,16 @@ public class CharacterStatBarUI : MonoBehaviour
 
     public void DockTo(Transform slot)
     {
+        // 도킹되면 ComandMenu(행동 메뉴) 밑으로 들어가는 평범한 UI 자식이 되는 거라, 전장에서 쓰던 자체 정렬
+        // (overrideSorting)을 끄고 메뉴 자체의 정렬을 그대로 따라가게 해야 메뉴 배경/버튼과 안 어긋난다.
+        if (barCanvas != null) barCanvas.overrideSorting = false;
         RestartMove(DockRoutine(slot));
     }
 
     public void Undock()
     {
+        // 전장으로 돌아가면 다시 CharacterStatBarManager가 관리하는 독립적인 sortingOrder가 필요하다.
+        if (barCanvas != null) barCanvas.overrideSorting = true;
         RestartMove(UndockRoutine());
     }
 
