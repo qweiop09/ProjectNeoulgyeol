@@ -27,12 +27,14 @@ public class CompeteContestController : MonoBehaviour
     {
         QTECoordinator.Instance.OnQTEMarkerReceived += ApplyQteResult;
         CharacterStatusCalculator.Instance.isCharacterDead += OnCharacterDead;
+        CharacterStatusCalculator.Instance.isCharacterStagger += OnCharacterStaggered;
     }
 
     private void OnDisable()
     {
         QTECoordinator.Instance.OnQTEMarkerReceived -= ApplyQteResult;
         CharacterStatusCalculator.Instance.isCharacterDead -= OnCharacterDead;
+        CharacterStatusCalculator.Instance.isCharacterStagger -= OnCharacterStaggered;
     }
 
     private void OnCharacterDead(CharacterStatus status)
@@ -43,6 +45,14 @@ public class CompeteContestController : MonoBehaviour
 
         CharacterAnimationMonitor.Instance.PlayAnimation(
             currentActData.TargetPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Dead);
+    }
+
+    private void OnCharacterStaggered(CharacterStatus status)
+    {
+        if (currentActData.TargetPlayerCharacter.GetCharacterStatus() != status) return;
+
+        CharacterAnimationMonitor.Instance.PlayAnimation(
+            currentActData.TargetPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Staggered);
     }
 
 
@@ -70,17 +80,21 @@ public class CompeteContestController : MonoBehaviour
             HitEffects = skillActData?.UseSkill.hitEffects ?? System.Array.Empty<IHitEffect>()
         };
 
-        DamageResult damage = DamageCalculation.Calculate(hitContext);
+        DamageResult rawDamage = DamageCalculation.Calculate(hitContext);
+        DamageResult finalDamage = DamageCalculation.ResolveFinalDamage(rawDamage, hitContext.Target);
 
+        // 텍스트는 DamageCalculation이 "결론적인" 값을 낸 바로 그 자리에서 가져다 쓴다 —
+        // ApplyHit(실제 적용)을 거칠 필요 없이 이미 확정된 값이라 화면 수치와 절대 어긋나지 않는다.
         DamageTextSpawner.Instance.SpawnDamageText(
             currentActData.TargetPlayerCharacter.transform.position,
-            damage.HpDamage,
+            finalDamage.HpDamage,
             hitInfo.Result);
 
-        HitResolver.ApplyHit(hitContext, damage);
+        HitResolver.ApplyHit(hitContext, finalDamage);
 
-        // 이 피격으로 죽었으면 OnCharacterDead가 이미 Dead 애니메이션을 재생했으므로 덮어쓰지 않는다.
-        if (currentActData.TargetPlayerCharacter.GetCharacterStatus().currentState != CharacterState.Dead)
+        // 이 피격으로 죽거나 흐트러졌으면 OnCharacterDead/OnCharacterStaggered가 이미 해당 애니메이션을
+        // 재생했으므로 Hit으로 덮어쓰지 않는다 — 완전히 멀쩡한 상태로 맞았을 때만 Hit을 재생.
+        if (currentActData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Normal)
             CharacterAnimationMonitor.Instance.PlayAnimation(
                 currentActData.TargetPlayerCharacter, CharacterAnimationMonitor.CharacterAnimationState.Hit);
     }

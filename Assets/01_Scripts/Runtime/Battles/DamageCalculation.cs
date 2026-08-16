@@ -1,4 +1,5 @@
 using _01_Scripts.DTO;
+using UnityEngine;
 
 namespace _01_Scripts.Runtime.Battles
 {
@@ -32,6 +33,27 @@ public static class DamageCalculation
         int staminaDamage = (int)(ctx.Attacker.GetAttack() * qteMultiplier * ctx.StaminaDamageCoefficient);
 
         return new DamageResult { HpDamage = hpDamage, StaminaDamage = staminaDamage };
+    }
+
+    // 원본 피해량(양수)에 "최종 반영 직전" 배율(흐트러짐 등, 앞으로 크리티컬/속성 저항 등이 추가될 자리)을 전부
+    // 적용해서 결론적인 피해량을 낸다 — 스킬/아이템 소스와 무관하게 공용으로 쓰인다. 이 반환값이 곧 실제로
+    // 적용될 값이므로, 데미지 텍스트 등 표시에도 이 값을 그대로 써야 한다.
+    public static int ResolveFinalDamage(int rawDamage, CharacterStatus target)
+    {
+        if (target.currentState == CharacterState.Staggered)
+            rawDamage = Mathf.RoundToInt(rawDamage * CharacterStatusCalculator.Instance.StaggeredDamageMultiplier);
+
+        return rawDamage;
+    }
+
+    // HP+스태미나를 한 번에 처리하는 오버로드 — HitResolver처럼 DamageResult를 통째로 다루는 곳에서 사용.
+    public static DamageResult ResolveFinalDamage(DamageResult rawDamage, CharacterStatus target)
+    {
+        return new DamageResult
+        {
+            HpDamage = ResolveFinalDamage(rawDamage.HpDamage, target),
+            StaminaDamage = ResolveFinalDamage(rawDamage.StaminaDamage, target)
+        };
     }
 
     // 방어력 반영 지점 — 실제 공식 미정, 지금은 항등(no-op)

@@ -27,6 +27,10 @@ public class CharacterStatus
 
     public CharacterState currentState;
 
+    // 흐트러진 바로 그 라운드인지 — 회복은 흐트러진 라운드를 제외한 한 라운드 뒤에 일어나므로,
+    // ClosePhaseController가 이 라운드는 건너뛰고 다음 라운드 종료 때 회복시키도록 구분하는 데 쓴다.
+    public bool StaggerJustStarted;
+
     public void SetCurrentState(CharacterState newState)
     {
         Debug.Log("상태 변경: " + currentState + " -> " + newState);

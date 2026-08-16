@@ -20,15 +20,19 @@ namespace _01_Scripts.DTO.Item.Effects
         {
             int value = Mathf.RoundToInt(amount.Resolve(caster, target) * qteMultiplier);
 
+            // 피해(음수)일 때만 DamageCalculation이 "결론적인" 값을 내도록 거친다(흐트러짐 배율 등) — 회복은 대상 아님.
+            // 반환값을 그대로 반환해야 아이템 효과 텍스트도 실제 적용치와 일치한다.
             switch (statType)
             {
                 case InstantStatType.Hp:
+                    if (value < 0) value = -DamageCalculation.ResolveFinalDamage(-value, target);
                     CharacterStatusCalculator.Instance.ApplyHpModify(target, value);
                     break;
                 case InstantStatType.Mp:
                     CharacterStatusCalculator.Instance.ApplyMpModify(target, value);
                     break;
                 case InstantStatType.Stamina:
+                    if (value < 0) value = -DamageCalculation.ResolveFinalDamage(-value, target);
                     CharacterStatusCalculator.Instance.ApplyStaminaModify(target, value);
                     break;
             }

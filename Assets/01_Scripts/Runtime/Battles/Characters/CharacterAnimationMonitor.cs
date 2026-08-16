@@ -11,6 +11,7 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
         Idle,
         Run,
         Hit,
+        Staggered,
         Dead
     }
 
@@ -20,9 +21,9 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
     public void PlayAnimation(CharacterHandler characterHandler, CharacterState state)
     {
         CharacterAnimationState characterAnimationState = CharacterAnimationState.Idle;
-        
+
         if(state == CharacterState.Normal) characterAnimationState = CharacterAnimationState.Idle;
-        // else if(state == CharacterState.Staggered) characterAnimationState = CharacterAnimationState.Idle;
+        else if(state == CharacterState.Staggered) characterAnimationState = CharacterAnimationState.Staggered;
         else if(state == CharacterState.Dead) characterAnimationState = CharacterAnimationState.Dead;
 
         PlayAnimation(characterHandler, characterAnimationState);
@@ -61,10 +62,11 @@ public class CharacterAnimationMonitor : Singleton<CharacterAnimationMonitor>
     {
         return state switch
         {
-            CharacterAnimationState.Idle => characterData.idleAnimation,
-            CharacterAnimationState.Run  => characterData.runAnimation,
-            CharacterAnimationState.Hit  => characterData.hitAnimation,
-            CharacterAnimationState.Dead => characterData.deadAnimation,
+            CharacterAnimationState.Idle      => characterData.idleAnimation,
+            CharacterAnimationState.Run       => characterData.runAnimation,
+            CharacterAnimationState.Hit       => characterData.hitAnimation,
+            CharacterAnimationState.Staggered => characterData.staggeredAnimation,
+            CharacterAnimationState.Dead      => characterData.deadAnimation,
             _ => null
         };
     }

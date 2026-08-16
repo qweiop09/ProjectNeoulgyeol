@@ -350,6 +350,12 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         {
             if (characterHandler.characterType == CharacterHandler.CharacterType.Enemy) return;
 
+            if (characterHandler.GetCharacterStatus().currentState == CharacterState.Staggered)
+            {
+                NotificationManager.Instance.Show("흐트러진 상태라 행동할 수 없습니다.");
+                return;
+            }
+
             Debug.Log("Setting selected act caster: " + characterHandler.name);
             selectedActCaster = characterHandler;
             ChangeSelectionState(SelectionState.SelectingAction);

@@ -45,6 +45,7 @@ public class ClosePhaseController : MonoBehaviour
                 = new ActData[allCharacterHandlers[i].TargetingData.Length];
 
             DecrementBuffs(allCharacterHandlers[i].GetCharacterStatus());
+            ProcessStaggerRecovery(allCharacterHandlers[i].GetCharacterStatus());
         }
     
         // 아군/적군으로 분리
@@ -137,6 +138,21 @@ public class ClosePhaseController : MonoBehaviour
                 CharacterStatusCalculator.Instance.ExpireBuff(status, buff);
             }
         }
+    }
+
+    // 흐트러짐 회복 처리 — 흐트러진 그 라운드는 세지 않고, 그다음 라운드가 끝날 때 회복시킨다.
+    private void ProcessStaggerRecovery(CharacterStatus status)
+    {
+        if (status.currentState != CharacterState.Staggered) return;
+
+        if (status.StaggerJustStarted)
+        {
+            status.StaggerJustStarted = false; // 흐트러진 이번 라운드는 소진만 시키고, 회복은 다음 라운드 종료로 미룬다
+            return;
+        }
+
+        CharacterStatusCalculator.Instance.ApplyStaminaModify(status, status.GetMaxStamina() / 2);
+        status.SetCurrentState(CharacterState.Normal);
     }
 
     // 해당 진영 전원 사망 여부 체크

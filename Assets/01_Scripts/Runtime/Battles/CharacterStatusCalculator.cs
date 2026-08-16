@@ -34,6 +34,9 @@ public static class StatusCalculation
 // 대상 타입이 CharacterHandler가 아니라 CharacterStatus이므로 월드 씬에서도 호출 가능하다.
 public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
 {
+    [Tooltip("흐트러짐 상태인 캐릭터가 받는 모든 피해(HP/스태미나)에 마지막으로 곱해지는 배율 — 실제 계산은 DamageCalculation.ResolveFinalDamage가 담당, 여기선 인스펙터 튜닝용 값만 들고 있음")]
+    [SerializeField] private float staggeredDamageMultiplier = 1.5f;
+    public float StaggeredDamageMultiplier => staggeredDamageMultiplier;
 
     public Action<CharacterStatus> isCharacterDead;
     public Action<CharacterStatus> isCharacterStagger;
@@ -49,7 +52,8 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         ApplyStaminaModify(caster, -skill.skillStaminaCost);
     }
 
-    // HP 변화
+    // HP 변화 — 순수하게 스탯 반영 + 이벤트만 담당한다. 흐트러짐 배율 등 "얼마나 깎일지"는 이 메서드에
+    // 도달하기 전에 DamageCalculation.ResolveFinalDamage가 이미 끝내둔 값이어야 한다.
     public void ApplyHpModify(CharacterStatus target, int amount)
     {
         var result = StatusCalculation.Modify(target.currentHp, amount, target.GetMaxHp());
@@ -77,16 +81,18 @@ public class CharacterStatusCalculator : Singleton<CharacterStatusCalculator>
         Debug.Log(target.CharacterData.characterName + " MP 회복: " + amount + " / 현재 MP: " + target.currentMp);
     }
 
-    // 스테미나 변화
+    // 스테미나 변화 — ApplyHpModify와 마찬가지로 순수 반영만 담당(배율은 호출 전에 이미 반영된 값이어야 함).
     public void ApplyStaminaModify(CharacterStatus target, int amount)
     {
         var result = StatusCalculation.Modify(target.currentStamina, amount, target.GetMaxStamina());
         target.currentStamina = result.NewValue;
 
-        // 이미 사망 판정이면 흐트러짐으로 덮어쓰지 않는다 (한 히트에 HP/스테미나가 동시에 0이 되는 경우 대비)
-        if (result.HitFloor && target.currentState != CharacterState.Dead)
+        // Normal 상태에서만 흐트러짐 진입 — 이미 흐트러진 상태에서 또 맞아도 재발동(회복 타이밍 리셋) 안 되게,
+        // 사망 상태에서도 안 걸리게(한 히트에 HP/스테미나가 동시에 0이 되는 경우 대비) 막는다.
+        if (result.HitFloor && target.currentState == CharacterState.Normal)
         {
             target.SetCurrentState(CharacterState.Staggered);
+            target.StaggerJustStarted = true; // 흐트러진 이번 라운드는 회복 카운트에서 제외(ClosePhaseController가 참고)
             isCharacterStagger?.Invoke(target);
         }
 
