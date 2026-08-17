@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using _01_Scripts.DTO;
 using _01_Scripts.DTO.Item;
@@ -160,10 +161,28 @@ public class CompeteContestController : MonoBehaviour
             // 도망은 판정이 이미 경합 페이즈 시작 시 끝났다(실패했으니 여기 도달함) — 아무 효과 없이 그냥 턴 소모
             if (actData is RunActData) continue;
 
+            // 추가 타겟 중 이미 죽은 대상은 미리 걸러낸다 (아이템 경로는 이미 개별 스킵 처리가 있었음 — 스킬 경로엔 없었음)
+            if (actData.AdditionalTargets != null && actData.AdditionalTargets.Length > 0)
+            {
+                actData.AdditionalTargets = actData.AdditionalTargets
+                    .Where(t => t != null && t.GetCharacterStatus().currentState != CharacterState.Dead)
+                    .ToArray();
+            }
+
             if (actData.TargetPlayerCharacter.GetCharacterStatus().currentState == CharacterState.Dead)
             {
-                ReleaseReservationIfItem(actData);
-                continue;
+                if (actData.AdditionalTargets == null || actData.AdditionalTargets.Length == 0)
+                {
+                    // 메인 타겟도 남은 추가 타겟도 전부 무효화됐다 — 재타겟하지 않고 이 슬롯을 Stay로 대체한다.
+                    // 뒤이은 "Stay 행동 처리" 패스가 actDatas 배열을 다시 스캔하므로 스태미나 회복도 자동 적용됨.
+                    ReleaseReservationIfItem(actData);
+                    actDatas[i] = new StayActData(actData.CastPlayerCharacter, actData.UseSlot);
+                    continue;
+                }
+
+                // 메인 타겟만 무효화되고 추가 타겟 중 일부는 살아있다 — 그중 하나를 새 메인으로 승격해서 나머지 유효 타겟에 그대로 실행한다.
+                actData.TargetPlayerCharacter = actData.AdditionalTargets[0];
+                actData.AdditionalTargets = actData.AdditionalTargets.Skip(1).ToArray();
             }
 
             CameraHandler.Instance.SetFollowTransform(actData.CastPlayerCharacter.transform, 1.5f);

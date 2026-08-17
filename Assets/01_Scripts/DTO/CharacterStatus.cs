@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _01_Scripts.DTO.Item;
 using _01_Scripts.DTO.Item.Effects;
+using _01_Scripts.Runtime.Battles.Phase.Open.EnemyTargeting;
 using _01_Scripts.Runtime.Worlds;
 using UnityEngine;
 
@@ -54,6 +55,11 @@ public class CharacterStatus
     // 이 캐릭터를 만든 EnemyData 역참조 (적 전용, 플레이어는 항상 null) — 컷신 오버라이드 등 인카운터
     // 시점에만 아는 정보를 전투 중에도 조회할 수 있게 해준다. BattleManager.BattleStart에서 채워짐.
     public EnemyData SourceEnemyData;
+
+    // 보스 트리거 중 oneShot으로 표시된 것들이 이 배틀 인스턴스에서 이미 발동했는지 기록.
+    // EnemyAIProfile/BossTriggerEntry는 여러 적이 공유하는 SO 에셋이라 여기(런타임 인스턴스)에 둬야
+    // 발동 기록이 배틀 간/캐릭터 간에 새어나가지 않는다.
+    public List<BossTriggerEntry> FiredOneShotBossTriggers = new();
 
     public CharacterStatus(CharacterData characterData)
     {

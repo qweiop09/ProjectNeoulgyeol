@@ -172,7 +172,7 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         // 랜덤 타겟 행동은 확정 전까지 "누가 뽑힐 수 있는지" 후보 전원을 점선으로 미리 보여준다
         ITargetSpec previewSpec = _currentActData?.GetTargetSpec();
         if (previewSpec != null && previewSpec.TargetCount == TargetCount.Random)
-            attackArrowController?.ShowCandidatePreview(selectedActCaster, GetCandidates(previewSpec.TargetScope, selectedActCaster));
+            attackArrowController?.ShowCandidatePreview(selectedActCaster, TargetResolution.GetCandidates(previewSpec.TargetScope, selectedActCaster, allBattleCharacters));
         else
             attackArrowController?.HideCandidatePreview();
     }
@@ -233,22 +233,6 @@ public class ActionSelectionPhaseManager : MonoBehaviour
             InventoryManager.Instance.ReleaseReservation(itemActData.UseItem, 1);
     }
 
-    // scope에 맞는 타겟 후보(생존자만) 조회. Ally scope엔 caster 자신도 포함된다.
-    private IEnumerable<CharacterHandler> GetCandidates(TargetScope scope, CharacterHandler caster)
-    {
-        if (allBattleCharacters == null) return Enumerable.Empty<CharacterHandler>();
-
-        IEnumerable<CharacterHandler> alive = allBattleCharacters
-            .Where(c => c != null && c.GetCharacterStatus().currentState != CharacterState.Dead);
-
-        return scope switch
-        {
-            TargetScope.Ally  => alive.Where(c => c.characterType == caster.characterType),
-            TargetScope.Enemy => alive.Where(c => c.characterType != caster.characterType),
-            _                 => alive // Any
-        };
-    }
-
     // candidate가 이번 라운드에 이미 다른 미확정 행동의 타겟(메인 또는 추가)으로 걸려있는지
     private bool IsTargeted(CharacterHandler candidate)
     {
@@ -267,35 +251,6 @@ public class ActionSelectionPhaseManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    // 메인 타겟 제외 후보를 빈슬롯 > 진영(메인과 동일) > 속도(느린 순)로 정렬해 totalCount-1명 선택
-    private CharacterHandler[] SelectPriorityTargets(CharacterHandler mainTarget, IEnumerable<CharacterHandler> candidates, int totalCount)
-    {
-        return candidates
-            .Where(c => c != mainTarget)
-            .OrderByDescending(c => !IsTargeted(c))
-            .ThenByDescending(c => c.characterType == mainTarget.characterType)
-            .ThenBy(c => c.CurrentSpeed)
-            .Take(Mathf.Max(0, totalCount - 1))
-            .ToArray();
-    }
-
-    // 메인 타겟 제외 후보에서 비복원 랜덤으로 totalCount-1명 선택
-    private CharacterHandler[] SelectRandomTargets(CharacterHandler mainTarget, IEnumerable<CharacterHandler> candidates, int totalCount)
-    {
-        List<CharacterHandler> pool = candidates.Where(c => c != mainTarget).ToList();
-        List<CharacterHandler> picked = new List<CharacterHandler>();
-        int need = Mathf.Max(0, totalCount - 1);
-
-        for (int i = 0; i < need && pool.Count > 0; i++)
-        {
-            int index = UnityEngine.Random.Range(0, pool.Count);
-            picked.Add(pool[index]);
-            pool.RemoveAt(index);
-        }
-
-        return picked.ToArray();
     }
 
     // 행동의 targetScope(Ally/Enemy) 제한을 클릭된 candidate가 만족하는지
@@ -373,15 +328,8 @@ public class ActionSelectionPhaseManager : MonoBehaviour
 
             if (targetSpec != null)
             {
-                IEnumerable<CharacterHandler> candidates = GetCandidates(targetSpec.TargetScope, selectedActCaster);
-
-                _currentActData.AdditionalTargets = targetSpec.TargetCount switch
-                {
-                    TargetCount.Fixed  => SelectPriorityTargets(characterHandler, candidates, targetSpec.TargetCountValue),
-                    TargetCount.All    => candidates.Where(c => c != characterHandler).ToArray(),
-                    TargetCount.Random => SelectRandomTargets(characterHandler, candidates, targetSpec.TargetCountValue),
-                    _                  => Array.Empty<CharacterHandler>() // Single
-                };
+                IEnumerable<CharacterHandler> candidates = TargetResolution.GetCandidates(targetSpec.TargetScope, selectedActCaster, allBattleCharacters);
+                _currentActData.AdditionalTargets = TargetResolution.ResolveAdditionalTargets(characterHandler, targetSpec, candidates, IsTargeted);
             }
 
             // SetFixedArrow — actData를 그대로 넘겨서 랜덤 타겟이면 점선 스타일이 유지되게 함
